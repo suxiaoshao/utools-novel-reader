@@ -1,12 +1,13 @@
 <template>
-    <div id="content">
+    <div id="content" class="router">
         <el-container style="height: 100%">
             <el-header>
                 <el-page-header @back="go_back" :content="`${novel_name}-${chapter_name}`">
                 </el-page-header>
             </el-header>
             <el-main v-loading="loading">
-                <div style="text-align: center;margin-bottom: 10px"><h4 class="title">{{chapter_name}}</h4></div>
+                <div style="text-align: center;margin-bottom: 10px"><h4 class="title" id="title">{{chapter_name}}</h4>
+                </div>
                 <div style="text-align: center;">
                     <p>
                         <span style="margin-right: 10px" v-show="pre_cid!==-1">
@@ -58,9 +59,53 @@
         name: "content",
         created() {
             window.utools.onPluginEnter(({code, type, payload}) => {
+                window.utools.setSubInput(({text}) => {
+                    this.$router.push({name: "search", query: {name: text}})
+                }, '搜索在线小说');
             });
-            document.onkeydown = undefined;
+            window.utools.setSubInput(({text}) => {
+                this.$router.push({name: "search", query: {name: text}})
+            }, '搜索在线小说');
+            let setting = window.utools.db.get("setting");
+            if (setting === null) {
+                let new_setting = {
+                    _id: "setting",
+                    using_keyboard: false,
+                    pre_key: "ArrowLeft",
+                    next_key: "ArrowRight"
+                };
+                setting = window.utools.db.put(new_setting);
+            }
             this.get_text_and_info();
+            if (setting.using_keyboard) {
+                document.onkeydown = (e) => {
+                    if (e.key === setting.pre_key) {
+                        if(this.pre_cid!==-1){
+                            this.go_to_content(this.nid, this.pre_cid);
+                        }else{
+                            this.$message({
+                                showClose: true,
+                                message: '没有上一章啦',
+                                type: 'error'
+                            })
+                        }
+                    } else if (e.key === setting.next_key) {
+                        if(this.next_cid !== -1){
+                            this.go_to_content(this.nid, this.next_cid)
+                        }else{
+                            this.$message({
+                                showClose: true,
+                                message: '没有下一章啦',
+                                type: 'error'
+                            })
+                        }
+
+                    }
+                }
+            } else {
+                document.onkeydown = undefined;
+            }
+            window.utools.subInputBlur();
         },
         data() {
             return {
@@ -68,8 +113,8 @@
                 novel_name: '',
                 chapter_name: '',
                 content_list: [],
-                pre_cid: '',
-                next_cid: ''
+                pre_cid: -1,
+                next_cid: -1
             }
         },
         methods: {
@@ -113,29 +158,28 @@
                 this.$router.replace({name: "content", params: {nid: nid, cid: cid}});
                 this.get_text_and_info();
             },
-            update_reading_section(){
+            update_reading_section() {
                 let data = window.utools.db.get(this.nid);
                 if (data !== null) {
                     data["read_chapter"] = {cid: this.cid, name: this.chapter_name};
-                    let result=window.utools.db.put(data);
-                    if(result.hasOwnProperty("error")&&result["error"]){
+                    let result = window.utools.db.put(data);
+                    if (result.hasOwnProperty("error") && result["error"]) {
                         this.$notify({
                             title: "错误",
                             message: "更新最后阅读章节失败",
                             duration: 0,
                             type: "error"
                         });
-                    }else{
-                        this.$notify({
-                            title: "成功",
-                            message: "更新最后阅读章节成功",
-                            duration: 0,
-                            type: "success"
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: '更新最后阅读章节成功',
+                            type: 'success'
                         });
                     }
                 }
-                document.body.scrollTop = 0;
-                document.documentElement.scrollTop = 0;
+                // window.location.hash="#title"
+                document.getElementById("title").scrollIntoView();
             }
         },
         computed: {

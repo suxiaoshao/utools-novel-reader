@@ -1,5 +1,5 @@
 <template>
-    <div id="search">
+    <div id="search" class="router">
         <el-container style="height: 100%">
             <el-header>
                 <my-navigation active-index="0"></my-navigation>
@@ -127,24 +127,25 @@
                     window.utools.setSubInput(({text}) => {
                         this.search_name = text;
                         // 这里的 text 就是输入的内容, 实时变化
-                    }, '搜索在线小说')
+                    }, '搜索在线小说',true);
                 } else if (code === 'bookshelf') {
                     this.$router.push({name: "bookshelf"})
                 }
             });
             window.utools.setSubInput(({text}) => {
                 this.search_name = text;
-                // 这里的 text 就是输入的内容, 实时变化
-            }, '搜索在线小说');
+            }, '搜索在线小说',true);
             document.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     this.$router.push({name: "search", query: {name: this.search_name}});
-                    this.search();
                 }
             };
             if (this.$route.query.name !== undefined) {
                 this.search();
             }
+        },
+        watch: {
+            "$route": "search"
         }
     }
 </script>

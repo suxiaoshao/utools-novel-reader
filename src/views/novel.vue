@@ -1,5 +1,5 @@
 <template>
-    <div id="novel">
+    <div id="novel" class="router">
         <el-container style="height: 100%">
             <el-header>
                 <el-page-header @back="go_back" :content="name">
@@ -160,7 +160,6 @@
                     this.$notify({
                         title: "成功",
                         message: "加入书架成功",
-                        duration: 0,
                         type: "success"
                     });
                 }
@@ -179,7 +178,6 @@
                     this.$notify({
                         title: "成功",
                         message: "移除书架成功",
-                        duration: 0,
                         type: "success"
                     });
                 }
@@ -187,10 +185,16 @@
         },
         created() {
             this.whether_collection = (window.utools.db.get(this.nid) !== null);
-            console.log(window.utools.db.get(this.nid) !== null);
             window.utools.onPluginEnter(({code, type, payload}) => {
+                window.utools.setSubInput(({text}) => {
+                    this.$router.push({name:"search",query:{name:text}})
+                }, '搜索在线小说');
             });
+            window.utools.setSubInput(({text}) => {
+                this.$router.push({name:"search",query:{name:text}})
+            }, '搜索在线小说');
             document.onkeydown = undefined;
+            window.utools.subInputBlur();
             this.to_get_directory_and_info();
         }
     }

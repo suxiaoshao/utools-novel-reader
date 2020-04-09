@@ -5,12 +5,24 @@
             <!-- 普通信息框 -->
             <el-menu-item v-for="(item,index) in navigation_item" :key="index" :index="String(index)">{{item.name}}
             </el-menu-item>
+            <el-link style="float: right" index="setting" :underline="false" @click="dialogVisible=true">
+                <i class="el-icon-s-tools" style="font-size: 20px;margin-top: 20px"></i>
+            </el-link>
         </el-menu>
+
+        <!-- 设置栏 -->
+        <my-setting :dialog-visible="dialogVisible" @close-dialog="dialogVisible=false"></my-setting>
     </div>
 </template>
 <script>
+
+    import setting from "./setting";
+
     export default {
         name: "Navigation",
+        components: {
+            "my-setting": setting
+        },
         data() {
             return {
                 navigation_item: [
@@ -26,7 +38,8 @@
                         name: "测试",
                         path: {name: "text"}
                     }
-                ], // 导航内容数组
+                ], // 导航内容数组,
+                dialogVisible: false, //是否显示设置框,
             };
         },
         props: {

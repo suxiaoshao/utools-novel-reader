@@ -1,5 +1,5 @@
 <template>
-    <div id="bookshelf">
+    <div id="bookshelf" class="router">
         <el-container style="height: 100%">
             <el-header>
                 <my-navigation active-index="1"></my-navigation>
@@ -39,19 +39,6 @@
                             </el-link>
                         </template>
                     </el-table-column>
-
-                    <!-- 书签 -->
-                    <!--                    <el-table-column>-->
-                    <!--                        <template slot="header">书签</template>-->
-                    <!--                        <template slot-scope="scope">-->
-                    <!--                            <el-dropdown><span class="el-dropdown-link">查看</span></el-dropdown>-->
-                    <!--                            <el-dropdown-menu slot="dropdown">-->
-                    <!--                                <el-dropdown-item v-for="(item,index) in scope.row.bookmark_list" :key="index"-->
-                    <!--                                                  @click="go_to_content(scope.row._id,item.cid)">{{item.name}}-->
-                    <!--                                </el-dropdown-item>-->
-                    <!--                            </el-dropdown-menu>-->
-                    <!--                        </template>-->
-                    <!--                    </el-table-column>-->
                 </el-table>
             </el-main>
         </el-container>
@@ -93,17 +80,27 @@
                     this.$notify({
                         title: "成功",
                         message: "移除书架成功",
-                        duration: 0,
                         type: "success"
                     });
                 }
-                this.all_book_list = window.utools.db.allDocs();
+                this.all_book_list = window.utools.db.allDocs().filter(item => {
+                    return item._id !== "setting"
+                });
             }
         },
-        created() {
-            this.all_book_list = window.utools.db.allDocs();
-            window.utools.onPluginEnter(({code, type, payload}) => {
+        created: function () {
+            this.all_book_list = window.utools.db.allDocs().filter(item => {
+                return item._id !== "setting"
             });
+            window.utools.onPluginEnter(({code, type, payload}) => {
+                window.utools.setSubInput(({text}) => {
+                    this.$router.push({name: "search", query: {name: text}})
+                }, '搜索在线小说');
+            });
+            window.utools.setSubInput(({text}) => {
+                this.$router.push({name: "search", query: {name: text}})
+            }, '搜索在线小说');
+            window.utools.subInputBlur();
             document.onkeydown = undefined;
         }
     }
