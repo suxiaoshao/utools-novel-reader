@@ -2,7 +2,7 @@
     <div id="text" class="router">
         <el-container style="height: 100%">
             <el-header>
-                <my-navigation active-index="2"></my-navigation>
+                <my-navigation active-index="2" @created-method="created_method"></my-navigation>
             </el-header>
             <el-main v-loading="loading">
                 <el-input placeholder="url地址" v-model="url"></el-input>
@@ -46,19 +46,17 @@
                 }).catch(error => {
                     console.log(error)
                 })
+            },
+            created_method() {
+                window.utools.setSubInput(({text}) => {
+                    this.$router.push({name: "search", query: {name: text, type: "1"}})
+                }, '搜索在线小说');
+                window.utools.subInputBlur();
+                document.onkeydown = undefined;
             }
         },
         created() {
-            window.utools.onPluginEnter(({code, type, payload}) => {
-                window.utools.setSubInput(({text}) => {
-                    this.$router.push({name:"search",query:{name:text}})
-                }, '搜索在线小说');
-            });
-            window.utools.setSubInput(({text}) => {
-                this.$router.push({name:"search",query:{name:text}})
-            }, '搜索在线小说');
-            window.utools.subInputBlur();
-            document.onkeydown = undefined;
+            this.created_method()
         }
     }
 </SCRIPT>

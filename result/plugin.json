@@ -1,0 +1,28 @@
+{
+    "pluginName": "小说阅读",
+    "description": "一个小说阅读工具",
+    "author": "sushao",
+    "preload": "preload.js",
+    "logo": "read.png",
+    "main": "index.html",
+    "homepage": "www.sushao.top",
+    "version": "0.0.7",
+    "features": [
+        {
+            "code": "search",
+            "explain": "进入小说搜索页面",
+            "cmds": [
+                "novel",
+                "小说"
+            ]
+        },
+        {
+            "code": "bookshelf",
+            "explain": "进入书架",
+            "cmds": [
+                "书架",
+                "bookshelf"
+            ]
+        }
+    ]
+}

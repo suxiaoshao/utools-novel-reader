@@ -1,61 +1,112 @@
 <template>
     <div id="setting">
         <el-dialog title="设置" :visible.sync="dialogVisible" width="70%" :before-close="dialog_close">
-            <el-form :model="setting_data" ref="setting_data">
+            <el-tabs v-model="activeName" type="card">
 
-                <!-- 是否启用快捷键 -->
-                <el-form-item>
-                    <el-switch
-                            v-model="setting_data.using_keyboard"
-                            inactive-text="使用快捷键打开上下章">
-                    </el-switch>
-                </el-form-item>
+                <!-- 快捷键设置 -->
+                <el-tab-pane label="快捷键" name="first">
+                    <el-form :model="setting_data" ref="setting_data">
+                        <!-- 是否启用快捷键 -->
+                        <el-form-item>
+                            <el-switch
+                                    v-model="setting_data.keyborad.using_keyboard"
+                                    inactive-text="使用快捷键打开上下章">
+                            </el-switch>
+                        </el-form-item>
 
-                <!-- 上一章快捷键 -->
-                <el-form-item v-show="setting_data.using_keyboard">
-                    <el-row :gutter="2">
-                        <el-col :span="5">
-                            <el-popover placement="top-start" width="200" trigger="hover"
-                                        content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
+                        <!-- 上一章快捷键 -->
+                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                            <el-row :gutter="2">
+                                <el-col :span="5">
+                                    <el-popover placement="top-start" width="200" trigger="hover"
+                                                content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
                                 <span style="font-size: 15px" slot="reference">
                                     上一章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
                                 </span>
-                            </el-popover>
-                        </el-col>
-                        <el-col :span="17">
-                            <el-input :placeholder="setting_data.pre_key" @blur="cleared_to_monitor"
-                                      @focus="listen_previous_chapter"></el-input>
-                        </el-col>
-                    </el-row>
-                </el-form-item>
+                                    </el-popover>
+                                </el-col>
+                                <el-col :span="17">
+                                    <el-input v-model="setting_data.keyborad.pre_key" @blur="cleared_to_monitor"
+                                              @focus="listen_previous_chapter" readonly></el-input>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
 
-                <!-- 下一章快捷键 -->
-                <el-form-item v-show="setting_data.using_keyboard">
-                    <el-row :gutter="2">
-                        <el-col :span="5">
-                            <el-popover placement="top-start" width="200" trigger="hover"
-                                        content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
+                        <!-- 下一章快捷键 -->
+                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                            <el-row :gutter="2">
+                                <el-col :span="5">
+                                    <el-popover placement="top-start" width="200" trigger="hover"
+                                                content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
                                 <span style="font-size: 15px" slot="reference">
                                     下一章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
                                 </span>
-                            </el-popover>
-                        </el-col>
-                        <el-col :span="17">
-                            <el-input :placeholder="setting_data.next_key" @blur="cleared_to_monitor"
-                                      @focus="listen_next_chapter"></el-input>
-                        </el-col>
-                    </el-row>
-                </el-form-item>
+                                    </el-popover>
+                                </el-col>
+                                <el-col :span="17">
+                                    <el-input v-model="setting_data.keyborad.next_key" @blur="cleared_to_monitor"
+                                              @focus="listen_next_chapter" readonly></el-input>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
 
-                <el-form-item>
-                    <div style="text-align: center;">
-                        <el-button type="primary" @click="save_settings">保存</el-button>
-                        <el-button type="danger" @click="restore_settings">取消</el-button>
-                    </div>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-            </span>
+                <!-- 提醒设置 -->
+                <el-tab-pane label="提醒" name="second">
+                    <el-form :model="setting_data" ref="setting_data">
+
+                        <!-- 收藏提醒 -->
+                        <el-form-item label="收藏提醒 ">
+                            <el-radio v-model="setting_data.remind.collect_remind" :label="1">都不提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.collect_remind" :label="2">只有失败提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.collect_remind" :label="3">都提醒</el-radio>
+                        </el-form-item>
+
+                        <!-- 章节更新提醒 -->
+                        <el-form-item label="章节更新提醒 ">
+                            <el-radio v-model="setting_data.remind.update_reading_section" :label="1">都不提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.update_reading_section" :label="2">只有失败提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.update_reading_section" :label="3">都提醒</el-radio>
+                        </el-form-item>
+
+                        <!-- 设置保存提醒 -->
+                        <el-form-item label="设置保存提醒 ">
+                            <el-radio v-model="setting_data.remind.settings_saved_remind" :label="1">都不提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.settings_saved_remind" :label="2">只有失败提醒</el-radio>
+                            <el-radio v-model="setting_data.remind.settings_saved_remind" :label="3">都提醒</el-radio>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+
+                <!-- 阅读外观设置 -->
+                <el-tab-pane label="阅读外观" name="third">
+                    <el-form :model="setting_data" ref="setting_data">
+
+                        <!-- 主题 -->
+                        <el-form-item label="主题">
+                            <el-select v-model="setting_data.style.theme" placeholder="主题">
+                                <el-option label="基础" value="base-theme">
+                                </el-option>
+                                <el-option label="护眼" value="yellow-theme">
+                                </el-option>
+                                <el-option label="暗色" value="gray-theme">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                        <el-form-item label="字体大小">
+                            <el-input-number v-model="setting_data.style.fort_size" :min="1"
+                                             :max="40"></el-input-number>
+                        </el-form-item>
+                    </el-form>
+                </el-tab-pane>
+            </el-tabs>
+
+            <div style="text-align: center;" slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="save_settings">保存</el-button>
+                <el-button type="danger" @click="restore_settings">取消</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -65,7 +116,25 @@
         name: "setting",
         data() {
             return {
-                setting_data: {}
+                setting_data: {
+                    _id: "setting",
+                    keyborad: {
+                        using_keyboard: false,
+                        pre_key: "ArrowLeft",
+                        next_key: "ArrowRight"
+                    },
+                    remind: {
+                        collect_remind: 3,
+                        update_reading_section: 3,
+                        settings_saved_remind: 3
+                    },
+                    style: {
+                        theme: "base-theme",
+                        fort_size: 18
+                    },
+                    version: "0.0.7"
+                },
+                activeName: 'first'
             }
         },
         props: {
@@ -77,8 +146,8 @@
             },
             listen_previous_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.next_key) {
-                        this.setting_data.pre_key = e.key;
+                    if (e.key !== this.setting_data.keyborad.next_key) {
+                        this.setting_data.keyborad.pre_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -90,8 +159,8 @@
             },
             listen_next_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.pre_key) {
-                        this.setting_data.next_key = e.key;
+                    if (e.key !== this.setting_data.keyborad.pre_key) {
+                        this.setting_data.keyborad.next_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -107,43 +176,37 @@
             save_settings() {
                 let result = window.utools.db.put(this.setting_data);
                 if (result.hasOwnProperty("error") && result["error"]) {
-                    this.$notify({
-                        title: "错误",
-                        message: "保存设置失败",
-                        duration: 0,
-                        type: "error"
-                    });
+                    if (this.setting_data.remind.settings_saved_remind >= 2) {
+                        this.$notify({
+                            title: "错误",
+                            message: "保存设置失败",
+                            duration: 0,
+                            type: "error"
+                        });
+                    }
                     this.setting_data = window.utools.db.get("setting");
                 } else {
-                    this.setting_data= window.utools.db.get("setting");
-                    this.$notify({
-                        title: "成功",
-                        message: "保存设置成功",
-                        type: "success"
-                    });
+                    this.setting_data = window.utools.db.get("setting");
+                    if (this.setting_data.remind.settings_saved_remind >= 3) {
+                        this.$notify({
+                            title: "成功",
+                            message: "保存设置成功",
+                            type: "success"
+                        });
+                    }
                 }
+                this.$emit("after-save")
             },
             restore_settings() {
                 this.setting_data = window.utools.db.get("setting");
             }
         },
         created() {
-            let data = window.utools.db.get("setting");
-            if (data === null) {
-                let new_data = {
-                    _id: "setting",
-                    using_keyboard: false,
-                    pre_key: "ArrowLeft",
-                    next_key: "ArrowRight"
-                };
-                this.setting_data = window.utools.db.put(new_data);
-            } else {
-                this.setting_data = data;
-            }
+            this.setting_data = window.utools.db.get("setting");
         }
     }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 
 </style>

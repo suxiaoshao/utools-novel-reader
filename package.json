@@ -19,6 +19,10 @@
     "@vue/cli-plugin-babel": "~4.2.0",
     "@vue/cli-plugin-router": "~4.2.0",
     "@vue/cli-service": "~4.2.0",
+    "electron": "^8.2.3",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "utools-helper": "^0.1.6",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11"
   },

@@ -2,9 +2,13 @@
     <div id="search" class="router">
         <el-container style="height: 100%">
             <el-header>
-                <my-navigation active-index="0"></my-navigation>
+                <my-navigation active-index="0" @created-method="created_method"></my-navigation>
             </el-header>
+
             <el-main v-loading="loading">
+                <!-- 标题 -->
+                <div style="text-align: center;"><h4 class="title">搜索:{{this.$route.query.name}}</h4></div>
+
                 <el-table :data="search_list" style="width: 100%" border :stripe="true">
 
                     <!-- 小说名 -->
@@ -40,6 +44,7 @@
 
 <script>
     import navigation from "../components/navigation";
+    import search_method from "../assets/js/search";
 
     export default {
         name: "search",
@@ -55,94 +60,57 @@
         },
         methods: {
             search() {
-                this.loading = true;
-                this.search_list = [];
-                this.axios.get("https://www.meegoq.com/search.htm?keyword=" + encodeURI(String(this.$route.query.name))).then(response => {
-                    this.loading = false;
-                    const doc = new this.xmldom.DOMParser().parseFromString(response.data);
-                    const nodes = this.xpath.select("/html/body/section/div[1]/section/ul/li", doc);
-                    nodes.slice(1).forEach(value => {
-                        try {
-                            const item_doc = new this.xmldom.DOMParser().parseFromString(value.toString());
-                            let name = this.xpath.select("/li/span[2]/a/text()", item_doc);
-                            if (name.length !== 1) {
-                                name = '';
-                            } else {
-                                name = name[0].toString();
-                            }
-                            let novel_id = this.xpath.select1("/li/span[2]/a/@href", item_doc).value;
-                            novel_id = novel_id.match(/info(?<id>\d+)\.html/).groups["id"];
-                            let author = this.xpath.select("/li/span[4]/a/text()", item_doc);
-                            if (author.length !== 1) {
-                                author = ''
-                            } else {
-                                author = author[0].toString();
-                            }
-                            let latest_chapter_name = this.xpath.select("/li/span[3]/a/text()", item_doc);
-                            if (latest_chapter_name.length !== 1) {
-                                latest_chapter_name = ''
-                            } else {
-                                latest_chapter_name = latest_chapter_name[0].toString();
-                            }
-                            let latest_chapter_id;
-                            try {
-                                latest_chapter_id = this.xpath.select1("/li/span[3]/a/@href", item_doc).value;
-                                latest_chapter_id = latest_chapter_id.match(/_(?<id>\d+).html/).groups["id"];
-                            } catch (e) {
-                                latest_chapter_id = '';
-                            }
-                            let update_time = this.xpath.select("/li/span[5]/text()", item_doc);
-                            if (update_time.length !== 1) {
-                                update_time = ''
-                            } else {
-                                update_time = update_time[0].toString()
-                            }
-                            this.search_list.push({
-                                name: name,
-                                novel_id: novel_id,
-                                author: author,
-                                latest_chapter_name: latest_chapter_name,
-                                latest_chapter_id: latest_chapter_id,
-                                update_time: update_time
-                            });
-                        } catch (e) {
-                            console.log("出错一次")
-                        }
-                    });
-                }).catch(error => {
-                    this.loading = false;
-                    console.log(error)
-                });
+                search_method.search(this.type, String(this.$route.query.name), this);
             },
             go_to_novel(nid) {
-                this.$router.push({name: "novel", params: {nid: nid}})
+                this.$router.push({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
             go_to_content(nid, cid) {
-                this.$router.push({name: "content", params: {nid: nid, cid: cid}})
+                this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
+            },
+            created_method() {
+                window.set_initialization();
+                this.plugin_enter();
+                window.utools.setSubInput(({text}) => {
+                    this.search_name = text;
+                }, '搜索在线小说', true);
+                document.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        this.$router.push({name: "search", query: {name: this.search_name, type: String(this.type)}});
+                    }
+                };
+                if (this.$route.query.name !== undefined) {
+                    this.search();
+                }
+            },
+            plugin_enter() {
+                window.utools.onPluginEnter(({code, type, payload}) => {
+                    //分流
+                    if (code === "search") {
+                        window.utools.setSubInput(({text}) => {
+                            this.search_name = text;
+                            // 这里的 text 就是输入的内容, 实时变化
+                        }, '搜索在线小说', true);
+                    } else if (code === 'bookshelf') {
+                        this.$router.push({name: "bookshelf"})
+                    } else if (code === "read_novel") {
+                        //读取本地小说
+                        console.log(code, type, payload)
+                        this.$router.push({
+                            name: 'read_file',
+                            query: {"path": payload[0].path}
+                        })
+                    }
+                });
+            }
+        },
+        computed: {
+            type() {
+                return this.$route.query.type;
             }
         },
         created() {
-            window.utools.onPluginEnter(({code, type, payload}) => {
-                if (code === "search") {
-                    window.utools.setSubInput(({text}) => {
-                        this.search_name = text;
-                        // 这里的 text 就是输入的内容, 实时变化
-                    }, '搜索在线小说',true);
-                } else if (code === 'bookshelf') {
-                    this.$router.push({name: "bookshelf"})
-                }
-            });
-            window.utools.setSubInput(({text}) => {
-                this.search_name = text;
-            }, '搜索在线小说',true);
-            document.onkeydown = (e) => {
-                if (e.key === 'Enter') {
-                    this.$router.push({name: "search", query: {name: this.search_name}});
-                }
-            };
-            if (this.$route.query.name !== undefined) {
-                this.search();
-            }
+            this.created_method();
         },
         watch: {
             "$route": "search"
@@ -150,6 +118,20 @@
     }
 </script>
 
-<style scoped>
-
+<style scoped lang="less">
+    .title {
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        float: left;
+        height: 42px;
+        width: 100%;
+        font-size: 26px;
+        font-weight: 600;
+        color: rgba(51, 51, 51, 1);
+        line-height: 42px;
+    }
 </style>

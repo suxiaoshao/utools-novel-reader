@@ -5,13 +5,21 @@
             <!-- 普通信息框 -->
             <el-menu-item v-for="(item,index) in navigation_item" :key="index" :index="String(index)">{{item.name}}
             </el-menu-item>
-            <el-link style="float: right" index="setting" :underline="false" @click="dialogVisible=true">
-                <i class="el-icon-s-tools" style="font-size: 20px;margin-top: 20px"></i>
+
+            <!-- 设置按钮 -->
+            <el-link style="float: right;height: 60px" index="setting" :underline="false" @click="dialogVisible=true">
+                <i class="el-icon-s-tools" style="font-size: 20px;align-self: center"></i>
+            </el-link>
+
+            <!-- 设置按钮 -->
+            <el-link style="float: right;height: 60px" index="setting" :underline="false"
+                     @click="$emit('created-method')">
+                <i class="el-icon-refresh-right" style="font-size: 20px;align-self: center;margin-right: 6px"></i>
             </el-link>
         </el-menu>
-
-        <!-- 设置栏 -->
-        <my-setting :dialog-visible="dialogVisible" @close-dialog="dialogVisible=false"></my-setting>
+        <!-- 设置内容 -->
+        <my-setting :dialog-visible="dialogVisible" @close-dialog="dialogVisible=false"
+                    @after-save="$emit('after-save')"></my-setting>
     </div>
 </template>
 <script>
@@ -28,7 +36,7 @@
                 navigation_item: [
                     {
                         name: "搜索",
-                        path: {name: "search"}
+                        path: {name: "search", query: {type: "1"}}
                     },
                     {
                         name: "书架",
@@ -37,7 +45,11 @@
                     {
                         name: "测试",
                         path: {name: "text"}
-                    }
+                    },
+                    // {
+                    //     name: "读取文件",
+                    //     path: {name: "read_file"}
+                    // }
                 ], // 导航内容数组,
                 dialogVisible: false, //是否显示设置框,
             };
@@ -53,5 +65,5 @@
         }
     };
 </script>
-<style scoped>
+<style scoped lang="less">
 </style>
