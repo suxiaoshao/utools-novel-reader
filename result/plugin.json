@@ -6,7 +6,7 @@
     "logo": "read.png",
     "main": "index.html",
     "homepage": "www.sushao.top",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "features": [
         {
             "code": "search",

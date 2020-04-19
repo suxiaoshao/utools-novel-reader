@@ -1,5 +1,6 @@
-const fs=require("fs")
-const electron =require("electron")
+const fs = require("fs")
+
+// const electron =require("electron")
 
 function set_initialization() {
     let setting = window.utools.db.get("setting");
@@ -23,7 +24,7 @@ function set_initialization() {
                 theme: "base-theme",
                 fort_size: 18
             },
-            version: "0.0.7"
+            version: "0.0.8"
         }
         window.utools.db.put(new_setting)
     } else if (!setting.hasOwnProperty("version")) {//如果是0.0.6之前版本的设置数据
@@ -44,7 +45,7 @@ function set_initialization() {
                 update_reading_section: 3,
                 settings_saved_remind: 3
             },
-            version: "0.0.7",
+            version: "0.0.8",
             style: {
                 theme: "base-theme",
                 fort_size: 18
@@ -53,14 +54,14 @@ function set_initialization() {
         };
         new_setting = Object.assign(new_setting, {keyborad: setting});
         window.utools.db.put(new_setting)
-    } else if (setting.version === "0.0.6") {
+    } else if (setting.version === "0.0.6" || setting.version === "0.0.7") {
 
         // 版本是0.0.6
         setting.style = {
             theme: "base-theme",
             fort_size: 18
         };
-        setting.value = "0.0.7"
+        setting.version = "0.0.8"
         window.utools.db.put(setting)
     }
 
@@ -78,4 +79,4 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.qs = fs;
-window.electron=electron;
+// window.electron=electron;
