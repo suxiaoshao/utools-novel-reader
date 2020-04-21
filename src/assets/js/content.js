@@ -4,6 +4,7 @@ function get_content(type, nid, cid, that) {
             get_meegoq_content(nid, cid, that);
             break;
         case "0":
+            get_file_content(nid, cid, that)
             break;
     }
 }
@@ -42,6 +43,52 @@ function get_meegoq_content(nid, cid, that) {
         that.loading = false;
         console.log(error)
     })
+}
+
+function get_file_content(nid, cid, that) {
+    let result = window.utools.db.get(nid)
+    if (result === null) {
+        that.$notify({
+            title: "错误",
+            message: "没有此章节,三秒后将返回",
+            duration: 0,
+            type: "error"
+        })
+        window.setTimeout(() => {
+            that.$router.go(-1)
+        }, 3000)
+    } else {
+        that.novel_name = result.name;
+        that.chapter_name = result.directory_list[Number(cid)].name;
+        //如果是用正则区分
+        let content
+        if (result.is_regex) {
+            const re = new RegExp(result.regex, "g")
+            content = result.content.split(re)[Number(cid) + 1]
+        }
+        //不用正则
+        else {
+            content = result.content.slice(Number(cid) * Number(result.split_num), (Number(cid) + 1) * Number(result.split_num))
+        }
+
+        //获取内容数组
+        that.content_list = content.split(/\r\n|\n/).filter(value => {
+            return value !== ''
+        }).map(value => {
+            if (!/^( +|　+).*$/.test(String(value))) {
+                return "　　" + value
+            } else {
+                return value.replace(/ +/, "　　")
+            }
+        })
+        that.pre_cid = Number(cid) - 1
+        if (result.directory_list.length === Number(cid) + 1) {
+            that.next_cid = -1;
+        } else {
+            that.next_cid = Number(cid) + 1
+        }
+        that.update_reading_section();
+    }
 }
 
 export default {

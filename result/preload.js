@@ -1,7 +1,5 @@
 const fs = require("fs")
 
-// const electron =require("electron")
-
 function set_initialization() {
     let setting = window.utools.db.get("setting");
     // 如果没有设置数据
@@ -24,7 +22,7 @@ function set_initialization() {
                 theme: "base-theme",
                 fort_size: 18
             },
-            version: "0.0.8"
+            version: "0.1.0"
         }
         window.utools.db.put(new_setting)
     } else if (!setting.hasOwnProperty("version")) {//如果是0.0.6之前版本的设置数据
@@ -45,7 +43,7 @@ function set_initialization() {
                 update_reading_section: 3,
                 settings_saved_remind: 3
             },
-            version: "0.0.8",
+            version: "0.1.0",
             style: {
                 theme: "base-theme",
                 fort_size: 18
@@ -56,12 +54,15 @@ function set_initialization() {
         window.utools.db.put(new_setting)
     } else if (setting.version === "0.0.6" || setting.version === "0.0.7") {
 
-        // 版本是0.0.6
+        // 版本是0.0.6或者0.0.7
         setting.style = {
             theme: "base-theme",
             fort_size: 18
         };
-        setting.version = "0.0.8"
+        setting.version = "0.1.0"
+        window.utools.db.put(setting)
+    } else if (setting.version === "0.0.8") {
+        setting.version = "0.1.0"
         window.utools.db.put(setting)
     }
 
@@ -79,4 +80,3 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.qs = fs;
-// window.electron=electron;

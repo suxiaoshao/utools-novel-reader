@@ -72,7 +72,7 @@
         components: {
             "my-header": header
         },
-        created() {
+        mounted() {
             this.created_method();
         },
         data() {

@@ -4,6 +4,7 @@ function get_directory_and_info(type, nid, that) {
             get_meegoq_directory_and_info(nid, that);
             break;
         case "0":
+            get_file_directory_and_info(nid, that)
             break;
     }
 }
@@ -58,6 +59,19 @@ function get_meegoq_directory_and_info(nid, that) {
         that.info_loading = false;
         console.log(error)
     })
+}
+
+function get_file_directory_and_info(nid, that) {
+    const result = window.utools.db.get(nid)
+    that.name = result.name;
+    that.author = result.author;
+    that.last_update_time = "未知";
+    that.latest_chapter = result.directory_list[result.directory_list.length - 1].name;
+    that.last_cid = result.directory_list[result.directory_list.length - 1].cid;
+    that.directory_list = result.directory_list;
+    that.whether_collection = true;
+    that.directory_loading = false;
+    that.info_loading=false;
 }
 
 export default {
