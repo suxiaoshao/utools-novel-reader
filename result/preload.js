@@ -1,4 +1,5 @@
 const fs = require("fs")
+const electron = require("electron")
 
 function set_initialization() {
     let setting = window.utools.db.get("setting");
@@ -22,7 +23,7 @@ function set_initialization() {
                 theme: "base-theme",
                 fort_size: 18
             },
-            version: "0.1.0"
+            version: "0.1.1"
         }
         window.utools.db.put(new_setting)
     } else if (!setting.hasOwnProperty("version")) {//如果是0.0.6之前版本的设置数据
@@ -43,7 +44,7 @@ function set_initialization() {
                 update_reading_section: 3,
                 settings_saved_remind: 3
             },
-            version: "0.1.0",
+            version: "0.1.1",
             style: {
                 theme: "base-theme",
                 fort_size: 18
@@ -59,12 +60,11 @@ function set_initialization() {
             theme: "base-theme",
             fort_size: 18
         };
-        setting.version = "0.1.0"
-        window.utools.db.put(setting)
-    } else if (setting.version === "0.0.8") {
-        setting.version = "0.1.0"
+        setting.version = "0.1.1"
         window.utools.db.put(setting)
     }
+    setting.version = "0.1.1"
+    window.utools.db.put(setting)
 
     // 收藏书架的数据优化
     let novel_data = window.utools.db.allDocs().filter(item => {
@@ -80,3 +80,4 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.qs = fs;
+window.dialog = electron.remote.dialog

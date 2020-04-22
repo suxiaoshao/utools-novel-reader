@@ -43,13 +43,13 @@
                         path: {name: "bookshelf"}
                     },
                     {
+                        name: "读取文件",
+                        path: {name: "read_file"}
+                    },
+                    {
                         name: "测试",
                         path: {name: "text"}
-                    },
-                    // {
-                    //     name: "读取文件",
-                    //     path: {name: "read_file"}
-                    // }
+                    }
                 ], // 导航内容数组,
                 dialogVisible: false, //是否显示设置框,
             };

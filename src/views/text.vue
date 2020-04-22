@@ -2,7 +2,7 @@
     <div id="text" class="router">
         <el-container style="height: 100%">
             <el-header>
-                <my-navigation active-index="2" @created-method="created_method"></my-navigation>
+                <my-navigation active-index="3" @created-method="created_method"></my-navigation>
             </el-header>
             <el-main v-loading="loading">
                 <el-input placeholder="url地址" v-model="url"></el-input>

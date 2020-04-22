@@ -2,13 +2,14 @@
     <div id="read_file" class="router">
         <el-container>
             <el-header>
-                <my-navigation active-index="3" @created-method="created_method"
+                <my-navigation active-index="2" @created-method="created_method"
                                @after-save="get_setting_info"></my-navigation>
             </el-header>
             <el-main>
                 <el-form>
                     <el-form-item label="文件路径">
                         <el-input v-model="path" readonly></el-input>
+                        <el-button @click="get_file">上传小说文件</el-button>
                     </el-form-item>
 
                     <el-form-item label="作者">
@@ -26,10 +27,11 @@
                                   placeholder="正则表达式"></el-input>
                         <el-input v-model="split_num" style="width: auto;margin-left: 20px" v-show="!is_regex"
                                   placeholder="章节字符数" type="number"></el-input>
-                        <el-button @click="split_novel" style="margin-left: 20px">获取章节</el-button>
+                        <el-button @click="split_novel" style="margin-left: 20px" :disabled="path===undefined">获取章节
+                        </el-button>
                     </el-form-item>
                 </el-form>
-                <el-button @click="add_bookshelf">加入书架</el-button>
+                <el-button @click="add_bookshelf" :disabled="path===undefined">加入书架</el-button>
 
                 <!-- 章节目录 -->
                 <div>
@@ -73,24 +75,35 @@
         methods: {
             created_method() {
                 this.get_setting_info()
-                window.qs.readFile(this.path, {}, (err, data) => {
-                    if (err) {
-                        return this.$notify({
-                            title: "错误",
-                            message: "读取文件失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                    this.content = " " + data.toString();
-                    this.name = this.path.match(/\\([^\\]*?)\./)[1]
-                });
-                this.$notify({
-                    title: "提示",
-                    message: "目前仅支持utf-8编码的.txt结尾的文件,其他编码方式的.txt文件可以通过文本编辑器改成utf-8编码,就可以正确读取",
-                    duration: 0,
-                    type: "info"
-                })
+                if (this.path !== undefined) {
+                    window.qs.readFile(this.path, {}, (err, data) => {
+                        if (err) {
+                            this.$notify({
+                                title: "错误",
+                                message: "读取文件失败，请重新读取文件",
+                                duration: 0,
+                                type: "error"
+                            });
+                            this.$router.push({name: "read_file"})
+                            this.created_method();
+                            return
+                        }
+                        this.content = " " + data.toString();
+                        this.name = this.path.match(/\\([^\\]*?)\./)[1]
+                    });
+                    this.$notify({
+                        title: "提示",
+                        message: "目前仅支持utf-8编码的.txt结尾的文件,其他编码方式的.txt文件可以通过文本编辑器改成utf-8编码,就可以正确读取",
+                        duration: 0,
+                        type: "info"
+                    })
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '还没读取文件，先读取文件',
+                        type: 'error'
+                    })
+                }
             },
             add_bookshelf() {
                 //获取章节目录
@@ -183,8 +196,27 @@
                     })
                 }
             },
-            get_file(event) {
-                console.log(event.target.files)
+            get_file() {
+                window.dialog.showOpenDialog({
+                    title: "获取小说文件",
+                    filters: [
+                        {name: "txt文档", extensions: ["txt"]}
+                    ],
+                    properties: ['openFile']
+                }, fileNames => {
+                    if (fileNames.length === 1) {
+                        console.log(fileNames)
+                        this.$router.push({name: "read_file", query: {path: fileNames[0]}})
+                        this.created_method()
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: '没有选取文件',
+                            type: 'error'
+                        })
+                    }
+
+                })
             },
             get_setting_info() {
                 this.remind = window.utools.db.get("setting").remind;
