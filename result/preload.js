@@ -23,7 +23,7 @@ function set_initialization() {
                 theme: "base-theme",
                 fort_size: 18
             },
-            version: "0.1.1"
+            version: "0.1.2"
         }
         window.utools.db.put(new_setting)
     } else if (!setting.hasOwnProperty("version")) {//如果是0.0.6之前版本的设置数据
@@ -44,7 +44,7 @@ function set_initialization() {
                 update_reading_section: 3,
                 settings_saved_remind: 3
             },
-            version: "0.1.1",
+            version: "0.1.2",
             style: {
                 theme: "base-theme",
                 fort_size: 18
@@ -60,10 +60,21 @@ function set_initialization() {
             theme: "base-theme",
             fort_size: 18
         };
-        setting.version = "0.1.1"
+        setting.version = "0.1.2"
         window.utools.db.put(setting)
     }
-    setting.version = "0.1.1"
+
+    setting = window.utools.db.get("setting");
+    setting.version = "0.1.2"
+    // 按键设置加入活动快捷键
+    setting.keyborad = Object.assign({
+        using_keyboard: false,
+        pre_key: "ArrowLeft",
+        next_key: "ArrowRight",
+        scroll_key: " ",
+        scroll_distance:150,
+        scroll_speed:5
+    },setting.keyborad);
     window.utools.db.put(setting)
 
     // 收藏书架的数据优化

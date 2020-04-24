@@ -6,7 +6,7 @@
     "logo": "read.png",
     "main": "vue/index.html",
     "homepage": "www.sushao.top",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "features": [
         {
             "code": "search",

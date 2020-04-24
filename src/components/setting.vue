@@ -5,7 +5,7 @@
 
                 <!-- 快捷键设置 -->
                 <el-tab-pane label="快捷键" name="first">
-                    <el-form :model="setting_data" ref="setting_data">
+                    <el-form :model="setting_data" ref="setting_data" >
                         <!-- 是否启用快捷键 -->
                         <el-form-item>
                             <el-switch
@@ -46,6 +46,60 @@
                                 <el-col :span="17">
                                     <el-input v-model="setting_data.keyborad.next_key" @blur="cleared_to_monitor"
                                               @focus="listen_next_chapter" readonly></el-input>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+
+                        <!-- 滚动小说快捷键 -->
+                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                            <el-row :gutter="2">
+                                <el-col :span="5">
+                                    <el-popover placement="top-start" width="200" trigger="hover"
+                                                content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
+                                <span style="font-size: 15px" slot="reference">
+                                    滚动快捷键<i class="el-icon-question" style="font-size: 1em"></i>
+                                </span>
+                                    </el-popover>
+                                </el-col>
+                                <el-col :span="17">
+                                    <el-input v-model="setting_data.keyborad.scroll_key" @blur="cleared_to_monitor"
+                                              @focus="listen_scroll" readonly></el-input>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+
+                        <!-- 滚动长度 -->
+                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                            <el-row :gutter="2">
+                                <el-col :span="5">
+                                    <el-popover placement="top-start" width="200" trigger="hover"
+                                                content="设置滚动长度，数字越大滚动远，最大1000">
+                                <span style="font-size: 15px" slot="reference">
+                                    滚动长度<i class="el-icon-question" style="font-size: 1em"></i>
+                                </span>
+                                    </el-popover>
+                                </el-col>
+                                <el-col :span="17">
+                                    <el-input-number v-model="setting_data.keyborad.scroll_distance" :min="1"
+                                                     :max="1000"></el-input-number>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+
+                        <!-- 滚动速度 -->
+                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                            <el-row :gutter="2">
+                                <el-col :span="5">
+                                    <el-popover placement="top-start" width="200" trigger="hover"
+                                                content="设置滚动速度，数字越大滚动越慢，为0时立即滚动，最大20">
+                                <span style="font-size: 15px" slot="reference">
+                                    滚动速度<i class="el-icon-question" style="font-size: 1em"></i>
+                                </span>
+                                    </el-popover>
+                                </el-col>
+                                <el-col :span="17">
+                                    <el-input-number v-model="setting_data.keyborad.scroll_speed" :min="1"
+                                                     :max="20"></el-input-number>
                                 </el-col>
                             </el-row>
                         </el-form-item>
@@ -121,7 +175,10 @@
                     keyborad: {
                         using_keyboard: false,
                         pre_key: "ArrowLeft",
-                        next_key: "ArrowRight"
+                        next_key: "ArrowRight",
+                        scroll_key: " ",
+                        scroll_distance: 150,
+                        scroll_speed: 5
                     },
                     remind: {
                         collect_remind: 3,
@@ -132,7 +189,7 @@
                         theme: "base-theme",
                         fort_size: 18
                     },
-                    version: "0.0.7"
+                    version: "0.1.2"
                 },
                 activeName: 'first'
             }
@@ -146,7 +203,7 @@
             },
             listen_previous_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.keyborad.next_key) {
+                    if (e.key !== this.setting_data.keyborad.scroll_key && e.key !== this.setting_data.keyborad.next_key) {
                         this.setting_data.keyborad.pre_key = e.key;
                     } else {
                         this.$message({
@@ -159,8 +216,21 @@
             },
             listen_next_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.keyborad.pre_key) {
+                    if (e.key !== this.setting_data.keyborad.pre_key && e.key !== this.setting_data.keyborad.scroll_key) {
                         this.setting_data.keyborad.next_key = e.key;
+                    } else {
+                        this.$message({
+                            showClose: true,
+                            message: '两个快捷键不能相同',
+                            type: 'error'
+                        })
+                    }
+                };
+            },
+            listen_scroll() {
+                document.onkeydown = (e) => {
+                    if (e.key !== this.setting_data.keyborad.pre_key && e.key !== this.setting_data.keyborad.next_key) {
+                        this.setting_data.keyborad.scroll_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -208,5 +278,7 @@
 </script>
 
 <style scoped lang="less">
-
+    .el-form {
+        height: 215px;overflow-y: auto;overflow-x: hidden
+    }
 </style>

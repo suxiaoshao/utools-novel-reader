@@ -74,6 +74,11 @@
         },
         methods: {
             created_method() {
+                window.utools.setSubInput(({text}) => {
+                    this.$router.push({name: "search", query: {name: text, type: "1"}})
+                }, '搜索在线小说');
+                window.utools.subInputBlur();
+                document.onkeydown = undefined;
                 this.get_setting_info()
                 if (this.path !== undefined) {
                     window.qs.readFile(this.path, {}, (err, data) => {

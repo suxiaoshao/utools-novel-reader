@@ -6,7 +6,7 @@
                 <my-header :name="`${novel_name}-${chapter_name}`" @created-method="created_method"
                            @after-save="get_setting_info"></my-header>
             </el-header>
-            <el-main v-loading="loading" :class="style.theme">
+            <el-main v-loading="loading" :class="style.theme" id="main">
                 <!-- 标题 -->
                 <div style="text-align: center;margin-bottom: 10px"><h4 class="title" id="title">{{chapter_name}}</h4>
                 </div>
@@ -16,7 +16,8 @@
                     <p style="margin-block-end: 0">
                         <span style="margin-right: 10px" v-show="pre_cid!==-1">
                             <i class="el-icon-caret-left"></i>
-                            <el-link target="_blank" :underline="false" :type="style.theme==='gray-theme'?'info':'default'"
+                            <el-link target="_blank" :underline="false"
+                                     :type="style.theme==='gray-theme'?'info':'default'"
                                      @click="go_to_content(nid,pre_cid)">上一章</el-link>
                         </span>
                         <span style="margin-right: 10px">
@@ -44,7 +45,8 @@
                     <p style="margin-block-start: 0">
                         <span style="margin-right: 10px" v-show="pre_cid!==-1">
                             <i class="el-icon-caret-left"></i>
-                            <el-link target="_blank" :underline="false" :type="style.theme==='gray-theme'?'info':'default'"
+                            <el-link target="_blank" :underline="false"
+                                     :type="style.theme==='gray-theme'?'info':'default'"
                                      @click="go_to_content(nid,pre_cid)">上一章</el-link>
                         </span>
                         <span style="margin-right: 10px">
@@ -54,7 +56,8 @@
                         </span>
                         <span v-show="next_cid!==-1" style="margin-right: 10px">
                             <i class="el-icon-caret-right"></i>
-                            <el-link target="_blank" :underline="false" :type="style.theme==='gray-theme'?'info':'default'"
+                            <el-link target="_blank" :underline="false"
+                                     :type="style.theme==='gray-theme'?'info':'default'"
                                      @click="go_to_content(nid,next_cid)">下一章</el-link>
                         </span>
                     </p>
@@ -132,8 +135,8 @@
                         }
                     }
                 }
-                // window.location.hash="#title"
-                document.getElementById("title").scrollIntoView();
+                // document.getElementById("title").scrollIntoView();
+                document.getElementById("main").scrollTop = 0;
             },
             get_setting_info() {
                 this.remind = window.utools.db.get("setting").remind;
@@ -162,7 +165,12 @@
                                     type: 'error'
                                 })
                             }
-
+                        } else if (e.key === setting.keyborad.scroll_key) {
+                            for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
+                                setTimeout(() => {
+                                    document.getElementById("main").scrollTop += 1;
+                                }, setting.keyborad.scroll_speed * i)
+                            }
                         }
                     }
                 } else {
@@ -177,6 +185,7 @@
                 this.style = window.utools.db.get("setting").style;
                 const setting = window.utools.db.get("setting");
                 this.get_text_and_info();
+
                 //快捷键设置
                 if (setting.keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
@@ -200,7 +209,12 @@
                                     type: 'error'
                                 })
                             }
-
+                        } else if (e.key === setting.keyborad.scroll_key) {
+                            for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
+                                setTimeout(() => {
+                                    document.getElementById("main").scrollTop += 1;
+                                }, setting.keyborad.scroll_speed * i)
+                            }
                         }
                     }
                 } else {
