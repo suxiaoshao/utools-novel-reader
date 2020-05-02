@@ -11,8 +11,10 @@ Vue.config.productionTip = false;
 Vue.prototype.axios = axios;
 Vue.prototype.xmldom = xmldom;
 Vue.prototype.xpath = xpath;
-
-new Vue({
-    router,
-    render: h => h(App)
-}).$mount('#app');
+window.utools.onPluginReady(() => {
+    window.set_initialization();
+    new Vue({
+        router,
+        render: h => h(App)
+    }).$mount('#app');
+})

@@ -85,7 +85,6 @@
             },
             plugin_enter() {
                 window.utools.onPluginEnter(({code, type, payload, optional}) => {
-                    window.set_initialization();
                     //分流
                     if (code === "search") {
                         window.utools.setSubInput(({text}) => {
