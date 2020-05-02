@@ -34,8 +34,9 @@
                 </div>
 
                 <!-- 小说内容 -->
-                <div class="content">
-                    <p v-for="(item,index) in content_list" :key="index" :style="`font-size:${style.fort_size}px`">
+                <div class="content" :style="`line-height: ${style.fort_size+style.line_height}px;`">
+                    <p v-for="(item,index) in content_list" :key="index"
+                       :style="`font-size:${style.fort_size}px;`">
                         {{item}}
                     </p>
                 </div>
@@ -93,7 +94,8 @@
                 },
                 style: {
                     theme: "base-theme",
-                    fort_size: 18
+                    fort_size: 18,
+                    line_height: 25
                 }
             }
         },
@@ -189,35 +191,48 @@
                 //快捷键设置
                 if (setting.keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
-                        if (e.key === setting.keyborad.pre_key) {
-                            if (this.pre_cid !== -1) {
-                                this.go_to_content(this.nid, this.pre_cid);
-                            } else {
-                                this.$message({
-                                    showClose: true,
-                                    message: '没有上一章啦',
-                                    type: 'error'
-                                })
-                            }
-                        } else if (e.key === setting.keyborad.next_key) {
-                            if (this.next_cid !== -1) {
-                                this.go_to_content(this.nid, this.next_cid)
-                            } else {
-                                this.$message({
-                                    showClose: true,
-                                    message: '没有下一章啦',
-                                    type: 'error'
-                                })
-                            }
-                        } else if (e.key === setting.keyborad.scroll_key) {
-                            for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
-                                setTimeout(() => {
-                                    document.getElementById("main").scrollTop += 1;
-                                }, setting.keyborad.scroll_speed * i)
-                            }
+                        switch (e.key) {
+
+                            // 前一章快捷键
+                            case setting.keyborad.pre_key:
+                                if (this.pre_cid !== -1) {
+                                    this.go_to_content(this.nid, this.pre_cid);
+                                } else {
+                                    this.$message({
+                                        showClose: true,
+                                        message: '没有上一章啦',
+                                        type: 'error'
+                                    })
+                                }
+                                break
+
+                            //后一章快捷键
+                            case setting.keyborad.next_key:
+                                if (this.next_cid !== -1) {
+                                    this.go_to_content(this.nid, this.next_cid)
+                                } else {
+                                    this.$message({
+                                        showClose: true,
+                                        message: '没有下一章啦',
+                                        type: 'error'
+                                    })
+                                }
+                                break
+
+                            //自动滚动快捷键
+                            case setting.keyborad.scroll_key:
+                                for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
+                                    setTimeout(() => {
+                                        document.getElementById("main").scrollTop += 1;
+                                    }, setting.keyborad.scroll_speed * i)
+                                }
+                                break
                         }
                     }
-                } else {
+                }
+
+                // 不使用快捷键
+                else {
                     document.onkeydown = undefined;
                 }
                 window.utools.subInputBlur();
@@ -260,7 +275,6 @@
             font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
             color: #333;
             margin: 0;
-            line-height: 180%;
             padding: 5px 20px;
         }
     }
@@ -287,7 +301,6 @@
             font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
             color: #333;
             margin: 0;
-            line-height: 180%;
             padding: 5px 20px;
         }
     }
@@ -313,9 +326,14 @@
             font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
             color: #C1C1C1;
             margin: 0;
-            line-height: 180%;
             padding: 5px 20px;
         }
     }
 
+    .content {
+        p {
+            margin-block-start: 0;
+            margin-block-end: 0;
+        }
+    }
 </style>

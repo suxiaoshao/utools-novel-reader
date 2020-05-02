@@ -21,7 +21,7 @@
                                     <el-popover placement="top-start" width="200" trigger="hover"
                                                 content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
                                 <span style="font-size: 15px" slot="reference">
-                                    上一章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
+                                    上章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
                                 </span>
                                     </el-popover>
                                 </el-col>
@@ -39,7 +39,7 @@
                                     <el-popover placement="top-start" width="200" trigger="hover"
                                                 content="鼠标点击输入框，输入框亮起时即可输入你想要的快捷键,目前只支持一个键">
                                 <span style="font-size: 15px" slot="reference">
-                                    下一章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
+                                    下章快捷键<i class="el-icon-question" style="font-size: 1em"></i>
                                 </span>
                                     </el-popover>
                                 </el-col>
@@ -153,6 +153,11 @@
                             <el-input-number v-model="setting_data.style.fort_size" :min="1"
                                              :max="40"></el-input-number>
                         </el-form-item>
+
+                        <el-form-item label="间隔大小">
+                            <el-input-number v-model="setting_data.style.line_height" :min="1"
+                                             :max="40"></el-input-number>
+                        </el-form-item>
                     </el-form>
                 </el-tab-pane>
             </el-tabs>
@@ -187,7 +192,8 @@
                     },
                     style: {
                         theme: "base-theme",
-                        fort_size: 18
+                        fort_size: 18,
+                        line_height: 25
                     },
                     version: "0.1.2"
                 },

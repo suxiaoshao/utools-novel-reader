@@ -5,6 +5,7 @@ import './plugins/element.js'
 import axios from "axios"
 import xmldom from "xmldom"
 import xpath from "xpath"
+import "./app.less"
 
 Vue.config.productionTip = false;
 Vue.prototype.axios = axios;

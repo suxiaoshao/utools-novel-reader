@@ -2,7 +2,8 @@
     <div id="search" class="router">
         <el-container style="height: 100%">
             <el-header>
-                <my-navigation active-index="0" @created-method="created_method"></my-navigation>
+                <my-navigation active-index="0" @created-method="created_method"
+                               @after-save="console.log(1)"></my-navigation>
             </el-header>
 
             <el-main v-loading="loading">
@@ -69,7 +70,6 @@
                 this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
             },
             created_method() {
-                window.set_initialization();
                 this.plugin_enter();
                 window.utools.setSubInput(({text}) => {
                     this.search_name = text;
@@ -84,7 +84,8 @@
                 }
             },
             plugin_enter() {
-                window.utools.onPluginEnter(({code, type, payload}) => {
+                window.utools.onPluginEnter(({code, type, payload, optional}) => {
+                    window.set_initialization();
                     //分流
                     if (code === "search") {
                         window.utools.setSubInput(({text}) => {

@@ -2,6 +2,12 @@
 
 ## 更新
 
+### v0.2.0
+
+1. 适配新版本utools1.0.0-beta的api
+
+2. 加入阅读页面行间距的自定义设置
+
 ### v0.1.2
 
 1. 添加了阅读页面的滚动快捷键设置
@@ -167,9 +173,12 @@ this.axios.get(this.url).then(response => {
 
 这个插件的开源地址[utools-novel-reader](https://github.com/suxiaoshao/utools-novel-reader)
 
-因为第一次写插件，使用了前端框架vue.js，vue-router和ui框架element-ui，目前我还在学习前端中，所以有任何bug或者问题都可以在我的这篇博客下留言:[【前端】utools小说阅读插件](https://www.sushao.top/blog/article/21)。
+因为第一次写插件，使用了前端框架vue.js，vue-router和ui框架element-ui，目前我还在学习前端中，
+所以有任何bug或者问题都可以在我的这篇博客下留言:[【前端】utools小说阅读插件](https://www.sushao.top/blog/article/21)。
+在这个帖子里留言最好留下联系方式，不然只能过一段时间上去看看我有没有回复。
 
-或者我的猿料页面下找我[sushao](https://yuanliao.info/u/32696)
+或者我的猿料页面下找我[sushao](https://yuanliao.info/u/32696)，
+这是我插件在官方论坛的[帖子](https://yuanliao.info/d/1392)，这个帖子下回复我会有提醒的
 
 ## utools使用
 

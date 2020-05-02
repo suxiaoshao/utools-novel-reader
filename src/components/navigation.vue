@@ -11,7 +11,7 @@
                 <i class="el-icon-s-tools" style="font-size: 20px;align-self: center"></i>
             </el-link>
 
-            <!-- 设置按钮 -->
+            <!-- 保存按钮 -->
             <el-link style="float: right;height: 60px" index="setting" :underline="false"
                      @click="$emit('created-method')">
                 <i class="el-icon-refresh-right" style="font-size: 20px;align-self: center;margin-right: 6px"></i>

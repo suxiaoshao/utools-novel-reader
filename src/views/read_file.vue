@@ -202,26 +202,24 @@
                 }
             },
             get_file() {
-                window.dialog.showOpenDialog({
+                let fileNames=window.utools.showOpenDialog({
                     title: "获取小说文件",
                     filters: [
                         {name: "txt文档", extensions: ["txt"]}
                     ],
                     properties: ['openFile']
-                }, fileNames => {
-                    if (fileNames.length === 1) {
-                        console.log(fileNames)
-                        this.$router.push({name: "read_file", query: {path: fileNames[0]}})
-                        this.created_method()
-                    } else {
-                        this.$message({
-                            showClose: true,
-                            message: '没有选取文件',
-                            type: 'error'
-                        })
-                    }
-
                 })
+                if (fileNames.length === 1) {
+                    console.log(fileNames)
+                    this.$router.push({name: "read_file", query: {path: fileNames[0]}})
+                    this.created_method()
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '没有选取文件',
+                        type: 'error'
+                    })
+                }
             },
             get_setting_info() {
                 this.remind = window.utools.db.get("setting").remind;

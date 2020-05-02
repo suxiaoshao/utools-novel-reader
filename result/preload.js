@@ -1,5 +1,4 @@
 const fs = require("fs")
-const electron = require("electron")
 
 function set_initialization() {
     let setting = window.utools.db.get("setting");
@@ -65,16 +64,25 @@ function set_initialization() {
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.1.2"
+    setting.version = "0.2.0"
+
     // 按键设置加入活动快捷键
     setting.keyborad = Object.assign({
         using_keyboard: false,
         pre_key: "ArrowLeft",
         next_key: "ArrowRight",
         scroll_key: " ",
-        scroll_distance:150,
-        scroll_speed:5
-    },setting.keyborad);
+        scroll_distance: 150,
+        scroll_speed: 5
+    }, setting.keyborad);
+
+    // 设置行高
+    setting.style = Object.assign({
+        theme: "base-theme",
+        fort_size: 18,
+        line_height: 25
+    }, setting.style)
+
     window.utools.db.put(setting)
 
     // 收藏书架的数据优化
@@ -91,4 +99,3 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.qs = fs;
-window.dialog = electron.remote.dialog
