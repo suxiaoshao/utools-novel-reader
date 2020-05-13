@@ -10,54 +10,40 @@ function get_directory_and_info(type, nid, that) {
 }
 
 function get_meegoq_directory_and_info(nid, that) {
-    that.axios.get(`https://www.meegoq.com/book${nid}.html`).then(response => {
-        const doc = new that.xmldom.DOMParser().parseFromString(response.data);
-        const nodes = that.xpath.select("/html/body/section/article/ul/li/a", doc);
-        that.directory_list = [];
-        nodes.forEach(value => {
-            try {
-                const item_doc = new that.xmldom.DOMParser().parseFromString(value.toString());
-                let name = that.xpath.select("/a/text()", item_doc);
-                if (name.length !== 1) {
-                    name = '';
-                } else {
-                    name = name[0].toString();
-                }
-                let cid;
-                cid = that.xpath.select1("/a/@href", item_doc).value;
-                cid = cid.match(/_(?<id>\d+).html/).groups["id"];
-                that.directory_list.push({
-                    name: name,
-                    cid: cid
-                })
-            } catch (e) {
-                console.log("错误一个")
-            }
-        });
+
+    // 获取章节信息
+    window.getHtml(`https://www.meegoq.com/book${nid}.html`, "utf-8", str => {
+        const cheerio = require("cheerio")
+        const $ = cheerio.load(str, {decodeEntities: false});
+        that.directory_list = []
+        $("body > section > article > ul > li > a").each((index, value) => {
+            const $value = $(value)
+            const name = $value.text()
+            let cid = $value.attr("href")
+            cid = cid.match(/_(?<id>\d+).html/).groups["id"];
+            that.directory_list.push({
+                name: name,
+                cid: cid
+            })
+        })
         if (that.directory_list.length > 9) {
             that.directory_list = that.directory_list.splice(9);
         }
         that.directory_loading = false;
-    }).catch(error => {
-        that.directory_loading = false;
-        console.log(error)
-    });
-    that.axios.get(`https://www.meegoq.com/info${nid}.html`).then(response => {
-        const doc = new that.xmldom.DOMParser().parseFromString(response.data);
-        try {
-            that.name = that.xpath.select("/html/body/section/div[1]/article[1]/header/h1/text()", doc)[0].toString();
-            that.author = that.xpath.select("/html/body/section/div[1]/article[1]/p[1]/i[1]/a/text()", doc)[0].toString();
-            that.last_update_time = that.xpath.select("/html/body/section/div[1]/article[1]/p[2]/i/text()", doc)[0].toString();
-            that.latest_chapter = that.xpath.select("/html/body/section/div[1]/article[1]/p[3]/i/a/text()", doc)[0].toString();
-            that.last_cid = that.xpath.select1("/html/body/section/div[1]/article[1]/p[3]/i/a/@href", doc).value;
-            that.last_cid = that.last_cid.match(/_(?<id>\d+).html/).groups['id'];
-        } catch (e) {
+    })
 
-        }
+    //获取小说信息
+    window.getHtml(`https://www.meegoq.com/info${nid}.html`, "utf-8", str => {
+        const cheerio = require("cheerio")
+        const $ = cheerio.load(str, {decodeEntities: false});
+        that.name = $("body > section > div.left > article.info > header > h1").text()
+        that.author = $("body > section > div.left > article.info > p.detail.pt20 > i:nth-child(1) > a").text()
+        that.last_update_time = $("body > section > div.left > article.info > p:nth-child(4) > i").text()
+        const last = $("body > section > div.left > article.info > p:nth-child(5) > i > a")
+        that.latest_chapter = last.text()
+        that.last_cid = last.attr("href")
+        that.last_cid = that.last_cid.match(/_(?<id>\d+).html/).groups['id'];
         that.info_loading = false;
-    }).catch(error => {
-        that.info_loading = false;
-        console.log(error)
     })
 }
 
@@ -71,7 +57,7 @@ function get_file_directory_and_info(nid, that) {
     that.directory_list = result.directory_list;
     that.whether_collection = true;
     that.directory_loading = false;
-    that.info_loading=false;
+    that.info_loading = false;
 }
 
 export default {

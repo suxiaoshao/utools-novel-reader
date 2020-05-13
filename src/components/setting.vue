@@ -98,7 +98,7 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input-number v-model="setting_data.keyborad.scroll_speed" :min="1"
+                                    <el-input-number v-model="setting_data.keyborad.scroll_speed" :min="0"
                                                      :max="20"></el-input-number>
                                 </el-col>
                             </el-row>

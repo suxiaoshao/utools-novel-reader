@@ -64,7 +64,7 @@ function set_initialization() {
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.2.0"
+    setting.version = "0.2.1"
 
     // 按键设置加入活动快捷键
     setting.keyborad = Object.assign({
@@ -99,3 +99,26 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.qs = fs;
+
+function getHtml(url, encoding, then) {
+    const iconv = require("iconv-lite");
+    let https
+    if (url.indexOf("https")===0){
+        https = require("https");
+    }else{
+        https = require("http");
+    }
+    let req = https.get(url, (res) => {
+        let chunks = [];
+        res.on("data", (chunk) => {
+            chunks.push(chunk);
+        });
+        res.on("end", () => {
+            let html = iconv.decode(Buffer.concat(chunks), encoding);
+            then(html)
+        });
+    });
+    req.end();
+}
+
+window.getHtml = getHtml

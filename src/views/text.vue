@@ -6,8 +6,16 @@
             </el-header>
             <el-main v-loading="loading">
                 <el-input placeholder="url地址" v-model="url"></el-input>
+                <el-select v-model="encoding" placeholder="编码方式" style="margin-top: 10px">
+                    <el-option
+                            v-for="(item,index) in options"
+                            :key="index"
+                            :label="item"
+                            :value="item">
+                    </el-option>
+                </el-select>
                 <el-input placeholder="选择器" v-model="select" style="margin-top: 10px"></el-input>
-                <el-button @click="text">获取</el-button>
+                <el-button @click="text" style="margin-top: 10px">获取</el-button>
                 <div v-for="(item,index) in html_list" :key="index" v-html="item"></div>
                 <div v-for="(item,index) in html_list" :key="index">{{item}}</div>
             </el-main>
@@ -24,7 +32,9 @@
             return {
                 url: "",
                 select: '',
-                html_list: []
+                html_list: [],
+                encoding: 'utf-8',
+                options: ["utf-8", "gbk"]
             }
         },
         components: {
@@ -32,18 +42,16 @@
         },
         methods: {
             text() {
-                this.axios.get(this.url).then(response => {
-                    console.log(response.data);
-                    let doc = new this.xmldom.DOMParser().parseFromString(response.data);
-                    let nodes = this.xpath.select(this.select, doc);
-                    this.html_list = [];
-                    nodes.forEach(value => {
-                        console.log(value.toString());
-                        this.html_list.push(value.toString())
-                    });
-                    console.log(this.html_list.length);
-                }).catch(error => {
-                    console.log(error)
+                window.getHtml(this.url, this.encoding, str => {
+                    console.log(str)
+                    const cheerio = require("cheerio")
+                    const $ = cheerio.load(str, {decodeEntities: false});
+                    this.html_list = []
+                    $(this.select).each((index, value) => {
+                        const $value = $(value)
+                        console.log($.html($value))
+                        this.html_list.push($.html($value))
+                    })
                 })
             },
             created_method() {

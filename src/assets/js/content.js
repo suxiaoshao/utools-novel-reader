@@ -11,37 +11,31 @@ function get_content(type, nid, cid, that) {
 
 function get_meegoq_content(nid, cid, that) {
     that.loading = true;
-    that.axios.get(`https://www.meegoq.com/book/${nid}_${cid}.html`).then(response => {
-        that.loading = false;
-        const doc = new that.xmldom.DOMParser().parseFromString(response.data);
-        that.chapter_name = that.xpath.select("/html/body/article/header/h1/text()", doc)[0].toString();
-        that.novel_name = that.xpath.select("/html/body/article/header/div/span[1]/a/text()", doc)[0].toString();
-        that.content_list = [];
-        that.pre_cid = that.xpath.select1("/html/body/article/div[2]/ul/li[1]/a/@href", doc).value.match(/_(?<id>\d+).html/);
+    window.getHtml(`https://www.meegoq.com/book/${nid}_${cid}.html`, "utf-8", str => {
+        that.loading = false
+        const cheerio = require("cheerio")
+        const $ = cheerio.load(str, {decodeEntities: false});
+        that.chapter_name = $("body > article > header > h1").text()
+        that.novel_name = $("body > article > header > div > span:nth-child(1) > a").text()
+        that.content_list = []
+        that.pre_cid = $("body > article > div.operate > ul > li:nth-child(1) > a").attr("href").match(/_(?<id>\d+).html/);
         if (that.pre_cid === null) {
             that.pre_cid = -1
         } else {
             that.pre_cid = that.pre_cid.groups['id']
         }
-        that.next_cid = that.xpath.select1("/html/body/article/div[2]/ul/li[6]/a/@href", doc).value.match(/_(?<id>\d+).html/);
+        that.next_cid = $("body > article > div.operate > ul > li.last > a").attr("href").match(/_(?<id>\d+).html/);
         if (that.next_cid === null) {
             that.next_cid = -1
         } else {
             that.next_cid = that.next_cid.groups['id']
         }
-        let result_list = that.xpath.select("//*[@id=\"content\"]/text()", doc);
-        result_list.forEach(value => {
-            let re = /^　*$/;
-            //判断字符串是否全为为空格
-            if (!re.test(value.toString())) {
-                that.content_list.push(value.toString())
+        $("#content").text().split("　　").forEach(value => {
+            if (value !== "") {
+                that.content_list.push("　　" + value)
             }
-
-        });
+        })
         that.update_reading_section();
-    }).catch(error => {
-        that.loading = false;
-        console.log(error)
     })
 }
 
