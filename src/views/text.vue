@@ -56,6 +56,7 @@
             },
             created_method() {
                 window.utools.setSubInput(({text}) => {
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                     this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();

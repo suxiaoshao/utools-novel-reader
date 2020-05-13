@@ -2,6 +2,24 @@
 
 ## 更新
 
+### v0.2.1
+
+1. 修复放回按钮bug，因为新版本utools禁止了`windows.history`的用法，
+所以之前的版本的小说插件在新版utools下返回按钮出现bug，
+我换了一种方法实现修复了这个问题
+
+1. 修改了爬虫的逻辑,把xmldom+xpath的解析html方式换成了
+[cheerio](https://github.com/cheeriojs/cheerio) 的方式,
+增强了解析html的兼容性。把axios的网络资源获取方式换成了
+[node](https://nodejs.org/zh-cn/) 自带的
+[http](https://nodejs.org/zh-cn/docs/guides/anatomy-of-an-http-transaction/)
+ 和[https](http://nodejs.cn/api/https.html) 模块。
+ 添加了[iconv-lite](https://www.npmjs.com/package/iconv-lite) 作为网页编码，
+ 用来处理gbk页面。
+ 
+ 3. 后续更新，更改了以上之后，下个版本可以加入更多的用户自定义元素，比如用户自定义
+ 小说源之类的，我也会加入其他小说源，字体什么的也在下个版本推出。
+ 
 ### v0.2.0
 
 1. 适配新版本utools1.0.0-beta的api
@@ -139,26 +157,56 @@
 
 这个页面是用来爬虫测试的，你可以在url栏输入网页的url地址
 
-在选择器栏输入xpath选择器,点击获取就可以获取匹配的页面
+在编码栏输入网页编码方式，目前只支持utf-8和gbk
 
-xpath选择器是使用了[xpath](https://github.com/goto100/xpath#readme)包,网页获取使用了[axios](https://github.com/axios/axios),js转html树使用了[xmldom](https://www.npmjs.com/package/xmldom)
+在选择器栏输入jquery选择器(也就是现在的js选择器),点击获取就可以获取匹配的页面
+
+选择器是使用了[cheerio](https://github.com/cheeriojs/cheerio) 包,网页获取使用了[node](https://nodejs.org/zh-cn/)
+ 自带的[http](https://nodejs.org/zh-cn/docs/guides/anatomy-of-an-http-transaction/)
+ 和[https](http://nodejs.cn/api/https.html) 模块 ,
+ 网页编码解码使用了[iconv-lite](https://www.npmjs.com/package/iconv-lite)
 
 获取按钮的源代码如下
 
 ```js
-this.axios.get(this.url).then(response => {
-                    console.log(response.data);
-                    let doc = new this.xmldom.DOMParser().parseFromString(response.data);
-                    let nodes = this.xpath.select(this.select, doc);
-                    this.html_list = [];
-                    nodes.forEach(value => {
-                        console.log(value.toString());
-                        this.html_list.push(value.toString())
-                    });
-                    console.log(this.html_list.length);
-                }).catch(error => {
-                    console.log(error)
+window.getHtml(this.url, this.encoding, str => {
+                    console.log(str)
+                    const cheerio = require("cheerio")
+                    const $ = cheerio.load(str, {decodeEntities: false});
+                    this.html_list = []
+                    $(this.select).each((index, value) => {
+                        const $value = $(value)
+                        console.log($.html($value))
+                        this.html_list.push($.html($value))
+                    })
                 })
+```
+
+getHtml的源代码
+
+```js
+function getHtml(url, encoding, then) {
+    const iconv = require("iconv-lite");
+    let https
+    if (url.indexOf("https")===0){
+        https = require("https");
+    }else{
+        https = require("http");
+    }
+    let req = https.get(url, (res) => {
+        let chunks = [];
+        res.on("data", (chunk) => {
+            chunks.push(chunk);
+        });
+        res.on("end", () => {
+            let html = iconv.decode(Buffer.concat(chunks), encoding);
+            then(html)
+        });
+    });
+    req.end();
+}
+
+window.getHtml = getHtml
 ```
 
 用户输入的url和xpath选择方式绑定在呢this.url和this.select,axios,xmldom,xpath这三个包也绑定在this.axios,this.xmldom,this.xpath上

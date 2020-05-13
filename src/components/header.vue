@@ -42,7 +42,17 @@
         },
         methods: {
             go_back() {
-                this.$router.go(-1)
+                const item = this.myHistory.goBackItem()
+                if (item !== false) {
+                    //实际上是返回
+                    this.$router.push(item)
+                } else {
+                    this.$message({
+                        showClose: true,
+                        message: '没有上一个页面了',
+                        type: 'error'
+                    })
+                }
             }
         },
         data() {

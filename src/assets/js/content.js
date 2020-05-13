@@ -12,7 +12,6 @@ function get_content(type, nid, cid, that) {
 function get_meegoq_content(nid, cid, that) {
     that.loading = true;
     window.getHtml(`https://www.meegoq.com/book/${nid}_${cid}.html`, "utf-8", str => {
-        that.loading = false
         const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
         that.chapter_name = $("body > article > header > h1").text()
@@ -36,6 +35,7 @@ function get_meegoq_content(nid, cid, that) {
             }
         })
         that.update_reading_section();
+        that.loading = false
     })
 }
 

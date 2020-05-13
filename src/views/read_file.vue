@@ -75,6 +75,7 @@
         methods: {
             created_method() {
                 window.utools.setSubInput(({text}) => {
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                     this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
@@ -89,6 +90,7 @@
                                 duration: 0,
                                 type: "error"
                             });
+                            this.myHistory.addNewItem({name: "read_file"})
                             this.$router.push({name: "read_file"})
                             this.created_method();
                             return
@@ -202,7 +204,7 @@
                 }
             },
             get_file() {
-                let fileNames=window.utools.showOpenDialog({
+                let fileNames = window.utools.showOpenDialog({
                     title: "获取小说文件",
                     filters: [
                         {name: "txt文档", extensions: ["txt"]}
@@ -210,7 +212,7 @@
                     properties: ['openFile']
                 })
                 if (fileNames.length === 1) {
-                    console.log(fileNames)
+                    this.myHistory.addNewItem({name: "read_file", query: {path: fileNames[0]}})
                     this.$router.push({name: "read_file", query: {path: fileNames[0]}})
                     this.created_method()
                 } else {

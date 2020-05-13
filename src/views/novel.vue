@@ -102,6 +102,11 @@
 
             //到小说章节
             go_to_content(nid, cid) {
+                this.myHistory.addNewItem({
+                    name: "content",
+                    params: {nid: nid, cid: cid},
+                    query: {type: String(this.type)}
+                })
                 this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
             },
 
@@ -168,6 +173,7 @@
             created_method() {
                 this.whether_collection = (window.utools.db.get(this.nid) !== null);
                 window.utools.setSubInput(({text}) => {
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                     this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 document.onkeydown = undefined;

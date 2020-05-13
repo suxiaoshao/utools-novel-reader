@@ -68,9 +68,11 @@
         },
         methods: {
             go_to_novel(nid, type) {
+                this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: type}})
                 this.$router.push({name: "novel", params: {nid: nid}, query: {type: type}})
             },
             go_to_content(nid, cid, type) {
+                this.myHistory.addNewItem({name: "content", params: {nid: nid, cid: cid}, query: {type: type}})
                 this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: type}})
             },
             cancel_collect(nid) {
@@ -103,13 +105,14 @@
                     return item._id !== "setting"
                 });
                 window.utools.setSubInput(({text}) => {
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                     this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
                 document.onkeydown = undefined;
                 this.remind = window.utools.db.get("setting").remind;
             },
-            get_setting_info(){
+            get_setting_info() {
                 this.remind = window.utools.db.get("setting").remind;
             }
         },

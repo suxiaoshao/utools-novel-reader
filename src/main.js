@@ -3,7 +3,9 @@ import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
 import "./app.less"
+import history from "./assets/js/history";
 
+Vue.prototype.myHistory = history
 Vue.config.productionTip = false;
 window.utools.onPluginReady(() => {
     window.set_initialization();
@@ -12,3 +14,7 @@ window.utools.onPluginReady(() => {
         render: h => h(App)
     }).$mount('#app');
 })
+// new Vue({
+//     router,
+//     render: h => h(App)
+// }).$mount('#app');

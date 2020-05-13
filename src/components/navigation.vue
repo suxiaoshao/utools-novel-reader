@@ -60,6 +60,7 @@
         methods: {
             // 点击菜单
             select(index) {
+                this.myHistory.addNewItem(this.navigation_item[index].path)
                 this.$router.push(this.navigation_item[index].path);
             }
         }

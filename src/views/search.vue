@@ -64,9 +64,15 @@
                 search_method.search(this.type, String(this.$route.query.name), this);
             },
             go_to_novel(nid) {
+                this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
                 this.$router.push({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
             go_to_content(nid, cid) {
+                this.myHistory.addNewItem({
+                    name: "content",
+                    params: {nid: nid, cid: cid},
+                    query: {type: String(this.type)}
+                })
                 this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
             },
             created_method() {
@@ -76,6 +82,10 @@
                 }, '搜索在线小说', true);
                 document.onkeydown = (e) => {
                     if (e.key === 'Enter') {
+                        this.myHistory.addNewItem({
+                            name: "search",
+                            query: {name: this.search_name, type: String(this.type)}
+                        })
                         this.$router.push({name: "search", query: {name: this.search_name, type: String(this.type)}});
                     }
                 };
@@ -87,15 +97,21 @@
                 window.utools.onPluginEnter(({code, type, payload, optional}) => {
                     //分流
                     if (code === "search") {
+                        this.myHistory.addNewItem({name: "search", query: {type: "1"}})
                         window.utools.setSubInput(({text}) => {
                             this.search_name = text;
                             // 这里的 text 就是输入的内容, 实时变化
                         }, '搜索在线小说', true);
                     } else if (code === 'bookshelf') {
+                        //进入书架
+                        this.myHistory.addNewItem({name: "bookshelf"})
                         this.$router.push({name: "bookshelf"})
                     } else if (code === "read_novel") {
                         //读取本地小说
-                        console.log(code, type, payload)
+                        this.myHistory.addNewItem({
+                            name: 'read_file',
+                            query: {"path": payload[0].path}
+                        })
                         this.$router.push({
                             name: 'read_file',
                             query: {"path": payload[0].path}
