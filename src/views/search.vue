@@ -45,7 +45,7 @@
 
 <script>
     import navigation from "../components/navigation";
-    import search_method from "../assets/js/search";
+    import search_method from "../util/web/search";
 
     export default {
         name: "search",
@@ -134,7 +134,7 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
     .title {
         margin: 0;
         padding: 0;

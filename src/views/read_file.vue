@@ -238,7 +238,7 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
     .title {
         margin: 0;
         padding: 0;

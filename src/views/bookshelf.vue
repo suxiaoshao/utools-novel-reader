@@ -103,7 +103,7 @@
             created_method() {
                 this.all_book_list = window.utools.db.allDocs().filter(item => {
                     return item._id !== "setting"
-                });
+                })
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                     this.$router.push({name: "search", query: {name: text, type: "1"}})
@@ -122,6 +122,6 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
 
 </style>

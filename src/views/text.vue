@@ -34,7 +34,7 @@
                 select: '',
                 html_list: [],
                 encoding: 'utf-8',
-                options: ["utf-8", "gbk"]
+                options: ["utf-8", "gbk",'gb2312']
             }
         },
         components: {

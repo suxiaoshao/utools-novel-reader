@@ -283,7 +283,7 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
     .el-form {
         height: 215px;overflow-y: auto;overflow-x: hidden
     }

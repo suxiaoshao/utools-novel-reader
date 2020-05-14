@@ -2,8 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import './plugins/element.js'
-import "./app.less"
-import history from "./assets/js/history";
+import "./app.scss"
+import history from "./util/history";
 
 Vue.prototype.myHistory = history
 Vue.config.productionTip = false;

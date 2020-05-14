@@ -68,7 +68,7 @@
     </div>
 </template>
 <script>
-    import content_method from "../assets/js/content";
+    import content_method from "../util/web/content";
     import header from "../components/header";
 
     export default {
@@ -256,7 +256,7 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
     .yellow-theme {
         background-color: #F6F1E7;
 
@@ -338,6 +338,7 @@
         p {
             margin-block-start: 0;
             margin-block-end: 0;
+            text-indent: 2em;
         }
     }
 </style>

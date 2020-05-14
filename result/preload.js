@@ -64,7 +64,7 @@ function set_initialization() {
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.2.1"
+    setting.version = "0.2.3"
 
     // 按键设置加入活动快捷键
     setting.keyborad = Object.assign({
@@ -101,7 +101,7 @@ window.set_initialization = set_initialization;
 window.qs = fs;
 
 function getHtml(url, encoding, then) {
-    const iconv = require("iconv-lite");
+    const iconv=require("iconv-lite")
     let https
     if (url.indexOf("https")===0){
         https = require("https");

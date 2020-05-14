@@ -54,7 +54,7 @@
 </template>
 
 <script>
-    import novel_method from "../assets/js/novel"
+    import novel_method from "../util/web/novel"
     import setting from "../components/setting";
     import header from "../components/header";
 
@@ -191,7 +191,7 @@
     }
 </script>
 
-<style scoped lang="less">
+<style scoped lang="scss">
     .title {
         margin: 0;
         padding: 0;
