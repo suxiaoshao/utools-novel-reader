@@ -70,6 +70,7 @@
 <script>
     import content_method from "../util/web/content";
     import header from "../components/header";
+    import db from "../util/db";
 
     export default {
         name: "content",
@@ -87,11 +88,6 @@
                 content_list: [],
                 pre_cid: -1,
                 next_cid: -1,
-                remind: {
-                    collect_remind: 3,
-                    update_reading_section: 3,
-                    settings_saved_remind: 3
-                },
                 style: {
                     theme: "base-theme",
                     fort_size: 18,
@@ -105,7 +101,6 @@
             },
             go_to_novel(nid) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
-                this.$router.push({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
             go_to_content(nid, cid) {
                 this.myHistory.replaceHeadItem({
@@ -113,44 +108,23 @@
                     params: {nid: nid, cid: cid},
                     query: {type: String(this.type)}
                 })
-                this.$router.replace({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}});
                 this.get_text_and_info();
             },
             update_reading_section() {
-                let data = window.utools.db.get(this.nid);
-                if (data !== null) {
+                if (db.existNovel(this.nid, this.type)) {
+                    const data = db.getOneNovelData(this.nid, this.type)
                     data["read_chapter"] = {cid: this.cid, name: this.chapter_name};
-                    let result = window.utools.db.put(data);
-                    if (result.hasOwnProperty("error") && result["error"]) {
-                        if (this.remind.update_reading_section >= 2) {
-                            this.$notify({
-                                title: "错误",
-                                message: "更新最后阅读章节失败",
-                                duration: 0,
-                                type: "error"
-                            });
-                        }
-                    } else {
-                        if (this.remind.update_reading_section >= 3) {
-                            this.$message({
-                                showClose: true,
-                                message: '更新最后阅读章节成功',
-                                type: 'success'
-                            });
-                        }
-                    }
+                    db.updateNovel(data)
                 }
-                // document.getElementById("title").scrollIntoView();
                 document.getElementById("main").scrollTop = 0;
             },
             get_setting_info() {
-                this.remind = window.utools.db.get("setting").remind;
-                this.style = window.utools.db.get("setting").style;
-                const setting = window.utools.db.get("setting");
+                this.style = db.getSettingStyle();
+                const keyborad = db.getSettingKeyborad();
                 //快捷键设置
-                if (setting.keyborad.using_keyboard) {
+                if (keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
-                        if (e.key === setting.keyborad.pre_key) {
+                        if (e.key === keyborad.pre_key) {
                             if (this.pre_cid !== -1) {
                                 this.go_to_content(this.nid, this.pre_cid);
                             } else {
@@ -160,7 +134,7 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === setting.keyborad.next_key) {
+                        } else if (e.key === keyborad.next_key) {
                             if (this.next_cid !== -1) {
                                 this.go_to_content(this.nid, this.next_cid)
                             } else {
@@ -170,11 +144,11 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === setting.keyborad.scroll_key) {
-                            for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
+                        } else if (e.key === keyborad.scroll_key) {
+                            for (let i = 0; i < keyborad.scroll_distance; i++) {
                                 setTimeout(() => {
                                     document.getElementById("main").scrollTop += 1;
-                                }, setting.keyborad.scroll_speed * i)
+                                }, keyborad.scroll_speed * i)
                             }
                         }
                     }
@@ -184,59 +158,44 @@
             },
             created_method() {
                 window.utools.setSubInput(({text}) => {
-                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                    this.$router.push({name: "search", query: {name: text, type: "1"}})
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})
                 }, '搜索在线小说');
-                this.remind = window.utools.db.get("setting").remind;
-                this.style = window.utools.db.get("setting").style;
-                const setting = window.utools.db.get("setting");
+                this.style = db.getSettingStyle();
+                const keyborad = db.getSettingKeyborad();
                 this.get_text_and_info();
 
                 //快捷键设置
-                if (setting.keyborad.using_keyboard) {
+                if (keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
-                        switch (e.key) {
-
-                            // 前一章快捷键
-                            case setting.keyborad.pre_key:
-                                if (this.pre_cid !== -1) {
-                                    this.go_to_content(this.nid, this.pre_cid);
-                                } else {
-                                    this.$message({
-                                        showClose: true,
-                                        message: '没有上一章啦',
-                                        type: 'error'
-                                    })
-                                }
-                                break
-
-                            //后一章快捷键
-                            case setting.keyborad.next_key:
-                                if (this.next_cid !== -1) {
-                                    this.go_to_content(this.nid, this.next_cid)
-                                } else {
-                                    this.$message({
-                                        showClose: true,
-                                        message: '没有下一章啦',
-                                        type: 'error'
-                                    })
-                                }
-                                break
-
-                            //自动滚动快捷键
-                            case setting.keyborad.scroll_key:
-                                for (let i = 0; i < setting.keyborad.scroll_distance; i++) {
-                                    setTimeout(() => {
-                                        document.getElementById("main").scrollTop += 1;
-                                    }, setting.keyborad.scroll_speed * i)
-                                }
-                                break
+                        if (e.key === keyborad.pre_key) {
+                            if (this.pre_cid !== -1) {
+                                this.go_to_content(this.nid, this.pre_cid);
+                            } else {
+                                this.$message({
+                                    showClose: true,
+                                    message: '没有上一章啦',
+                                    type: 'error'
+                                })
+                            }
+                        } else if (e.key === keyborad.next_key) {
+                            if (this.next_cid !== -1) {
+                                this.go_to_content(this.nid, this.next_cid)
+                            } else {
+                                this.$message({
+                                    showClose: true,
+                                    message: '没有下一章啦',
+                                    type: 'error'
+                                })
+                            }
+                        } else if (e.key === keyborad.scroll_key) {
+                            for (let i = 0; i < keyborad.scroll_distance; i++) {
+                                setTimeout(() => {
+                                    document.getElementById("main").scrollTop += 1;
+                                }, keyborad.scroll_speed * i)
+                            }
                         }
                     }
-                }
-
-                // 不使用快捷键
-                else {
+                } else {
                     document.onkeydown = undefined;
                 }
                 window.utools.subInputBlur();

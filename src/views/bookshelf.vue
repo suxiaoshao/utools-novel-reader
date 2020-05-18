@@ -37,7 +37,7 @@
                         <template slot="header">管理</template>
                         <template slot-scope="scope">
                             <el-link :underline="false" type="danger"
-                                     @click="cancel_collect(scope.row._id)">移除
+                                     @click="cancel_collect(scope.row._id,scope.row.type)">移除
                             </el-link>
                         </template>
                     </el-table-column>
@@ -49,6 +49,7 @@
 
 <script>
     import navigation from "../components/navigation";
+    import db from "../util/db";
 
     export default {
         name: "bookshelf",
@@ -58,62 +59,29 @@
         data() {
             return {
                 loading: false,
-                all_book_list: [],
-                remind: {
-                    collect_remind: 3,
-                    update_reading_section: 3,
-                    settings_saved_remind: 3
-                }
+                all_book_list: []
             }
         },
         methods: {
             go_to_novel(nid, type) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: type}})
-                this.$router.push({name: "novel", params: {nid: nid}, query: {type: type}})
             },
             go_to_content(nid, cid, type) {
                 this.myHistory.addNewItem({name: "content", params: {nid: nid, cid: cid}, query: {type: type}})
-                this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: type}})
             },
-            cancel_collect(nid) {
-                let result = window.utools.db.remove(nid);
-                if (result.hasOwnProperty("error") && result["error"]) {
-                    if (this.remind.collect_remind >= 2) {
-                        this.$notify({
-                            title: "错误",
-                            message: "移除书架失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                } else {
-                    this.whether_collection = false;
-                    if (this.remind.collect_remind >= 3) {
-                        this.$notify({
-                            title: "成功",
-                            message: "移除书架成功",
-                            type: "success"
-                        });
-                    }
-                }
-                this.all_book_list = window.utools.db.allDocs().filter(item => {
-                    return item._id !== "setting"
-                });
+            cancel_collect(nid,type) {
+                db.removeNovel(nid,type)
+                this.all_book_list = db.getAllNovelData()
             },
             created_method() {
-                this.all_book_list = window.utools.db.allDocs().filter(item => {
-                    return item._id !== "setting"
-                })
+                this.all_book_list = db.getAllNovelData()
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                    this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
                 document.onkeydown = undefined;
-                this.remind = window.utools.db.get("setting").remind;
             },
             get_setting_info() {
-                this.remind = window.utools.db.get("setting").remind;
             }
         },
         created: function () {

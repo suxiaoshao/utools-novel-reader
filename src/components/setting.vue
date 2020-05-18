@@ -171,6 +171,8 @@
 </template>
 
 <script>
+    import db from "../util/db";
+
     export default {
         name: "setting",
         data() {
@@ -250,35 +252,18 @@
                 document.onkeydown = undefined
             },
             save_settings() {
-                let result = window.utools.db.put(this.setting_data);
-                if (result.hasOwnProperty("error") && result["error"]) {
-                    if (this.setting_data.remind.settings_saved_remind >= 2) {
-                        this.$notify({
-                            title: "错误",
-                            message: "保存设置失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                    this.setting_data = window.utools.db.get("setting");
-                } else {
-                    this.setting_data = window.utools.db.get("setting");
-                    if (this.setting_data.remind.settings_saved_remind >= 3) {
-                        this.$notify({
-                            title: "成功",
-                            message: "保存设置成功",
-                            type: "success"
-                        });
-                    }
-                }
+                db.updateSetting(this.setting_data)
+                this.setting_data=db.getSettingInfo()
                 this.$emit("after-save")
+                this.$emit("close-dialog")
             },
             restore_settings() {
-                this.setting_data = window.utools.db.get("setting");
+                this.setting_data = db.getSettingInfo()
+                this.$emit("close-dialog")
             }
         },
         created() {
-            this.setting_data = window.utools.db.get("setting");
+            this.setting_data = db.getSettingInfo()
         }
     }
 </script>

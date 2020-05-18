@@ -15,9 +15,10 @@
                     </el-option>
                 </el-select>
                 <el-input placeholder="选择器" v-model="select" style="margin-top: 10px"></el-input>
-                <el-button @click="text" style="margin-top: 10px">获取</el-button>
+                <el-button @click="getHtml" style="margin-top: 10px">获取</el-button>
                 <div v-for="(item,index) in html_list" :key="index" v-html="item"></div>
                 <div v-for="(item,index) in html_list" :key="index">{{item}}</div>
+                <el-button @click="text">text</el-button>
             </el-main>
         </el-container>
     </div>
@@ -25,6 +26,7 @@
 
 <script>
     import navigation from "../components/navigation"
+    import router from "../router"
 
     export default {
         name: 'text',
@@ -34,14 +36,14 @@
                 select: '',
                 html_list: [],
                 encoding: 'utf-8',
-                options: ["utf-8", "gbk",'gb2312']
+                options: ["utf-8", "gbk", 'gb2312']
             }
         },
         components: {
             "my-navigation": navigation
         },
         methods: {
-            text() {
+            getHtml() {
                 window.getHtml(this.url, this.encoding, str => {
                     console.log(str)
                     const cheerio = require("cheerio")
@@ -57,10 +59,13 @@
             created_method() {
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                    this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
                 document.onkeydown = undefined;
+            },
+            text(){
+                router.push({name: "search", query: { type: "1"}}).then(r=>{
+                    console.log(r)})
             }
         },
         created() {

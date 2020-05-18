@@ -3,14 +3,32 @@
         <el-container style="height: 100%">
             <el-header>
                 <my-navigation active-index="0" @created-method="created_method"
-                               @after-save="console.log(1)"></my-navigation>
+                               @after-save=""></my-navigation>
             </el-header>
 
-            <el-main v-loading="loading">
+            <el-main>
                 <!-- 标题 -->
                 <div style="text-align: center;"><h4 class="title">搜索:{{this.$route.query.name}}</h4></div>
 
-                <el-table :data="search_list" style="width: 100%" border :stripe="true">
+                <span style="font-size: 18px">选择源网站</span>
+
+                <!-- 网站源选择器-->
+                <el-select v-model="selected_type" placeholder="选择网站源" style="margin-left: 10px;" @change="typeChange">
+                    <el-option
+                            v-for="(value,index) in config"
+                            :key="index"
+                            :label="value.name"
+                            :value="index">
+                    </el-option>
+                </el-select>
+
+                <!-- 前往源网站 -->
+                <el-link :underline="false" style="margin-left: 10px;font-size: 18px"
+                         icon="el-icon-link" @click="openUrl">前往源网站
+                </el-link>
+
+                <el-table :data="search_list" v-loading="loading" style="width: 100%;margin-top: 20px" border
+                          :stripe="true">
 
                     <!-- 小说名 -->
                     <el-table-column>
@@ -46,6 +64,7 @@
 <script>
     import navigation from "../components/navigation";
     import search_method from "../util/web/search";
+    import config from "../util/web/config.json"
 
     export default {
         name: "search",
@@ -54,18 +73,21 @@
         },
         data() {
             return {
-                "search_name": '',
+                search_name: '',
                 loading: false,
-                search_list: []
+                search_list: [],
+                config: {},
+                selected_type: ""
             }
         },
         methods: {
             search() {
-                search_method.search(this.type, String(this.$route.query.name), this);
+                if (this.$route.query.name !== '' && this.$route.query.name !== undefined) {
+                    search_method.search(this.type, String(this.$route.query.name), this);
+                }
             },
             go_to_novel(nid) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
-                this.$router.push({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
             go_to_content(nid, cid) {
                 this.myHistory.addNewItem({
@@ -73,10 +95,11 @@
                     params: {nid: nid, cid: cid},
                     query: {type: String(this.type)}
                 })
-                this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
             },
             created_method() {
+                this.config = config;
                 this.plugin_enter();
+                this.selected_type = this.type
                 window.utools.setSubInput(({text}) => {
                     this.search_name = text;
                 }, '搜索在线小说', true);
@@ -86,7 +109,6 @@
                             name: "search",
                             query: {name: this.search_name, type: String(this.type)}
                         })
-                        this.$router.push({name: "search", query: {name: this.search_name, type: String(this.type)}});
                     }
                 };
                 if (this.$route.query.name !== undefined) {
@@ -97,7 +119,7 @@
                 window.utools.onPluginEnter(({code, type, payload, optional}) => {
                     //分流
                     if (code === "search") {
-                        this.myHistory.addNewItem({name: "search", query: {type: "1"}})
+                        this.myHistory.addNewItem({name: "search", query: {type: this.type}})
                         window.utools.setSubInput(({text}) => {
                             this.search_name = text;
                             // 这里的 text 就是输入的内容, 实时变化
@@ -105,19 +127,23 @@
                     } else if (code === 'bookshelf') {
                         //进入书架
                         this.myHistory.addNewItem({name: "bookshelf"})
-                        this.$router.push({name: "bookshelf"})
                     } else if (code === "read_novel") {
                         //读取本地小说
                         this.myHistory.addNewItem({
                             name: 'read_file',
                             query: {"path": payload[0].path}
                         })
-                        this.$router.push({
-                            name: 'read_file',
-                            query: {"path": payload[0].path}
-                        })
                     }
                 });
+            },
+            openUrl() {
+                window.utools.shellOpenExternal(this.config[this.selected_type].url)
+            },
+            typeChange(type) {
+                this.myHistory.addNewItem({
+                    name: "search",
+                    query: {name: this.search_name, type: type}
+                })
             }
         },
         computed: {

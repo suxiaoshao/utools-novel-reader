@@ -8,40 +8,43 @@
                            @after-save="get_setting_info"></my-header>
             </el-header>
 
-            <el-main v-loading="directory_loading||info_loading">
+            <el-main>
 
-                <!-- 标题 -->
-                <div style="text-align: center;"><h4 class="title">{{name}}</h4></div>
+                <div v-loading="info_loading">
+                    <!-- 标题 -->
+                    <div style="text-align: center;"><h4 class="title">{{name}}</h4></div>
 
-                <!-- 信息 -->
-                <div style="text-align: center;">
-                    <p>
-                        <span style="margin-right: 10px"><i class="el-icon-user"></i>{{author}} </span>
-                        <span style="margin-right: 10px"><i class="el-icon-time"></i>{{last_update_time}} </span>
-                        <span style="margin-right: 10px">
+                    <!-- 信息 -->
+                    <div style="text-align: center;">
+                        <p>
+                            <span style="margin-right: 10px"><i class="el-icon-user"></i>{{author}} </span>
+                            <span style="margin-right: 10px"><i class="el-icon-time"></i>{{last_update_time}} </span>
+                            <span style="margin-right: 10px">
                             <i class="el-icon-timer"></i>
                             <el-link target="_blank" :underline="false" @click="go_to_content(nid,last_cid)">{{latest_chapter}}</el-link>
                         </span>
 
-                        <!-- 收藏信息 -->
-                        <span style="margin-right: 10px" v-show="!whether_collection">
+                            <!-- 收藏信息 -->
+                            <span style="margin-right: 10px" v-show="!whether_collection">
                             <el-link target="_blank" :underline="false" @click="collect">
                                 <i class="el-icon-star-off"></i>
                                 加入书架
                             </el-link>
                         </span>
-                        <span style="margin-right: 10px" v-show="whether_collection">
+                            <span style="margin-right: 10px" v-show="whether_collection">
                             <el-link target="_blank" :underline="false" @click="cancel_collect">
                                 <i class="el-icon-star-on"></i>
                                 移除书架
                             </el-link>
                         </span>
-                    </p>
+                        </p>
+                    </div>
                 </div>
+
                 <el-divider></el-divider>
 
                 <!-- 章节目录 -->
-                <div>
+                <div v-loading="directory_loading">
                     <div style="text-align: center;"><h4 class="title">目录</h4></div>
                     <el-col :span="8" v-for="(item,index) in directory_list" :key="index">
                         <el-link target="_blank" :underline="false" @click="go_to_content(nid,item.cid)">{{item.name}}
@@ -57,6 +60,7 @@
     import novel_method from "../util/web/novel"
     import setting from "../components/setting";
     import header from "../components/header";
+    import db from "../util/db";
 
     export default {
         name: "novel",
@@ -74,13 +78,8 @@
                 last_cid: '',//最后更新章节的cid
                 directory_list: [],//目录列表
                 whether_collection: false,//是否收藏
-                info_loading: true,//信息的loading
-                directory_loading: true,//目录的loading
-                remind: {
-                    collect_remind: 3,
-                    update_reading_section: 3,
-                    settings_saved_remind: 3
-                },//提醒的设置
+                info_loading: false,//信息的loading
+                directory_loading: false,//目录的loading
             }
         },
         computed: {
@@ -107,7 +106,6 @@
                     params: {nid: nid, cid: cid},
                     query: {type: String(this.type)}
                 })
-                this.$router.push({name: "content", params: {nid: nid, cid: cid}, query: {type: String(this.type)}})
             },
 
             //收藏小说
@@ -120,69 +118,26 @@
                     bookmark_list: [],
                     type: this.type
                 };
-                let result = window.utools.db.put(data);
-
-                //加入数据库失败
-                if (result.hasOwnProperty("error") && result["error"]) {
-                    if (this.remind.collect_remind >= 2) {
-                        this.$notify({
-                            title: "错误",
-                            message: "加入书架失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                } else {
-                    this.whether_collection = true;
-                    if (this.remind.collect_remind >= 3) {
-                        this.$notify({
-                            title: "成功",
-                            message: "加入书架成功",
-                            type: "success"
-                        });
-                    }
-                }
+                db.addNovel(data)
+                this.whether_collection = db.existNovel(this.nid, this.type)
             },
 
             //取消收藏
             cancel_collect() {
-                let result = window.utools.db.remove(this.nid);
-
-                //成功
-                if (result.hasOwnProperty("error") && result["error"]) {
-                    if (this.remind.collect_remind >= 2) {
-                        this.$notify({
-                            title: "错误",
-                            message: "移除书架失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                } else {
-                    this.whether_collection = false;
-                    if (this.remind.collect_remind >= 3) {
-                        this.$notify({
-                            title: "成功",
-                            message: "移除书架成功",
-                            type: "success"
-                        });
-                    }
-                }
+                db.removeNovel(this.nid)
+                this.whether_collection = db.existNovel(this.nid, this.type)
             },
             // 创建方法
             created_method() {
-                this.whether_collection = (window.utools.db.get(this.nid) !== null);
+                this.whether_collection = db.existNovel(this.nid, this.type)
                 window.utools.setSubInput(({text}) => {
-                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                    this.$router.push({name: "search", query: {name: text, type: "1"}})
+                    this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})
                 }, '搜索在线小说');
                 document.onkeydown = undefined;
                 window.utools.subInputBlur();
-                this.remind = window.utools.db.get("setting").remind;
                 this.to_get_directory_and_info();
             },
             get_setting_info() {
-                this.remind = window.utools.db.get("setting").remind;
             }
         },
         created() {

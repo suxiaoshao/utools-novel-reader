@@ -1,54 +1,61 @@
+import db from "../db";
+import config from "./config.json"
+
 function get_directory_and_info(type, nid, that) {
-    switch (type) {
-        case "1":
-            get_meegoq_directory_and_info(nid, that);
-            break;
-        case "0":
-            get_file_directory_and_info(nid, that)
-            break;
+    if (type === "0") {
+        get_file_directory_and_info(nid, that)
+    } else {
+        get_meegoq_directory_and_info(nid, that, type);
     }
 }
 
-function get_meegoq_directory_and_info(nid, that) {
+function get_meegoq_directory_and_info(nid, that, type) {
+    that.info_loading = true;
+    that.directory_loading = true;
 
     // 获取章节信息
-    window.getHtml(`https://www.meegoq.com/book${nid}.html`, "utf-8", str => {
+    const directoryUrl = config[type]["novel"].directory.url.replace("{##novel_id##}", nid)
+    const encoding = config[type].encoding
+    window.getHtml(directoryUrl, encoding, str => {
+        const {chapter_id, chapter_id_regex, slice_left, slice_right} = config[type]["novel"].directory
         const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
         that.directory_list = []
-        $("body > section > article > ul > li > a").each((index, value) => {
+        $(chapter_id).each((index, value) => {
             const $value = $(value)
             const name = $value.text()
             let cid = $value.attr("href")
-            cid = cid.match(/_(?<id>\d+).html/).groups["id"];
+            cid = cid.match(RegExp(chapter_id_regex)).groups["id"];
             that.directory_list.push({
                 name: name,
                 cid: cid
             })
         })
-        if (that.directory_list.length > 9) {
-            that.directory_list = that.directory_list.splice(9);
-        }
+        const left = slice_left === false ? 0 : slice_left
+        const right = slice_right === false ? that.directory_list.length : slice_right
+        that.directory_list = that.directory_list.splice(left, right);
         that.directory_loading = false;
     })
 
     //获取小说信息
-    window.getHtml(`https://www.meegoq.com/info${nid}.html`, "utf-8", str => {
+    const infoUrl = config[type]['novel'].info.url.replace("{##novel_id##}", nid)
+    window.getHtml(infoUrl, encoding, str => {
+        const {name, author, last_update_time, latest_chapter_id, latest_chapter_id_regex} = config[type]["novel"].info
         const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
-        that.name = $("body > section > div.left > article.info > header > h1").text()
-        that.author = $("body > section > div.left > article.info > p.detail.pt20 > i:nth-child(1) > a").text()
-        that.last_update_time = $("body > section > div.left > article.info > p:nth-child(4) > i").text()
-        const last = $("body > section > div.left > article.info > p:nth-child(5) > i > a")
+        that.name = $(name).text()
+        that.author = $(author).text()
+        that.last_update_time = $(last_update_time).text()
+        const last = $(latest_chapter_id)
         that.latest_chapter = last.text()
         that.last_cid = last.attr("href")
-        that.last_cid = that.last_cid.match(/_(?<id>\d+).html/).groups['id'];
+        that.last_cid = that.last_cid.match(RegExp(latest_chapter_id_regex)).groups['id'];
         that.info_loading = false;
     })
 }
 
 function get_file_directory_and_info(nid, that) {
-    const result = window.utools.db.get(nid)
+    const result = db.getOneNovelData(nid, that.type)
     that.name = result.name;
     that.author = result.author;
     that.last_update_time = "未知";

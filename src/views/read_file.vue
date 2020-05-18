@@ -48,6 +48,7 @@
 
 <script>
     import navigation from "../components/navigation";
+    import db from "../util/db";
 
     export default {
         name: "read_file",
@@ -64,19 +65,13 @@
                 regex: '',//正则表达式字符串
                 name: '',//小说名字
                 is_regex: false,//是否使用正则
-                split_num: 4000,//每章字数
-                remind: {
-                    collect_remind: 3,
-                    update_reading_section: 3,
-                    settings_saved_remind: 3
-                },//提醒的设置
+                split_num: 4000//每章字数
             }
         },
         methods: {
             created_method() {
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                    this.$router.push({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
                 document.onkeydown = undefined;
@@ -91,7 +86,6 @@
                                 type: "error"
                             });
                             this.myHistory.addNewItem({name: "read_file"})
-                            this.$router.push({name: "read_file"})
                             this.created_method();
                             return
                         }
@@ -130,42 +124,18 @@
                 }
 
                 //判断是否已经存在这个地址
-                const old_data = window.utools.db.get(this.path)
-                let result
-                if (old_data === null) {
-                    result = window.utools.db.put(data)
-                } else {
-                    data._rev = old_data._rev
-                    result = window.utools.db.put(data)
+                const old_data = db.existNovel(this.path, "0")
+                if (old_data === true) {
+                    data._rev = db.getOneNovelData(this.path, "0")._rev
                 }
-
-                //提醒用户是否加入书架
-                if (result.hasOwnProperty("error") && result["error"]) {
-                    if (this.remind.collect_remind >= 2) {
-                        this.$notify({
-                            title: "错误",
-                            message: "加入书架失败",
-                            duration: 0,
-                            type: "error"
-                        });
-                    }
-                } else {
-                    this.whether_collection = true;
-                    if (this.remind.collect_remind >= 3) {
-                        this.$notify({
-                            title: "成功",
-                            message: "加入书架成功",
-                            type: "success"
-                        });
-                    }
-                }
+                db.addNovel(data)
             },
             split_novel() {
                 //是正则表达式
                 this.directory_list = [];
                 if (this.is_regex) {
                     if (this.regex !== "") {
-                        const re = new RegExp(this.regex, "g")
+                        const re = RegExp(this.regex, "g")
                         this.directory_list = this.content.match(re)
                         this.directory_list = this.directory_list.map((value, index) => {
                             return {
@@ -213,7 +183,6 @@
                 })
                 if (fileNames.length === 1) {
                     this.myHistory.addNewItem({name: "read_file", query: {path: fileNames[0]}})
-                    this.$router.push({name: "read_file", query: {path: fileNames[0]}})
                     this.created_method()
                 } else {
                     this.$message({
@@ -224,7 +193,6 @@
                 }
             },
             get_setting_info() {
-                this.remind = window.utools.db.get("setting").remind;
             }
         },
         created() {
