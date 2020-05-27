@@ -1,12 +1,12 @@
-import config from "./config.json"
+import config from "./config"
 
-function search(type, search_name, that) {
+function search(type:string, search_name:string, that:any) {
     if (type !== "0") {
         meegoq_search(search_name, that, type)
     }
 }
 
-function meegoq_search(search_name, that, type) {
+function meegoq_search(search_name:string, that:any, type:string) {
     that.loading = true;
     that.search_list = [];
 
@@ -25,7 +25,7 @@ function meegoq_search(search_name, that, type) {
         that.loading = false;
         const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
-        $(li).each((index, value) => {
+        $(li).each((index:number, value:any) => {
             const $value = $.load($.html(value), {decodeEntities: false,xmlMode: true})
             const name = $value(novel_id_selector).text()
             let novel_id = $value(novel_id_selector).attr("href")

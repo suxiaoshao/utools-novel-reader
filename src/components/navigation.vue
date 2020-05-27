@@ -22,11 +22,12 @@
                     @after-save="$emit('after-save')"></my-setting>
     </div>
 </template>
-<script>
+<script lang="ts">
 
-    import setting from "./setting";
+    import setting from "./setting.vue";
+    import Vue from "vue"
 
-    export default {
+    export default Vue.extend( {
         name: "Navigation",
         components: {
             "my-setting": setting
@@ -48,7 +49,7 @@
                     },
                     {
                         name: "测试",
-                        path: {name: "text"}
+                        path: {name: "test"}
                     }
                 ], // 导航内容数组,
                 dialogVisible: false, //是否显示设置框,
@@ -59,11 +60,11 @@
         },
         methods: {
             // 点击菜单
-            select(index) {
+            select(index:number) {
                 this.myHistory.addNewItem(this.navigation_item[index].path)
             }
         }
-    };
+    });
 </script>
 <style scoped lang="scss">
 </style>

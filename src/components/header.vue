@@ -1,7 +1,7 @@
 <template>
-    <div id="header">
+    <div class="my-header">
         <!-- 页头 -->
-        <el-col span="20">
+        <el-col :span="20">
             <el-page-header @back="go_back" style="height: 40px">
                         <span slot="title" style="font-size: 15px">
                                 返回
@@ -12,7 +12,7 @@
         </el-col>
 
         <!-- 工具 -->
-        <el-col span="4" style="height: 40px">
+        <el-col :span="4" style="height: 40px">
 
             <!-- 设置 -->
             <el-link style="float: right;height: 100%" index="setting" :underline="false" @click="dialogVisible=true">
@@ -34,9 +34,10 @@
 
 <script>
     import setting from "./setting";
+    import Vue from "vue"
 
-    export default {
-        name: "header",
+    export default Vue.extend({
+        name: "my-header",
         components: {
             "my-setting": setting
         },
@@ -53,7 +54,7 @@
         props: {
             name: String
         }
-    }
+    })
 </script>
 
 <style scoped lang="scss">

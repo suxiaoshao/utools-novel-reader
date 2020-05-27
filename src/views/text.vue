@@ -1,6 +1,6 @@
 <template>
-    <div id="text" class="router">
-        <el-container style="height: 100%">
+    <div class="router test">
+        <el-container>
             <el-header>
                 <my-navigation active-index="3" @created-method="created_method"></my-navigation>
             </el-header>
@@ -8,7 +8,7 @@
                 <el-input placeholder="url地址" v-model="url"></el-input>
                 <el-select v-model="encoding" placeholder="编码方式" style="margin-top: 10px">
                     <el-option
-                            v-for="(item,index) in options"
+                            v-for="(item,index) in encodingOptions"
                             :key="index"
                             :label="item"
                             :value="item">
@@ -18,25 +18,35 @@
                 <el-button @click="getHtml" style="margin-top: 10px">获取</el-button>
                 <div v-for="(item,index) in html_list" :key="index" v-html="item"></div>
                 <div v-for="(item,index) in html_list" :key="index">{{item}}</div>
-                <el-button @click="text">text</el-button>
+                <el-button @click="myTest">test</el-button>
             </el-main>
         </el-container>
     </div>
 </template>
 
-<script>
-    import navigation from "../components/navigation"
+<script lang="ts">
+    import navigation from "../components/navigation.vue"
     import router from "../router"
-
-    export default {
-        name: 'text',
-        data() {
+    import Vue from "vue"
+    import * as cheerio from "cheerio"
+    interface Data{
+        url:string,
+        select:string,
+        html_list:string[],
+        encoding:string,
+        encodingOptions:string[]
+        loading:boolean
+    }
+    export default Vue.extend({
+        name: 'test',
+        data():Data {
             return {
                 url: "",
                 select: '',
                 html_list: [],
                 encoding: 'utf-8',
-                options: ["utf-8", "gbk", 'gb2312']
+                encodingOptions: ["utf-8", "gbk", 'gb2312'],
+                loading:false
             }
         },
         components: {
@@ -44,12 +54,13 @@
         },
         methods: {
             getHtml() {
+                this.loading=true
                 window.getHtml(this.url, this.encoding, str => {
                     console.log(str)
-                    const cheerio = require("cheerio")
+                    this.loading=false
                     const $ = cheerio.load(str, {decodeEntities: false});
                     this.html_list = []
-                    $(this.select).each((index, value) => {
+                    $(this.select).each((index:number, value:CheerioElement) => {
                         const $value = $(value)
                         console.log($.html($value))
                         this.html_list.push($.html($value))
@@ -61,9 +72,9 @@
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
-                document.onkeydown = undefined;
+                document.onkeydown = null;
             },
-            text(){
+            myTest(){
                 router.push({name: "search", query: { type: "1"}}).then(r=>{
                     console.log(r)})
             }
@@ -71,5 +82,5 @@
         created() {
             this.created_method()
         }
-    }
+    })
 </SCRIPT>

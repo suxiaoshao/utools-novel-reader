@@ -1,14 +1,14 @@
 import db from "../db";
-import config from "./config.json"
+import config from "./config"
 
-function get_content(type, nid, cid, that) {
+function get_content(type:string, nid:string, cid:string, that:any) {
     if (type === "0") {
         get_file_content(nid, cid, that)
     } else {
         get_meegoq_content(nid, cid, that, type);
     }
 }
-function get_meegoq_content(nid, cid, that, type) {
+function get_meegoq_content(nid:string, cid:string, that:any, type:string) {
     that.loading = true;
     //网页url
     const url = config[type].content.url.replace("{##novel_id##}", nid).replace("{##chapter_id##}", cid)
@@ -24,19 +24,19 @@ function get_meegoq_content(nid, cid, that, type) {
         that.content_list = []
         that.pre_cid = $(pre_chapter_id).attr("href").match(RegExp(pre_chapter_id_regex));
         if (that.pre_cid === null) {
-            that.pre_cid = -1
+            that.pre_cid = null
         } else {
             that.pre_cid = that.pre_cid.groups['id']
         }
         that.next_cid = $(next_chapter_id).attr("href").match(RegExp(next_chapter_id_regex));
         if (that.next_cid === null) {
-            that.next_cid = -1
+            that.next_cid = null
         } else {
             that.next_cid = that.next_cid.groups['id']
         }
-        $(content).text().split(content_split).forEach(value => {
-            if (value !== "") {
-                that.content_list.push(value)
+        $(content).text().split(content_split).forEach((item: string) => {
+            if (item !== "") {
+                that.content_list.push(item)
             }
         })
         that.update_reading_section();
@@ -44,7 +44,7 @@ function get_meegoq_content(nid, cid, that, type) {
     })
 }
 
-function get_file_content(nid, cid, that) {
+function get_file_content(nid:string, cid:string, that:any) {
     let result = db.getOneNovelData(nid, that.type)
     that.novel_name = result.name;
     that.chapter_name = result.directory_list[Number(cid)].name;
@@ -60,9 +60,9 @@ function get_file_content(nid, cid, that) {
     }
 
     //获取内容数组
-    that.content_list = content.split(/\r\n|\n/).filter(value => {
+    that.content_list = content.split(/\r\n|\n/).filter((value: string) => {
         return value !== ''
-    }).map(value => {
+    }).map((value: string) => {
         if (!/^( +|　+).*$/.test(String(value))) {
             return value
         } else {
@@ -71,7 +71,7 @@ function get_file_content(nid, cid, that) {
     })
     that.pre_cid = Number(cid) - 1
     if (result.directory_list.length === Number(cid) + 1) {
-        that.next_cid = -1;
+        that.next_cid = null;
     } else {
         that.next_cid = Number(cid) + 1
     }

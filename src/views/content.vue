@@ -1,10 +1,11 @@
 <template>
-    <div id="content" class="router">
-        <el-container style="height: 100%">
+    <div class="router content">
+        <el-container>
 
             <el-header height="40px">
                 <my-header :name="`${novel_name}-${chapter_name}`" @created-method="created_method"
-                           @after-save="get_setting_info"></my-header>
+                           @after-save="get_setting_info">
+                </my-header>
             </el-header>
             <el-main v-loading="loading" :class="style.theme" id="main">
                 <!-- 标题 -->
@@ -34,9 +35,9 @@
                 </div>
 
                 <!-- 小说内容 -->
-                <div class="content" :style="`line-height: ${style.fort_size+style.line_height}px;`">
+                <div class="content" :style="`line-height: ${style.font_size+style.line_height}px;`">
                     <p v-for="(item,index) in content_list" :key="index"
-                       :style="`font-size:${style.fort_size}px;`">
+                       :style="`font-size:${style.font_size}px;`">
                         {{item}}
                     </p>
                 </div>
@@ -67,30 +68,42 @@
         </el-container>
     </div>
 </template>
-<script>
+<script lang="ts">
     import content_method from "../util/web/content";
-    import header from "../components/header";
+    import header from "../components/header.vue";
     import db from "../util/db";
+    import Vue from "vue"
+    import {Style} from "@/util/interface";
 
-    export default {
-        name: "content",
+    interface Data {
+        loading: boolean
+        novel_name: string
+        chapter_name: string
+        content_list: string[]
+        pre_cid: string | null
+        next_cid: string | null
+        style: Style
+    }
+
+    export default Vue.extend({
+        name: "mt-content",
         components: {
             "my-header": header
         },
         mounted() {
             this.created_method();
         },
-        data() {
+        data(): Data {
             return {
                 loading: false,
                 novel_name: '',
                 chapter_name: '',
                 content_list: [],
-                pre_cid: -1,
-                next_cid: -1,
+                pre_cid: null,
+                next_cid: null,
                 style: {
                     theme: "base-theme",
-                    fort_size: 18,
+                    font_size: 18,
                     line_height: 25
                 }
             }
@@ -99,10 +112,10 @@
             get_text_and_info() {
                 content_method.get_content(this.type, this.nid, this.cid, this);
             },
-            go_to_novel(nid) {
+            go_to_novel(nid: string) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
-            go_to_content(nid, cid) {
+            go_to_content(nid: string, cid: string) {
                 this.myHistory.replaceHeadItem({
                     name: "content",
                     params: {nid: nid, cid: cid},
@@ -116,7 +129,11 @@
                     data["read_chapter"] = {cid: this.cid, name: this.chapter_name};
                     db.updateNovel(data)
                 }
-                document.getElementById("main").scrollTop = 0;
+                const main: HTMLElement | null = document.getElementById("main")
+                if (main !== null) {
+                    main.scrollTop = 0;
+                }
+
             },
             get_setting_info() {
                 this.style = db.getSettingStyle();
@@ -125,7 +142,7 @@
                 if (keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
                         if (e.key === keyborad.pre_key) {
-                            if (this.pre_cid !== -1) {
+                            if (this.pre_cid !== null) {
                                 this.go_to_content(this.nid, this.pre_cid);
                             } else {
                                 this.$message({
@@ -135,7 +152,7 @@
                                 })
                             }
                         } else if (e.key === keyborad.next_key) {
-                            if (this.next_cid !== -1) {
+                            if (this.next_cid !== null) {
                                 this.go_to_content(this.nid, this.next_cid)
                             } else {
                                 this.$message({
@@ -147,13 +164,16 @@
                         } else if (e.key === keyborad.scroll_key) {
                             for (let i = 0; i < keyborad.scroll_distance; i++) {
                                 setTimeout(() => {
-                                    document.getElementById("main").scrollTop += 1;
+                                    const main: HTMLElement | null = document.getElementById("main")
+                                    if (main !== null) {
+                                        main.scrollTop += 1;
+                                    }
                                 }, keyborad.scroll_speed * i)
                             }
                         }
                     }
                 } else {
-                    document.onkeydown = undefined;
+                    document.onkeydown = null;
                 }
             },
             created_method() {
@@ -168,7 +188,7 @@
                 if (keyborad.using_keyboard) {
                     document.onkeydown = (e) => {
                         if (e.key === keyborad.pre_key) {
-                            if (this.pre_cid !== -1) {
+                            if (this.pre_cid !== null) {
                                 this.go_to_content(this.nid, this.pre_cid);
                             } else {
                                 this.$message({
@@ -178,7 +198,7 @@
                                 })
                             }
                         } else if (e.key === keyborad.next_key) {
-                            if (this.next_cid !== -1) {
+                            if (this.next_cid !== null) {
                                 this.go_to_content(this.nid, this.next_cid)
                             } else {
                                 this.$message({
@@ -190,55 +210,72 @@
                         } else if (e.key === keyborad.scroll_key) {
                             for (let i = 0; i < keyborad.scroll_distance; i++) {
                                 setTimeout(() => {
-                                    document.getElementById("main").scrollTop += 1;
+                                    const main: HTMLElement | null = document.getElementById("main")
+                                    if (main !== null) {
+                                        main.scrollTop += 1;
+                                    }
                                 }, keyborad.scroll_speed * i)
                             }
                         }
                     }
                 } else {
-                    document.onkeydown = undefined;
+                    document.onkeydown = null;
                 }
                 window.utools.subInputBlur();
             }
         },
         computed: {
-            nid() {
+            nid(): string {
                 return this.$route.params.nid;
             },
-            cid() {
+            cid(): string {
                 return this.$route.params.cid;
             },
-            type() {
-                return this.$route.query.type
+            type(): string {
+                return String(this.$route.query.type)
             }
         }
-    }
+    })
 </script>
 
 <style scoped lang="scss">
+
+    @mixin base-title {
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        height: 42px;
+        width: 100%;
+        font-size: 26px;
+        font-weight: 600;
+        color: rgba(51, 51, 51, 1);
+        line-height: 42px;
+    }
+
+    @mixin base-content {
+        font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 5px 20px;
+        p {
+            margin-block-start: 0;
+            margin-block-end: 0;
+            text-indent: 2em;
+        }
+    }
+
     .yellow-theme {
         background-color: #F6F1E7;
 
         .title {
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 42px;
-            width: 100%;
-            font-size: 26px;
-            font-weight: 600;
-            color: rgba(51, 51, 51, 1);
-            line-height: 42px;
+            @include base-title;
         }
 
         .content {
-            font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 5px 20px;
+            @include base-content
         }
     }
 
@@ -246,25 +283,11 @@
         background-image: url("../assets/maobianzhi.png");
 
         .title {
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 42px;
-            width: 100%;
-            font-size: 26px;
-            font-weight: 600;
-            color: rgba(51, 51, 51, 1);
-            line-height: 42px;
+            @include base-title;
         }
 
         .content {
-            font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 5px 20px;
+            @include base-content;
         }
     }
 
@@ -272,32 +295,13 @@
         background-color: #595959;
 
         .title {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            height: 42px;
-            width: 100%;
-            font-size: 26px;
-            font-weight: 600;
+            @include base-title;
             color: #C1C1C1;
-            line-height: 42px;
         }
 
         .content {
-            font: 400 14px/1.5 Arial, "Segoe UI", "Lucida Grande", Helvetica, "Microsoft YaHei", FreeSans, Arimo, "Droid Sans", "wenquanyi micro hei", "Hiragino Sans GB", "Hiragino Sans GB W3", FontVsoicon, sans-serif;
+            @include base-content;
             color: #C1C1C1;
-            margin: 0;
-            padding: 5px 20px;
-        }
-    }
-
-    .content {
-        p {
-            margin-block-start: 0;
-            margin-block-end: 0;
-            text-indent: 2em;
         }
     }
 </style>

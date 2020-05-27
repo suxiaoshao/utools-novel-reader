@@ -6,7 +6,12 @@
     "logo": "read.png",
     "main": "vue/index.html",
     "homepage": "https://github.com/suxiaoshao/utools-novel-reader",
-    "version": "0.2.4",
+    "version": "0.2.5",
+    "development":{
+        "main": "http://localhost:8080/index.html",
+        "preload": "preload.js",
+        "logo": "read.png"
+    },
     "features": [
         {
             "code": "search",

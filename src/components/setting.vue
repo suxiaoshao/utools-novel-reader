@@ -1,16 +1,16 @@
 <template>
-    <div id="setting">
+    <div class="setting">
         <el-dialog title="设置" :visible.sync="dialogVisible" width="70%" :before-close="dialog_close">
             <el-tabs v-model="activeName" type="card">
 
                 <!-- 快捷键设置 -->
                 <el-tab-pane label="快捷键" name="first">
-                    <el-form :model="setting_data" ref="setting_data" >
+                    <el-form :model="setting_data" ref="setting_data">
                         <!-- 是否启用快捷键 -->
                         <el-form-item>
                             <el-switch
-                                    v-model="setting_data.keyborad.using_keyboard"
-                                    inactive-text="使用快捷键打开上下章">
+                                v-model="setting_data.keyborad.using_keyboard"
+                                inactive-text="使用快捷键打开上下章">
                             </el-switch>
                         </el-form-item>
 
@@ -150,7 +150,7 @@
                         </el-form-item>
 
                         <el-form-item label="字体大小">
-                            <el-input-number v-model="setting_data.style.fort_size" :min="1"
+                            <el-input-number v-model="setting_data.style.font_size" :min="1"
                                              :max="40"></el-input-number>
                         </el-form-item>
 
@@ -170,12 +170,19 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import db from "../util/db";
+    import Vue from "vue"
+    import {DBItem} from "utools-helper/@types/utools";
 
-    export default {
+    interface Data {
+        setting_data: DBItem<any>,
+        activeName: string
+    }
+
+    export default Vue.extend({
         name: "setting",
-        data() {
+        data(): Data {
             return {
                 setting_data: {
                     _id: "setting",
@@ -194,10 +201,11 @@
                     },
                     style: {
                         theme: "base-theme",
-                        fort_size: 18,
+                        font_size: 18,
                         line_height: 25
                     },
-                    version: "0.1.2"
+                    version: "0.1.2",
+                    _rev: ''
                 },
                 activeName: 'first'
             }
@@ -206,7 +214,7 @@
             dialogVisible: Boolean
         },
         methods: {
-            dialog_close(done) {
+            dialog_close() {
                 this.$emit("close-dialog")
             },
             listen_previous_chapter() {
@@ -249,11 +257,11 @@
                 };
             },
             cleared_to_monitor() {
-                document.onkeydown = undefined
+                document.onkeydown = null
             },
             save_settings() {
                 db.updateSetting(this.setting_data)
-                this.setting_data=db.getSettingInfo()
+                this.setting_data = db.getSettingInfo()
                 this.$emit("after-save")
                 this.$emit("close-dialog")
             },
@@ -265,11 +273,13 @@
         created() {
             this.setting_data = db.getSettingInfo()
         }
-    }
+    })
 </script>
 
 <style scoped lang="scss">
     .el-form {
-        height: 215px;overflow-y: auto;overflow-x: hidden
+        height: 215px;
+        overflow-y: auto;
+        overflow-x: hidden
     }
 </style>

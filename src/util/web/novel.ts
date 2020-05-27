@@ -1,7 +1,8 @@
 import db from "../db";
-import config from "./config.json"
+import config from "./config"
+import {Message} from "element-ui";
 
-function get_directory_and_info(type, nid, that) {
+function get_directory_and_info(type: string, nid: string, that: any) {
     if (type === "0") {
         get_file_directory_and_info(nid, that)
     } else {
@@ -9,19 +10,19 @@ function get_directory_and_info(type, nid, that) {
     }
 }
 
-function get_meegoq_directory_and_info(nid, that, type) {
+function get_meegoq_directory_and_info(nid: string, that: any, type: string) {
     that.info_loading = true;
     that.directory_loading = true;
 
     // 获取章节信息
-    const directoryUrl = config[type]["novel"].directory.url.replace("{##novel_id##}", nid)
-    const encoding = config[type].encoding
+    const directoryUrl: string = config[type]["novel"].directory.url.replace("{##novel_id##}", nid)
+    const encoding: string = config[type].encoding
     window.getHtml(directoryUrl, encoding, str => {
         const {chapter_id, chapter_id_regex, slice_left, slice_right} = config[type]["novel"].directory
         const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
         that.directory_list = []
-        $(chapter_id).each((index, value) => {
+        $(chapter_id).each((index: number, value: any) => {
             const $value = $(value)
             const name = $value.text()
             let cid = $value.attr("href")
@@ -39,6 +40,7 @@ function get_meegoq_directory_and_info(nid, that, type) {
 
     //获取小说信息
     const infoUrl = config[type]['novel'].info.url.replace("{##novel_id##}", nid)
+    console.log(infoUrl)
     window.getHtml(infoUrl, encoding, str => {
         const {name, author, last_update_time, latest_chapter_id, latest_chapter_id_regex} = config[type]["novel"].info
         const cheerio = require("cheerio")
@@ -49,12 +51,20 @@ function get_meegoq_directory_and_info(nid, that, type) {
         const last = $(latest_chapter_id)
         that.latest_chapter = last.text()
         that.last_cid = last.attr("href")
-        that.last_cid = that.last_cid.match(RegExp(latest_chapter_id_regex)).groups['id'];
+        if (that.last_cid !== undefined) {
+            that.last_cid = that.last_cid.match(RegExp(latest_chapter_id_regex)).groups['id'];
+        }else{
+            Message({
+                showClose: true,
+                message: '网站解析发生错误',
+                type: 'error'
+            })
+        }
         that.info_loading = false;
     })
 }
 
-function get_file_directory_and_info(nid, that) {
+function get_file_directory_and_info(nid: string, that: any) {
     const result = db.getOneNovelData(nid, that.type)
     that.name = result.name;
     that.author = result.author;

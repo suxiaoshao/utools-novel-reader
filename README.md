@@ -2,6 +2,12 @@
 
 ## 更新
 
+### v0.2.5
+
+1. 修复进入插件后，没有进入正确的页面的bug
+
+2. 更改开发语言，将js改成ts，有利后期维护
+
 ### v0.2.3 v0.2.4
 
 1. 修复bug
@@ -233,7 +239,7 @@ window.getHtml = getHtml
 这个插件的开源地址[utools-novel-reader](https://github.com/suxiaoshao/utools-novel-reader)
 
 因为第一次写插件，使用了前端框架vue.js，vue-router和ui框架element-ui，目前我还在学习前端中，
-所以有任何bug或者问题都可以在我的这篇博客下留言:[【前端】utools小说阅读插件](https://www.sushao.top/blog/article/21)。
+所以有任何bug或者问题都可以在我的这篇博客下留言:[【前端】utools小说阅读插件](https://www.sushao.top/article/21)。
 在这个帖子里留言最好留下联系方式，不然只能过一段时间上去看看我有没有回复。
 
 或者我的猿料页面下找我[sushao](https://yuanliao.info/u/32696)，

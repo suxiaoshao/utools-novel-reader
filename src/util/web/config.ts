@@ -1,4 +1,64 @@
-{
+interface Search {
+    url: string,
+    li: string,
+    novel_id: string,
+    author: string,
+    latest_chapter_id: string,
+    latest_chapter_id_regex: string,
+    update_time: string,
+    novel_id_regex: string
+}
+
+interface Directory {
+    url: string,
+    chapter_id: string,
+    chapter_id_regex: string,
+    slice_left: number | boolean,
+    slice_right: number | boolean
+}
+
+interface Info {
+    url: string,
+    name: string,
+    author: string,
+    last_update_time:string,
+    latest_chapter_id: string,
+    latest_chapter_id_regex: string
+}
+
+interface Novel {
+    directory: Directory,
+    info: Info
+}
+
+interface Content {
+    url: string,
+    chapter_name: string,
+    novel_name: string,
+    pre_chapter_id: string,
+    pre_chapter_id_regex: string,
+    next_chapter_id: string,
+    next_chapter_id_regex: string,
+    content: string,
+    content_split: string
+}
+
+export interface Config {
+    encoding: string,
+    url: string,
+    name: string,
+    novel_id_to_url: string,
+    url_to_novel_id: string,
+    search: Search,
+    novel: Novel,
+    content: Content
+}
+
+export interface Configs {
+    [propName: string]: Config
+}
+
+const config: Configs = {
     "1": {
         "encoding": "utf-8",
         "url": "https://www.meegoq.com",
@@ -90,3 +150,4 @@
         }
     }
 }
+export default config

@@ -1,13 +1,14 @@
 const {Notification} = require("element-ui")
 const {Message} = require("element-ui")
-import config from "./web/config.json"
+import config from "@/util/web/config"
+import {DBItem} from "utools-helper/@types/utools";
 
 
 /*
 * 内部方法
 * */
 
-function viewIdToDbId(id, type) {
+function viewIdToDbId(id:string, type:string) {
     if (type !== "0") {
         const {novel_id_to_url} = config[type]
         return novel_id_to_url.replace("{##novel_id##}", id)
@@ -16,10 +17,11 @@ function viewIdToDbId(id, type) {
     }
 }
 
-function dbIdToViewId(id, type) {
+function dbIdToViewId(id:string, type:string):string {
     if (type !== "0") {
         const {url_to_novel_id} = config[type]
-        return id.match(RegExp(url_to_novel_id)).groups["id"]
+        // @ts-ignore
+        return id.match(url_to_novel_id).groups["id"]
     } else {
         return id
     }
@@ -62,7 +64,7 @@ function getSettingKeyborad() {
  * 更新设置
  * @param data
  * */
-function updateSetting(data) {
+function updateSetting(data:DBItem<any>) {
     const setting_data = getSettingInfo()
     const result = window.utools.db.put(data)
     if (result.hasOwnProperty("error") && result["error"]) {
@@ -104,7 +106,7 @@ function getAllNovelData() {
  * 删除小说
  * */
 
-function removeNovel(id, type) {
+function removeNovel(id:string, type:string) {
     id = viewIdToDbId(id, type)
     const result = window.utools.db.remove(id);
     const remind = getSettingRemind()
@@ -134,7 +136,7 @@ function removeNovel(id, type) {
  * 添加小说
  * */
 
-function addNovel(item) {
+function addNovel(item:DBItem<any>) {
     item._id = viewIdToDbId(item._id, item.type)
     const result = window.utools.db.put(item);
     const remind = getSettingRemind()
@@ -165,13 +167,13 @@ function addNovel(item) {
  * 判断小说是否存在
  * */
 
-function existNovel(id, type) {
+function existNovel(id:string, type:string):boolean {
     id = viewIdToDbId(id, type)
     const result = window.utools.db.get(id)
     return result !== null;
 }
 
-function updateNovel(data) {
+function updateNovel(data:DBItem<any>) {
     data._id = viewIdToDbId(data._id, data.type)
     const result = window.utools.db.put(data);
     const remind = getSettingRemind()
@@ -199,7 +201,7 @@ function updateNovel(data) {
  * 获取小说数据
  * */
 
-function getOneNovelData(id, type) {
+function getOneNovelData(id:string, type:string) {
     id = viewIdToDbId(id, type)
     const result = window.utools.db.get(id)
     result._id = dbIdToViewId(result._id, type)

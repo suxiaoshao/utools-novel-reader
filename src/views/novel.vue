@@ -1,6 +1,6 @@
 <template>
     <div id="novel" class="router">
-        <el-container style="height: 100%">
+        <el-container>
             <el-header height="40px">
 
                 <!-- 页头 -->
@@ -56,13 +56,14 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     import novel_method from "../util/web/novel"
-    import setting from "../components/setting";
-    import header from "../components/header";
+    import setting from "../components/setting.vue";
+    import header from "../components/header.vue";
     import db from "../util/db";
+    import Vue from "vue"
 
-    export default {
+    export default Vue.extend({
         name: "novel",
         components: {
             // "my-navigation": navigation,
@@ -84,12 +85,12 @@
         },
         computed: {
             //小说的nid
-            nid() {
+            nid(): string {
                 return this.$route.params.nid;
             },
             //小说的类别
-            type() {
-                return this.$route.query.type;
+            type(): string {
+                return String(this.$route.query.type);
             }
         },
         methods: {
@@ -100,7 +101,7 @@
             },
 
             //到小说章节
-            go_to_content(nid, cid) {
+            go_to_content(nid: string, cid: string) {
                 this.myHistory.addNewItem({
                     name: "content",
                     params: {nid: nid, cid: cid},
@@ -124,7 +125,7 @@
 
             //取消收藏
             cancel_collect() {
-                db.removeNovel(this.nid)
+                db.removeNovel(this.nid, this.type)
                 this.whether_collection = db.existNovel(this.nid, this.type)
             },
             // 创建方法
@@ -133,7 +134,7 @@
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})
                 }, '搜索在线小说');
-                document.onkeydown = undefined;
+                document.onkeydown = null;
                 window.utools.subInputBlur();
                 this.to_get_directory_and_info();
             },
@@ -143,7 +144,7 @@
         created() {
             this.created_method();
         }
-    }
+    })
 </script>
 
 <style scoped lang="scss">

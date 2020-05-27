@@ -1,6 +1,6 @@
 <template>
     <div id="search" class="router">
-        <el-container style="height: 100%">
+        <el-container>
             <el-header>
                 <my-navigation active-index="0" @created-method="created_method"
                                @after-save=""></my-navigation>
@@ -15,10 +15,10 @@
                 <!-- 网站源选择器-->
                 <el-select v-model="selected_type" placeholder="选择网站源" style="margin-left: 10px;" @change="typeChange">
                     <el-option
-                            v-for="(value,index) in config"
-                            :key="index"
-                            :label="value.name"
-                            :value="index">
+                        v-for="(value,index) in config"
+                        :key="index"
+                        :label="value.name"
+                        :value="index">
                     </el-option>
                 </el-select>
 
@@ -61,17 +61,26 @@
     </div>
 </template>
 
-<script>
-    import navigation from "../components/navigation";
+<script lang="ts">
+    import navigation from "../components/navigation.vue";
     import search_method from "../util/web/search";
-    import config from "../util/web/config.json"
+    import config, {Configs} from "../util/web/config"
+    import Vue from "vue"
 
-    export default {
+    interface Data {
+        search_name: string,
+        loading: boolean,
+        search_list: string[],
+        config: Configs,
+        selected_type: string
+    }
+
+    export default Vue.extend({
         name: "search",
         components: {
             "my-navigation": navigation
         },
-        data() {
+        data(): Data {
             return {
                 search_name: '',
                 loading: false,
@@ -86,10 +95,10 @@
                     search_method.search(this.type, String(this.$route.query.name), this);
                 }
             },
-            go_to_novel(nid) {
+            go_to_novel(nid: string) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})
             },
-            go_to_content(nid, cid) {
+            go_to_content(nid: string, cid: string) {
                 this.myHistory.addNewItem({
                     name: "content",
                     params: {nid: nid, cid: cid},
@@ -98,7 +107,6 @@
             },
             created_method() {
                 this.config = config;
-                this.plugin_enter();
                 this.selected_type = this.type
                 window.utools.setSubInput(({text}) => {
                     this.search_name = text;
@@ -115,31 +123,10 @@
                     this.search();
                 }
             },
-            plugin_enter() {
-                window.utools.onPluginEnter(({code, type, payload, optional}) => {
-                    //分流
-                    if (code === "search") {
-                        this.myHistory.addNewItem({name: "search", query: {type: this.type}})
-                        window.utools.setSubInput(({text}) => {
-                            this.search_name = text;
-                            // 这里的 text 就是输入的内容, 实时变化
-                        }, '搜索在线小说', true);
-                    } else if (code === 'bookshelf') {
-                        //进入书架
-                        this.myHistory.addNewItem({name: "bookshelf"})
-                    } else if (code === "read_novel") {
-                        //读取本地小说
-                        this.myHistory.addNewItem({
-                            name: 'read_file',
-                            query: {"path": payload[0].path}
-                        })
-                    }
-                });
-            },
             openUrl() {
                 window.utools.shellOpenExternal(this.config[this.selected_type].url)
             },
-            typeChange(type) {
+            typeChange(type: string) {
                 this.myHistory.addNewItem({
                     name: "search",
                     query: {name: this.search_name, type: type}
@@ -147,8 +134,8 @@
             }
         },
         computed: {
-            type() {
-                return this.$route.query.type;
+            type(): string {
+                return String(this.$route.query.type);
             }
         },
         created() {
@@ -157,7 +144,7 @@
         watch: {
             "$route": "search"
         }
-    }
+    })
 </script>
 
 <style scoped lang="scss">

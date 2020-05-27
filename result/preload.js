@@ -23,16 +23,21 @@ function set_initialization() {
             },
             style: {
                 theme: "base-theme",
-                fort_size: 18,
+                font_size: 18,
                 line_height: 25
             },
-            version: "0.2.4"
+            version: "0.2.5"
         }
         window.utools.db.put(new_setting)
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.2.4"
+    setting.version = "0.2.5"
+    setting.style=Object.assign({
+        theme: "base-theme",
+        font_size: 18,
+        line_height: 25
+    },setting.style);
 
     // 按键设置加入活动快捷键
     setting.keyborad = Object.assign({
@@ -47,7 +52,7 @@ function set_initialization() {
     // 设置行高
     setting.style = Object.assign({
         theme: "base-theme",
-        fort_size: 18,
+        font_size: 18,
         line_height: 25
     }, setting.style)
 
@@ -72,7 +77,7 @@ function set_initialization() {
 }
 
 window.set_initialization = set_initialization;
-window.qs = fs;
+window.readFile = fs.readFile;
 
 function getHtml(url, encoding, then) {
     const iconv = require("iconv-lite")
@@ -84,11 +89,13 @@ function getHtml(url, encoding, then) {
     }
     let req = https.get(url, (res) => {
         let chunks = [];
+        let chunkLength = 0
         res.on("data", (chunk) => {
             chunks.push(chunk);
+            chunkLength += chunk.length
         });
         res.on("end", () => {
-            let html = iconv.decode(Buffer.concat(chunks), encoding);
+            let html = iconv.decode(Buffer.concat(chunks, chunkLength), encoding);
             then(html)
         });
     });
