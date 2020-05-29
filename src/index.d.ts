@@ -1,6 +1,6 @@
 import {UTools} from "utools-helper/@types/utools"
 import myHistory from "./util/history"
-
+import {PathLike} from "fs"
 declare global {
     interface Window {
         utools: UTools;
@@ -9,7 +9,7 @@ declare global {
 
         set_initialization(): void;
 
-        readFile(path: string, options: { encoding?: BufferEncoding, flag?: number | string }, then: (err: any, data: Buffer) => void): void;
+        readFile(path: PathLike | number, options: { encoding?: BufferEncoding, flag?: number | string }, then: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     }
 }
 declare module 'vue/types/vue' {

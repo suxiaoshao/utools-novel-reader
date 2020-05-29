@@ -1,14 +1,22 @@
-import db from "../db";
-import config from "./config"
+import {getOneNovelData} from "../db";
+import config, {getIdFromHref} from "./config"
+import {ContentData, FileNovelItem} from "@/util/interface";
+import cheerio from "cheerio"
 
-function get_content(type:string, nid:string, cid:string, that:any) {
+interface ContentDataExtend extends ContentData {
+
+    update_reading_section(): void;
+}
+
+function get_content(type: string, nid: string, cid: string, that: ContentDataExtend) {
     if (type === "0") {
-        get_file_content(nid, cid, that)
+        get_file_content(nid, cid, that, type)
     } else {
         get_meegoq_content(nid, cid, that, type);
     }
 }
-function get_meegoq_content(nid:string, cid:string, that:any, type:string) {
+
+function get_meegoq_content(nid: string, cid: string, that: ContentDataExtend, type: string) {
     that.loading = true;
     //网页url
     const url = config[type].content.url.replace("{##novel_id##}", nid).replace("{##chapter_id##}", cid)
@@ -17,23 +25,14 @@ function get_meegoq_content(nid:string, cid:string, that:any, type:string) {
     //配置信息
     const {chapter_name, content, content_split, next_chapter_id, next_chapter_id_regex, novel_name, pre_chapter_id, pre_chapter_id_regex} = config[type].content
     window.getHtml(url, encoding, str => {
-        const cheerio = require("cheerio")
-        const $ = cheerio.load(str, {decodeEntities: false});
+        const $ = cheerio.load(str, {decodeEntities: false, xmlMode: true});
         that.chapter_name = $(chapter_name).text()
         that.novel_name = $(novel_name).text()
         that.content_list = []
-        that.pre_cid = $(pre_chapter_id).attr("href").match(RegExp(pre_chapter_id_regex));
-        if (that.pre_cid === null) {
-            that.pre_cid = null
-        } else {
-            that.pre_cid = that.pre_cid.groups['id']
-        }
-        that.next_cid = $(next_chapter_id).attr("href").match(RegExp(next_chapter_id_regex));
-        if (that.next_cid === null) {
-            that.next_cid = null
-        } else {
-            that.next_cid = that.next_cid.groups['id']
-        }
+
+        //获取pre_cid和next_cid
+        that.pre_cid = getIdFromHref($, pre_chapter_id, pre_chapter_id_regex)
+        that.next_cid = getIdFromHref($, next_chapter_id, next_chapter_id_regex)
         $(content).text().split(content_split).forEach((item: string) => {
             if (item !== "") {
                 that.content_list.push(item)
@@ -44,8 +43,8 @@ function get_meegoq_content(nid:string, cid:string, that:any, type:string) {
     })
 }
 
-function get_file_content(nid:string, cid:string, that:any) {
-    let result = db.getOneNovelData(nid, that.type)
+function get_file_content(nid: string, cid: string, that: ContentDataExtend, type: string) {
+    let result = getOneNovelData(nid, type) as FileNovelItem
     that.novel_name = result.name;
     that.chapter_name = result.directory_list[Number(cid)].name;
     //如果是用正则区分
@@ -69,11 +68,11 @@ function get_file_content(nid:string, cid:string, that:any) {
             return value.replace(/ +/, "")
         }
     })
-    that.pre_cid = Number(cid) - 1
+    that.pre_cid = String(Number(cid) - 1)
     if (result.directory_list.length === Number(cid) + 1) {
         that.next_cid = null;
     } else {
-        that.next_cid = Number(cid) + 1
+        that.next_cid = String(Number(cid) + 1)
     }
     that.update_reading_section();
 }

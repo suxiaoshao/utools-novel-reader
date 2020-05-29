@@ -71,19 +71,10 @@
 <script lang="ts">
     import content_method from "../util/web/content";
     import header from "../components/header.vue";
-    import db from "../util/db";
+    import {existNovel, getOneNovelData, getSettingKeyboard, getSettingStyle, updateNovel} from "@/util/db";
     import Vue from "vue"
-    import {Style} from "@/util/interface";
+    import {ContentData} from "@/util/interface";
 
-    interface Data {
-        loading: boolean
-        novel_name: string
-        chapter_name: string
-        content_list: string[]
-        pre_cid: string | null
-        next_cid: string | null
-        style: Style
-    }
 
     export default Vue.extend({
         name: "mt-content",
@@ -93,7 +84,7 @@
         mounted() {
             this.created_method();
         },
-        data(): Data {
+        data(): ContentData {
             return {
                 loading: false,
                 novel_name: '',
@@ -124,10 +115,10 @@
                 this.get_text_and_info();
             },
             update_reading_section() {
-                if (db.existNovel(this.nid, this.type)) {
-                    const data = db.getOneNovelData(this.nid, this.type)
+                if (existNovel(this.nid, this.type)) {
+                    const data = getOneNovelData(this.nid, this.type)
                     data["read_chapter"] = {cid: this.cid, name: this.chapter_name};
-                    db.updateNovel(data)
+                    updateNovel(data)
                 }
                 const main: HTMLElement | null = document.getElementById("main")
                 if (main !== null) {
@@ -136,12 +127,12 @@
 
             },
             get_setting_info() {
-                this.style = db.getSettingStyle();
-                const keyborad = db.getSettingKeyborad();
+                this.style = getSettingStyle()
+                const keyboard = getSettingKeyboard()
                 //快捷键设置
-                if (keyborad.using_keyboard) {
+                if (keyboard.using_keyboard) {
                     document.onkeydown = (e) => {
-                        if (e.key === keyborad.pre_key) {
+                        if (e.key === keyboard.pre_key) {
                             if (this.pre_cid !== null) {
                                 this.go_to_content(this.nid, this.pre_cid);
                             } else {
@@ -151,7 +142,7 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === keyborad.next_key) {
+                        } else if (e.key === keyboard.next_key) {
                             if (this.next_cid !== null) {
                                 this.go_to_content(this.nid, this.next_cid)
                             } else {
@@ -161,14 +152,14 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === keyborad.scroll_key) {
-                            for (let i = 0; i < keyborad.scroll_distance; i++) {
+                        } else if (e.key === keyboard.scroll_key) {
+                            for (let i = 0; i < keyboard.scroll_distance; i++) {
                                 setTimeout(() => {
                                     const main: HTMLElement | null = document.getElementById("main")
                                     if (main !== null) {
                                         main.scrollTop += 1;
                                     }
-                                }, keyborad.scroll_speed * i)
+                                }, keyboard.scroll_speed * i)
                             }
                         }
                     }
@@ -180,14 +171,14 @@
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})
                 }, '搜索在线小说');
-                this.style = db.getSettingStyle();
-                const keyborad = db.getSettingKeyborad();
+                this.style = getSettingStyle();
+                const keyboard = getSettingKeyboard();
                 this.get_text_and_info();
 
                 //快捷键设置
-                if (keyborad.using_keyboard) {
+                if (keyboard.using_keyboard) {
                     document.onkeydown = (e) => {
-                        if (e.key === keyborad.pre_key) {
+                        if (e.key === keyboard.pre_key) {
                             if (this.pre_cid !== null) {
                                 this.go_to_content(this.nid, this.pre_cid);
                             } else {
@@ -197,7 +188,7 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === keyborad.next_key) {
+                        } else if (e.key === keyboard.next_key) {
                             if (this.next_cid !== null) {
                                 this.go_to_content(this.nid, this.next_cid)
                             } else {
@@ -207,14 +198,14 @@
                                     type: 'error'
                                 })
                             }
-                        } else if (e.key === keyborad.scroll_key) {
-                            for (let i = 0; i < keyborad.scroll_distance; i++) {
+                        } else if (e.key === keyboard.scroll_key) {
+                            for (let i = 0; i < keyboard.scroll_distance; i++) {
                                 setTimeout(() => {
                                     const main: HTMLElement | null = document.getElementById("main")
                                     if (main !== null) {
                                         main.scrollTop += 1;
                                     }
-                                }, keyborad.scroll_speed * i)
+                                }, keyboard.scroll_speed * i)
                             }
                         }
                     }

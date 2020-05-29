@@ -1,6 +1,24 @@
 # 小说阅读器使用文档
 
+## 联系方式
+
+如出现bug或者希望添加的功能可用以下联系方式联系
+
+1. 我的个人博客[sushao'bolg](https://www.sushao.blog)
+
+2. 我的github[sushao](https://github.com/suxiaoshao)
+
+3. 这个插件的开源地址[utools-novel-reader](https://github.com/suxiaoshao/utools-novel-reader)
+
+4. 这是我插件在官方论坛的[帖子](https://yuanliao.info/d/1392)，这个帖子下回复我会有提醒的
+
 ## 更新
+
+### v0.2.6
+
+1. 添加爬虫解析html失败的提示
+
+2. 修复了多个解析html的bug
 
 ### v0.2.5
 
@@ -185,13 +203,13 @@
 
 获取按钮的源代码如下
 
-```js
+```ts
 window.getHtml(this.url, this.encoding, str => {
                     console.log(str)
-                    const cheerio = require("cheerio")
+                    this.loading=false
                     const $ = cheerio.load(str, {decodeEntities: false});
                     this.html_list = []
-                    $(this.select).each((index, value) => {
+                    $(this.select).each((index:number, value:CheerioElement) => {
                         const $value = $(value)
                         console.log($.html($value))
                         this.html_list.push($.html($value))

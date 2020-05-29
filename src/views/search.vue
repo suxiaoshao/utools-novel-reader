@@ -64,23 +64,16 @@
 <script lang="ts">
     import navigation from "../components/navigation.vue";
     import search_method from "../util/web/search";
-    import config, {Configs} from "../util/web/config"
+    import config from "../util/web/config"
     import Vue from "vue"
-
-    interface Data {
-        search_name: string,
-        loading: boolean,
-        search_list: string[],
-        config: Configs,
-        selected_type: string
-    }
+    import {SearchData} from "@/util/interface";
 
     export default Vue.extend({
         name: "search",
         components: {
             "my-navigation": navigation
         },
-        data(): Data {
+        data(): SearchData {
             return {
                 search_name: '',
                 loading: false,

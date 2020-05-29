@@ -48,7 +48,7 @@
 
 <script lang="ts">
     import navigation from "../components/navigation.vue";
-    import db from "../util/db";
+    import {addNovel, existNovel, getOneNovelData} from "@/util/db";
     import Vue from "vue"
     import {Chapter} from "@/util/interface";
 
@@ -76,7 +76,10 @@
                 _id: "",
                 content: "",//小说内容
                 author: "未知",//作者名
-                read_chapter: {},//最后阅读章节
+                read_chapter: {
+                    name:"",
+                    cid:0
+                },//最后阅读章节
                 directory_list: [],//目录数组
                 type: "0",//类型
                 regex: '',//正则表达式字符串
@@ -107,8 +110,8 @@
                             return
                         }
                         this.content = " " + data.toString();
-                        // @ts-ignore
-                        this.name = this.path.match(/\\([^\\]*?)\./)[1]
+                        const name = this.path.match(/\\([^\\]*?)\./)
+                        this.name = name === null ? "" : name[1]
                     });
                     this.$notify({
                         title: "提示",
@@ -142,11 +145,11 @@
                 }
 
                 //判断是否已经存在这个地址
-                const old_data = db.existNovel(this.path, "0")
+                const old_data = existNovel(this.path, "0")
                 if (old_data) {
-                    data._rev = db.getOneNovelData(this.path, "0")._rev
+                    data._rev = getOneNovelData(this.path, "0")._rev
                 }
-                db.addNovel(data)
+                addNovel(data)
             },
             split_novel() {
                 //是正则表达式

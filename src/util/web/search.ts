@@ -1,12 +1,15 @@
-import config from "./config"
+import config, {getIdFromHref} from "./config"
+import {SearchData} from "@/util/interface";
+import cheerio from "cheerio"
 
-function search(type:string, search_name:string, that:any) {
+
+function search(type: string, search_name: string, that: SearchData) {
     if (type !== "0") {
         meegoq_search(search_name, that, type)
     }
 }
 
-function meegoq_search(search_name:string, that:any, type:string) {
+function meegoq_search(search_name: string, that: SearchData, type: string) {
     that.loading = true;
     that.search_list = [];
 
@@ -23,19 +26,16 @@ function meegoq_search(search_name:string, that:any, type:string) {
             latest_chapter_id_regex
         } = config[type]["search"]
         that.loading = false;
-        const cheerio = require("cheerio")
         const $ = cheerio.load(str, {decodeEntities: false});
-        $(li).each((index:number, value:any) => {
-            const $value = $.load($.html(value), {decodeEntities: false,xmlMode: true})
-            const name = $value(novel_id_selector).text()
-            let novel_id = $value(novel_id_selector).attr("href")
-            const author = $value(author_selector).text()
-            const latest_chapter_name = $value(latest_chapter_id_selector).text()
-            let latest_chapter_id = $value(latest_chapter_id_selector).attr("href");
-            const update_time = $value(update_time_selector).text()
-            if (novel_id !== undefined) {
-                novel_id = novel_id.match(RegExp(novel_id_regex)).groups["id"];
-                latest_chapter_id = latest_chapter_id.match(RegExp(latest_chapter_id_regex)).groups["id"];
+        $(li).each((index: number, value: CheerioElement) => {
+            const $value = cheerio.load($.html(value), {decodeEntities: false, xmlMode: true})
+            const name: string = $value(novel_id_selector).text()
+            const author: string = $value(author_selector).text()
+            const latest_chapter_name: string = $value(latest_chapter_id_selector).text()
+            const update_time: string = $value(update_time_selector).text()
+            let novel_id: string | null = getIdFromHref($value, novel_id_selector, novel_id_regex)
+            let latest_chapter_id: string | null = getIdFromHref($value, latest_chapter_id_selector, latest_chapter_id_regex)
+            if (novel_id !== null && latest_chapter_id !== null) {
                 that.search_list.push({
                     name: name,
                     novel_id: novel_id,

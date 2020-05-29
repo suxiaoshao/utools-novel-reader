@@ -60,8 +60,9 @@
     import novel_method from "../util/web/novel"
     import setting from "../components/setting.vue";
     import header from "../components/header.vue";
-    import db from "../util/db";
+    import {addNovel, existNovel, removeNovel} from "@/util/db";
     import Vue from "vue"
+    import {NovelData} from "@/util/interface";
 
     export default Vue.extend({
         name: "novel",
@@ -70,7 +71,7 @@
             "my-setting": setting,
             "my-header": header
         },
-        data() {
+        data():NovelData {
             return {
                 name: '',//小说名字
                 author: '',//作者名字
@@ -110,7 +111,7 @@
             },
 
             //收藏小说
-            collect() {
+            collect():void {
                 let data = {
                     _id: this.nid,
                     name: this.name,
@@ -119,18 +120,18 @@
                     bookmark_list: [],
                     type: this.type
                 };
-                db.addNovel(data)
-                this.whether_collection = db.existNovel(this.nid, this.type)
+                addNovel(data)
+                this.whether_collection = existNovel(this.nid, this.type)
             },
 
             //取消收藏
-            cancel_collect() {
-                db.removeNovel(this.nid, this.type)
-                this.whether_collection = db.existNovel(this.nid, this.type)
+            cancel_collect():void {
+                removeNovel(this.nid, this.type)
+                this.whether_collection = existNovel(this.nid, this.type)
             },
             // 创建方法
-            created_method() {
-                this.whether_collection = db.existNovel(this.nid, this.type)
+            created_method():void {
+                this.whether_collection = existNovel(this.nid, this.type)
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})
                 }, '搜索在线小说');

@@ -1,6 +1,6 @@
 {
   "name": "novel",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,24 +10,22 @@
     "cheerio": "^1.0.0-rc.3",
     "core-js": "^3.6.5",
     "element-ui": "^2.13.1",
-    "encoding_convertor": "^0.2.1",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.18",
+    "@types/iconv-lite": "0.0.1",
     "@vue/cli-plugin-babel": "~4.2.0",
     "@vue/cli-plugin-router": "~4.2.0",
     "@vue/cli-plugin-typescript": "^4.3.1",
     "@vue/cli-service": "~4.2.0",
-    "electron": "^8.2.5",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.2",
     "typescript": "~3.8.3",
-    "vue-cli-plugin-element": "^1.0.1",
-    "vue-template-compiler": "^2.6.11",
     "utools-helper": "^1.0.3",
-    "@types/cheerio": "^0.22.18",
-    "@types/iconv-lite": "0.0.1"
+    "vue-cli-plugin-element": "^1.0.1",
+    "vue-template-compiler": "^2.6.11"
   },
   "browserslist": [
     "> 1%",

@@ -8,7 +8,7 @@ function set_initialization() {
         // 设置数据优化
         const new_setting = {
             _id: "setting",
-            keyborad: {
+            keyboard: {
                 using_keyboard: false,
                 pre_key: "ArrowLeft",
                 next_key: "ArrowRight",
@@ -26,29 +26,31 @@ function set_initialization() {
                 font_size: 18,
                 line_height: 25
             },
-            version: "0.2.5"
+            version: "0.2.6"
         }
         window.utools.db.put(new_setting)
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.2.5"
-    setting.style=Object.assign({
+    setting.version = "0.2.6"
+    setting.style = Object.assign({
         theme: "base-theme",
         font_size: 18,
         line_height: 25
-    },setting.style);
+    }, setting.style);
 
-    // 按键设置加入活动快捷键
-    setting.keyborad = Object.assign({
-        using_keyboard: false,
-        pre_key: "ArrowLeft",
-        next_key: "ArrowRight",
-        scroll_key: " ",
-        scroll_distance: 150,
-        scroll_speed: 5
-    }, setting.keyborad);
+    if (setting.hasOwnProperty("keyborad")) {// 按键设置加入活动快捷键
+        setting.keyboard = Object.assign({
+            using_keyboard: false,
+            pre_key: "ArrowLeft",
+            next_key: "ArrowRight",
+            scroll_key: " ",
+            scroll_distance: 150,
+            scroll_speed: 5
+        }, setting.keyborad);
 
+        delete setting.keyborad
+    }
     // 设置行高
     setting.style = Object.assign({
         theme: "base-theme",

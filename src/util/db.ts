@@ -1,14 +1,14 @@
-const {Notification} = require("element-ui")
-const {Message} = require("element-ui")
+import {Message} from "element-ui";
+import {Notification} from "element-ui";
 import config from "@/util/web/config"
-import {DBItem} from "utools-helper/@types/utools";
+import {Keyboard, NovelItem, Remind, Setting, Style} from "@/util/interface";
 
 
 /*
 * 内部方法
 * */
 
-function viewIdToDbId(id:string, type:string) {
+function viewIdToDbId(id: string, type: string) {
     if (type !== "0") {
         const {novel_id_to_url} = config[type]
         return novel_id_to_url.replace("{##novel_id##}", id)
@@ -17,7 +17,7 @@ function viewIdToDbId(id:string, type:string) {
     }
 }
 
-function dbIdToViewId(id:string, type:string):string {
+function dbIdToViewId(id: string, type: string): string {
     if (type !== "0") {
         const {url_to_novel_id} = config[type]
         // @ts-ignore
@@ -34,21 +34,21 @@ function dbIdToViewId(id:string, type:string):string {
 /**
  * 获取设置信息
  * */
-function getSettingInfo() {
-    return window.utools.db.get("setting")
+export function getSettingInfo(): Setting {
+    return window.utools.db.get("setting") as Setting
 }
 
 /**
  * 获取提醒设置内容
  * */
-function getSettingRemind() {
+function getSettingRemind(): Remind {
     return getSettingInfo().remind
 }
 
 /**
  * 获取样式设置内容
  * */
-function getSettingStyle() {
+export function getSettingStyle(): Style {
     return getSettingInfo().style
 }
 
@@ -56,15 +56,15 @@ function getSettingStyle() {
  * 获取快捷键信息
  * */
 
-function getSettingKeyborad() {
-    return getSettingInfo().keyborad
+export function getSettingKeyboard(): Keyboard {
+    return getSettingInfo().keyboard
 }
 
 /**
  * 更新设置
  * @param data
  * */
-function updateSetting(data:DBItem<any>) {
+export function updateSetting(data: Setting): boolean {
     const setting_data = getSettingInfo()
     const result = window.utools.db.put(data)
     if (result.hasOwnProperty("error") && result["error"]) {
@@ -93,12 +93,12 @@ function updateSetting(data:DBItem<any>) {
  * 获取所有小说
  * */
 
-function getAllNovelData() {
+export function getAllNovelData(): NovelItem[] {
     return window.utools.db.allDocs().filter(value => {
         return value._id !== "setting"
     }).map(value => {
         value._id = dbIdToViewId(value._id, value.type)
-        return value
+        return value as NovelItem
     })
 }
 
@@ -106,7 +106,7 @@ function getAllNovelData() {
  * 删除小说
  * */
 
-function removeNovel(id:string, type:string) {
+export function removeNovel(id: string, type: string):boolean {
     id = viewIdToDbId(id, type)
     const result = window.utools.db.remove(id);
     const remind = getSettingRemind()
@@ -136,7 +136,7 @@ function removeNovel(id:string, type:string) {
  * 添加小说
  * */
 
-function addNovel(item:DBItem<any>) {
+export function addNovel(item: NovelItem) {
     item._id = viewIdToDbId(item._id, item.type)
     const result = window.utools.db.put(item);
     const remind = getSettingRemind()
@@ -167,13 +167,13 @@ function addNovel(item:DBItem<any>) {
  * 判断小说是否存在
  * */
 
-function existNovel(id:string, type:string):boolean {
+export function existNovel(id: string, type: string): boolean {
     id = viewIdToDbId(id, type)
     const result = window.utools.db.get(id)
     return result !== null;
 }
 
-function updateNovel(data:DBItem<any>) {
+export function updateNovel(data: NovelItem):void {
     data._id = viewIdToDbId(data._id, data.type)
     const result = window.utools.db.put(data);
     const remind = getSettingRemind()
@@ -201,22 +201,9 @@ function updateNovel(data:DBItem<any>) {
  * 获取小说数据
  * */
 
-function getOneNovelData(id:string, type:string) {
+export function getOneNovelData(id: string, type: string):NovelItem {
     id = viewIdToDbId(id, type)
-    const result = window.utools.db.get(id)
+    const result = window.utools.db.get(id) as NovelItem
     result._id = dbIdToViewId(result._id, type)
     return result
-}
-
-export default {
-    getSettingInfo,
-    getAllNovelData,
-    getSettingStyle,
-    removeNovel,
-    updateSetting,
-    addNovel,
-    existNovel,
-    getOneNovelData,
-    updateNovel,
-    getSettingKeyborad
 }

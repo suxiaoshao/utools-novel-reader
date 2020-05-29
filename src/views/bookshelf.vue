@@ -49,47 +49,41 @@
 
 <script lang="ts">
     import navigation from "../components/navigation.vue";
-    import db from "../util/db";
+    import {getAllNovelData, removeNovel} from "@/util/db";
     import Vue from "vue"
-    import {DBItem} from "utools-helper/@types/utools";
-
-    interface Data {
-        loading: boolean
-        all_book_list: DBItem<any>[]
-    }
+    import {BookshelfData} from "@/util/interface";
 
     export default Vue.extend({
         name: "bookshelf",
         components: {
             "my-navigation": navigation
         },
-        data(): Data {
+        data(): BookshelfData {
             return {
                 loading: false,
                 all_book_list: []
             }
         },
         methods: {
-            go_to_novel(nid: string, type: string) {
+            go_to_novel(nid: string, type: string):void {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: type}})
             },
-            go_to_content(nid: string, cid: string, type: string) {
+            go_to_content(nid: string, cid: string, type: string):void {
                 this.myHistory.addNewItem({name: "content", params: {nid: nid, cid: cid}, query: {type: type}})
             },
-            cancel_collect(nid: string, type: string) {
-                db.removeNovel(nid, type)
-                this.all_book_list = db.getAllNovelData()
+            cancel_collect(nid: string, type: string):void {
+                removeNovel(nid, type)
+                this.all_book_list = getAllNovelData()
             },
-            created_method() {
-                this.all_book_list = db.getAllNovelData()
+            created_method():void {
+                this.all_book_list = getAllNovelData()
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
                 }, '搜索在线小说');
                 window.utools.subInputBlur();
-                // @ts-ignore
-                document.onkeydown = undefined;
+                document.onkeydown = null;
             },
-            get_setting_info() {
+            get_setting_info():void {
             }
         },
         created: function () {

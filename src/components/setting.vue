@@ -9,13 +9,13 @@
                         <!-- 是否启用快捷键 -->
                         <el-form-item>
                             <el-switch
-                                v-model="setting_data.keyborad.using_keyboard"
+                                v-model="setting_data.keyboard.using_keyboard"
                                 inactive-text="使用快捷键打开上下章">
                             </el-switch>
                         </el-form-item>
 
                         <!-- 上一章快捷键 -->
-                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                        <el-form-item v-show="setting_data.keyboard.using_keyboard">
                             <el-row :gutter="2">
                                 <el-col :span="5">
                                     <el-popover placement="top-start" width="200" trigger="hover"
@@ -26,14 +26,14 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input v-model="setting_data.keyborad.pre_key" @blur="cleared_to_monitor"
+                                    <el-input v-model="setting_data.keyboard.pre_key" @blur="cleared_to_monitor"
                                               @focus="listen_previous_chapter" readonly></el-input>
                                 </el-col>
                             </el-row>
                         </el-form-item>
 
                         <!-- 下一章快捷键 -->
-                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                        <el-form-item v-show="setting_data.keyboard.using_keyboard">
                             <el-row :gutter="2">
                                 <el-col :span="5">
                                     <el-popover placement="top-start" width="200" trigger="hover"
@@ -44,14 +44,14 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input v-model="setting_data.keyborad.next_key" @blur="cleared_to_monitor"
+                                    <el-input v-model="setting_data.keyboard.next_key" @blur="cleared_to_monitor"
                                               @focus="listen_next_chapter" readonly></el-input>
                                 </el-col>
                             </el-row>
                         </el-form-item>
 
                         <!-- 滚动小说快捷键 -->
-                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                        <el-form-item v-show="setting_data.keyboard.using_keyboard">
                             <el-row :gutter="2">
                                 <el-col :span="5">
                                     <el-popover placement="top-start" width="200" trigger="hover"
@@ -62,14 +62,14 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input v-model="setting_data.keyborad.scroll_key" @blur="cleared_to_monitor"
+                                    <el-input v-model="setting_data.keyboard.scroll_key" @blur="cleared_to_monitor"
                                               @focus="listen_scroll" readonly></el-input>
                                 </el-col>
                             </el-row>
                         </el-form-item>
 
                         <!-- 滚动长度 -->
-                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                        <el-form-item v-show="setting_data.keyboard.using_keyboard">
                             <el-row :gutter="2">
                                 <el-col :span="5">
                                     <el-popover placement="top-start" width="200" trigger="hover"
@@ -80,14 +80,14 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input-number v-model="setting_data.keyborad.scroll_distance" :min="1"
+                                    <el-input-number v-model="setting_data.keyboard.scroll_distance" :min="1"
                                                      :max="1000"></el-input-number>
                                 </el-col>
                             </el-row>
                         </el-form-item>
 
                         <!-- 滚动速度 -->
-                        <el-form-item v-show="setting_data.keyborad.using_keyboard">
+                        <el-form-item v-show="setting_data.keyboard.using_keyboard">
                             <el-row :gutter="2">
                                 <el-col :span="5">
                                     <el-popover placement="top-start" width="200" trigger="hover"
@@ -98,7 +98,7 @@
                                     </el-popover>
                                 </el-col>
                                 <el-col :span="17">
-                                    <el-input-number v-model="setting_data.keyborad.scroll_speed" :min="0"
+                                    <el-input-number v-model="setting_data.keyboard.scroll_speed" :min="0"
                                                      :max="20"></el-input-number>
                                 </el-col>
                             </el-row>
@@ -171,12 +171,12 @@
 </template>
 
 <script lang="ts">
-    import db from "../util/db";
+    import {getSettingInfo, updateSetting} from "@/util/db";
     import Vue from "vue"
-    import {DBItem} from "utools-helper/@types/utools";
+    import {Setting} from "@/util/interface";
 
     interface Data {
-        setting_data: DBItem<any>,
+        setting_data: Setting,
         activeName: string
     }
 
@@ -186,7 +186,7 @@
             return {
                 setting_data: {
                     _id: "setting",
-                    keyborad: {
+                    keyboard: {
                         using_keyboard: false,
                         pre_key: "ArrowLeft",
                         next_key: "ArrowRight",
@@ -219,8 +219,8 @@
             },
             listen_previous_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.keyborad.scroll_key && e.key !== this.setting_data.keyborad.next_key) {
-                        this.setting_data.keyborad.pre_key = e.key;
+                    if (e.key !== this.setting_data.keyboard.scroll_key && e.key !== this.setting_data.keyboard.next_key) {
+                        this.setting_data.keyboard.pre_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -232,8 +232,8 @@
             },
             listen_next_chapter() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.keyborad.pre_key && e.key !== this.setting_data.keyborad.scroll_key) {
-                        this.setting_data.keyborad.next_key = e.key;
+                    if (e.key !== this.setting_data.keyboard.pre_key && e.key !== this.setting_data.keyboard.scroll_key) {
+                        this.setting_data.keyboard.next_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -245,8 +245,8 @@
             },
             listen_scroll() {
                 document.onkeydown = (e) => {
-                    if (e.key !== this.setting_data.keyborad.pre_key && e.key !== this.setting_data.keyborad.next_key) {
-                        this.setting_data.keyborad.scroll_key = e.key;
+                    if (e.key !== this.setting_data.keyboard.pre_key && e.key !== this.setting_data.keyboard.next_key) {
+                        this.setting_data.keyboard.scroll_key = e.key;
                     } else {
                         this.$message({
                             showClose: true,
@@ -260,18 +260,18 @@
                 document.onkeydown = null
             },
             save_settings() {
-                db.updateSetting(this.setting_data)
-                this.setting_data = db.getSettingInfo()
+                updateSetting(this.setting_data)
+                this.setting_data = getSettingInfo()
                 this.$emit("after-save")
                 this.$emit("close-dialog")
             },
             restore_settings() {
-                this.setting_data = db.getSettingInfo()
+                this.setting_data = getSettingInfo()
                 this.$emit("close-dialog")
             }
         },
         created() {
-            this.setting_data = db.getSettingInfo()
+            this.setting_data = getSettingInfo()
         }
     })
 </script>

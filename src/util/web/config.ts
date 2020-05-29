@@ -13,8 +13,8 @@ interface Directory {
     url: string,
     chapter_id: string,
     chapter_id_regex: string,
-    slice_left: number | boolean,
-    slice_right: number | boolean
+    slice_left: number | false,
+    slice_right: number | false
 }
 
 interface Info {
@@ -58,6 +58,18 @@ export interface Configs {
     [propName: string]: Config
 }
 
+//根据selector和regexString获取id，如果找不到返回null，找到了返回结果:string
+export function getIdFromHref($: CheerioStatic, selector: string, regexString: string): null | string {
+    const href = $(selector).attr("href")
+    if (href === undefined) {
+        return null
+    }
+    const re = href.match(regexString)
+    if (re === null) {
+        return null
+    }
+    return re.groups === undefined ? null : re.groups['id']
+}
 const config: Configs = {
     "1": {
         "encoding": "utf-8",
