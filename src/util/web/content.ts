@@ -1,7 +1,8 @@
 import {getOneNovelData} from "../db";
 import config, {getIdFromHref} from "./config"
 import {ContentData, FileNovelItem} from "@/util/interface";
-import cheerio from "cheerio"
+import * as cheerio from "cheerio"
+import {netLog} from "electron";
 
 interface ContentDataExtend extends ContentData {
 
@@ -33,11 +34,17 @@ function get_meegoq_content(nid: string, cid: string, that: ContentDataExtend, t
         //获取pre_cid和next_cid
         that.pre_cid = getIdFromHref($, pre_chapter_id, pre_chapter_id_regex)
         that.next_cid = getIdFromHref($, next_chapter_id, next_chapter_id_regex)
-        $(content).text().split(content_split).forEach((item: string) => {
-            if (item !== "") {
-                that.content_list.push(item)
-            }
-        })
+        if (content_split !== false) {
+            $(content).text().split(content_split).forEach((item: string) => {
+                if (item !== "") {
+                    that.content_list.push(item)
+                }
+            })
+        } else {
+            $(content).each(((index, element) => {
+                that.content_list.push($(element).text())
+            }))
+        }
         that.update_reading_section();
         that.loading = false
     })
@@ -68,7 +75,7 @@ function get_file_content(nid: string, cid: string, that: ContentDataExtend, typ
             return value.replace(/ +/, "")
         }
     })
-    that.pre_cid = String(Number(cid) - 1)
+    that.pre_cid = Number(cid) - 1 >= 0 ? String(Number(cid) - 1) : null
     if (result.directory_list.length === Number(cid) + 1) {
         that.next_cid = null;
     } else {

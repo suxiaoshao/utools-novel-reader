@@ -5,7 +5,7 @@ interface Search {
     author: string,
     latest_chapter_id: string,
     latest_chapter_id_regex: string,
-    update_time: string,
+    update_time: string | false,
     novel_id_regex: string
 }
 
@@ -21,7 +21,7 @@ interface Info {
     url: string,
     name: string,
     author: string,
-    last_update_time:string,
+    last_update_time: string,
     latest_chapter_id: string,
     latest_chapter_id_regex: string
 }
@@ -40,7 +40,7 @@ interface Content {
     next_chapter_id: string,
     next_chapter_id_regex: string,
     content: string,
-    content_split: string
+    content_split: string | false
 }
 
 export interface Config {
@@ -70,6 +70,7 @@ export function getIdFromHref($: CheerioStatic, selector: string, regexString: s
     }
     return re.groups === undefined ? null : re.groups['id']
 }
+
 const config: Configs = {
     "1": {
         "encoding": "utf-8",
@@ -159,6 +160,51 @@ const config: Configs = {
             "next_chapter_id_regex": "\\/(?<id>\\d+).html",
             "content": "#content",
             "content_split": "　　"
+        }
+    },
+    "3": {
+        encoding: "utf-8",
+        url: "https://www.9txs.com/",
+        name: "九桃小说",
+        novel_id_to_url: "https://www.9txs.com/book/{##novel_id##}.html",
+        url_to_novel_id: "\\/(?<id>\\w+)\\.html",
+        search: {
+            url: "https://www.9txs.com/search.html?searchkey={##search_name##}",
+            li: "body > div.main > div > div.box.left.w_840 > ul > li",
+            novel_id: "a.bookname",
+            author: "p:nth-child(4) > a.author",
+            latest_chapter_id: "a.chapter",
+            latest_chapter_id_regex: "\\/(?<id>\\w+)\\.html",
+            update_time: false,
+            novel_id_regex: "\\/(?<id>\\w+)\\.html"
+        },
+        novel: {
+            directory: {
+                url: "https://www.9txs.com/book/{##novel_id##}/",
+                chapter_id: "body > div.main > div > div:nth-child(2) > div.read > dl > dd > a",
+                chapter_id_regex: "\\/(?<id>\\w+)\\.html",
+                slice_left: 12,
+                slice_right: false
+            },
+            info: {
+                url: "https://www.9txs.com/book/{##novel_id##}.html",
+                name: "body > div.main > div > div.left.w_860 > div:nth-child(1) > div.detail > h1",
+                author: "body > div.main > div > div.left.w_860 > div:nth-child(1) > div.detail > p:nth-child(3) > a:nth-child(1)",
+                latest_chapter_id: "body > div.main > div > div.left.w_860 > div:nth-child(1) > div.detail > p:nth-child(6) > a",
+                last_update_time: "body > div.main > div > div.left.w_860 > div:nth-child(1) > div.detail > p:nth-child(6) > span",
+                latest_chapter_id_regex: "\\/(?<id>\\w+)\\.html",
+            }
+        },
+        content: {
+            url: "https://www.9txs.com/book/{##novel_id##}/{##chapter_id##}.html",
+            chapter_name: "#chapter > div.main > div > div.area > h1",
+            novel_name: "#chapter > div.main > div > div.box > div > a:nth-child(5)",
+            pre_chapter_id: "#chapter > div.main > div > div.area > div.page > a:nth-child(1)",
+            pre_chapter_id_regex: "\\/(?<id>\\w+)\\.html",
+            next_chapter_id: "#chapter > div.main > div > div.area > div.page > a:nth-child(3)",
+            next_chapter_id_regex: "\\/(?<id>\\w+)\\.html",
+            content: "#content > p",
+            content_split: false
         }
     }
 }

@@ -2,7 +2,7 @@ import {getOneNovelData} from "../db";
 import config, {getIdFromHref} from "./config"
 import {Message} from "element-ui";
 import {FileNovelItem, NovelData} from "@/util/interface";
-import cheerio from "cheerio"
+import * as cheerio from "cheerio"
 
 function get_directory_and_info(type: string, nid: string, that: NovelData) {
     if (type === "0") {

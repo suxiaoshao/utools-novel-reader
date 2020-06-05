@@ -174,8 +174,9 @@
                         });
                     }
                 } else {
+                    //非正则提取章节
                     this.directory_list = [];
-                    const chapter_num = this.content.length / this.split_num + Number(this.content.length % this.split_num !== 0)
+                    const chapter_num = this.content.length / this.split_num
                     for (let i = 0; i < chapter_num; i++) {
                         this.directory_list.push({"name": `第${i + 1}章`, "cid": i});
                     }

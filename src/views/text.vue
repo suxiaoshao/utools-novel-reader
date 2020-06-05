@@ -28,7 +28,7 @@
     import navigation from "../components/navigation.vue"
     import router from "../router"
     import Vue from "vue"
-    import cheerio from "cheerio"
+    import * as cheerio from "cheerio"
     interface Data{
         url:string,
         select:string,

@@ -15,7 +15,7 @@
                 <!-- 章节选择器 -->
                 <div style="text-align: center;">
                     <p style="margin-block-end: 0">
-                        <span style="margin-right: 10px" v-show="pre_cid!==-1">
+                        <span style="margin-right: 10px" v-show="pre_cid!==null">
                             <i class="el-icon-caret-left"></i>
                             <el-link target="_blank" :underline="false"
                                      :type="style.theme==='gray-theme'?'info':'default'"
@@ -26,7 +26,7 @@
                             <el-link target="_blank" :underline="false" @click="go_to_novel(nid)"
                                      :type="style.theme==='gray-theme'?'info':'default'">目录</el-link>
                         </span>
-                        <span v-show="next_cid!==-1" style="margin-right: 10px">
+                        <span v-show="next_cid!==null" style="margin-right: 10px">
                             <i class="el-icon-caret-right"></i>
                             <el-link target="_blank" :underline="false" @click="go_to_content(nid,next_cid)"
                                      :type="style.theme==='gray-theme'?'info':'default'">下一章</el-link>
@@ -45,7 +45,7 @@
                 <!-- 章节选择器 -->
                 <div style="text-align: center;">
                     <p style="margin-block-start: 0">
-                        <span style="margin-right: 10px" v-show="pre_cid!==-1">
+                        <span style="margin-right: 10px" v-show="pre_cid!==null">
                             <i class="el-icon-caret-left"></i>
                             <el-link target="_blank" :underline="false"
                                      :type="style.theme==='gray-theme'?'info':'default'"
@@ -56,7 +56,7 @@
                             <el-link target="_blank" :underline="false" @click="go_to_novel(nid)"
                                      :type="style.theme==='gray-theme'?'info':'default'">目录</el-link>
                         </span>
-                        <span v-show="next_cid!==-1" style="margin-right: 10px">
+                        <span v-show="next_cid!==null" style="margin-right: 10px">
                             <i class="el-icon-caret-right"></i>
                             <el-link target="_blank" :underline="false"
                                      :type="style.theme==='gray-theme'?'info':'default'"

@@ -16,28 +16,28 @@ window.utools.onPluginReady(() => {
         router,
         render: h => h(App)
     }).$mount('#app');
+    utools.onPluginEnter((params) => {
+        //分流
+        const code:string=params.code
+        const payload:any[]=params.payload
+        if (code === "search") {
+            my_history.addNewItem({name: "search", query: {type: "1"}})
+        } else if (code === 'bookshelf') {
+            //进入书架
+            my_history.addNewItem({name: "bookshelf"})
+        } else if (code === "read_novel" &&payload.length >= 1) {
+            //读取本地小说
+            my_history.addNewItem({
+                name: 'read_file',
+                query: {"path": String(payload[0].path)}
+            })
+        }else{
+            Notification({
+                title:"错误",
+                message:"似乎出现了bug",
+                type:"error",
+                duration: 3000
+            })
+        }
+    });
 })
-utools.onPluginEnter((params) => {
-    //分流
-    const code:string=params.code
-    const payload:any[]=params.payload
-    if (code === "search") {
-        my_history.addNewItem({name: "search", query: {type: "1"}})
-    } else if (code === 'bookshelf') {
-        //进入书架
-        my_history.addNewItem({name: "bookshelf"})
-    } else if (code === "read_novel" &&payload.length >= 1) {
-        //读取本地小说
-        my_history.addNewItem({
-            name: 'read_file',
-            query: {"path": String(payload[0].path)}
-        })
-    }else{
-        Notification({
-            title:"错误",
-            message:"似乎出现了bug",
-            type:"error",
-            duration: 3000
-        })
-    }
-});
