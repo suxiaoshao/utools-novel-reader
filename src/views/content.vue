@@ -296,3 +296,14 @@
         }
     }
 </style>
+<style lang="scss">
+    .content {
+        .el-container {
+            .el-header {
+                padding: 0;
+            }
+        }
+
+    }
+
+</style>
