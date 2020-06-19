@@ -79,13 +79,13 @@ export interface NovelData {
     last_update_time: string
     latest_chapter: string
     last_cid: string
+    directory_list: Chapter[]
     whether_collection: boolean
     info_loading: boolean
     directory_loading: boolean
-    directory_list: Chapter[]
 }
 //搜索的每一个信息
-interface SearchListItem {
+export interface SearchListItem {
     name: string
     novel_id: string
     author: string

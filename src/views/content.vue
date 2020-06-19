@@ -69,7 +69,7 @@
     </div>
 </template>
 <script lang="ts">
-    import content_method from "../util/web/content";
+    import {getContent} from "@/util/web/content";
     import header from "../components/header.vue";
     import {existNovel, getOneNovelData, getSettingKeyboard, getSettingStyle, updateNovel} from "@/util/db";
     import Vue from "vue"
@@ -101,7 +101,17 @@
         },
         methods: {
             get_text_and_info() {
-                content_method.get_content(this.type, this.nid, this.cid, this);
+                this.loading = true;
+                getContent(this.type, this.nid, this.cid)
+                    .then(({novel_name, chapter_name, content_list, pre_cid, next_cid}) => {
+                        this.novel_name = novel_name
+                        this.chapter_name = chapter_name
+                        this.content_list = content_list
+                        this.pre_cid = pre_cid
+                        this.next_cid = next_cid
+                        this.update_reading_section();
+                        this.loading = false
+                    });
             },
             go_to_novel(nid: string) {
                 this.myHistory.addNewItem({name: "novel", params: {nid: nid}, query: {type: String(this.type)}})

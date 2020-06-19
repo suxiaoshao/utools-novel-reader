@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import './plugins/element.ts'
+import './util/element.ts'
 import "./assets/css/app.scss"
 import myHistory from "./util/history";
 import App from './App.vue'
-import router from './router'
+import router from './util/router'
 import {Notification} from "element-ui";
 
 let my_history=new myHistory()

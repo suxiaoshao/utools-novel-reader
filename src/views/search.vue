@@ -63,7 +63,7 @@
 
 <script lang="ts">
     import navigation from "../components/navigation.vue";
-    import search_method from "../util/web/search";
+    import {search} from "@/util/web/search";
     import config from "../util/web/config"
     import Vue from "vue"
     import {SearchData} from "@/util/interface";
@@ -85,7 +85,12 @@
         methods: {
             search() {
                 if (this.$route.query.name !== '' && this.$route.query.name !== undefined) {
-                    search_method.search(this.type, String(this.$route.query.name), this);
+                    this.loading = true;
+                    this.search_list = [];
+                    search(this.type, String(this.$route.query.name)).then(searchList => {
+                        this.search_list = searchList
+                        this.loading = false
+                    });
                 }
             },
             go_to_novel(nid: string) {

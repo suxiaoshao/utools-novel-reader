@@ -14,6 +14,16 @@
 
 ## 更新
 
+### v0.2.11
+
+1. 修改了后台api,提升了页面访问速度
+
+### v0.2.10
+
+1. 修复数据没有完全得到就可以加入书架的bug
+
+2. 修复书架数据不完整整个页面卡死的bug
+
 ### v0.2.9
 
 1. 添加了在阅读页面和章节页面返回书架的功能
@@ -218,44 +228,36 @@
 获取按钮的源代码如下
 
 ```ts
-window.getHtml(this.url, this.encoding, str => {
-                    console.log(str)
-                    this.loading=false
-                    const $ = cheerio.load(str, {decodeEntities: false});
-                    this.html_list = []
-                    $(this.select).each((index:number, value:CheerioElement) => {
-                        const $value = $(value)
-                        console.log($.html($value))
-                        this.html_list.push($.html($value))
-                    })
-                })
+
+this.loading = true       
+getHtml(this.url, this.encoding)
+    .then(htmlString => {
+        console.log(htmlString)
+        this.loading = false
+        const $ = cheerio.load(htmlString, {decodeEntities: false});
+        this.html_list = []
+        $(this.select).each((index: number, value: CheerioElement) => {
+            const $value = $(value)
+            console.log($.html($value))
+            this.html_list.push($.html($value))
+        })
+    })
+    .catch(error => {
+        console.log(error)
+    })
+
 ```
 
 getHtml的源代码
 
-```js
-function getHtml(url, encoding, then) {
-    const iconv = require("iconv-lite");
-    let https
-    if (url.indexOf("https")===0){
-        https = require("https");
-    }else{
-        https = require("http");
-    }
-    let req = https.get(url, (res) => {
-        let chunks = [];
-        res.on("data", (chunk) => {
-            chunks.push(chunk);
-        });
-        res.on("end", () => {
-            let html = iconv.decode(Buffer.concat(chunks), encoding);
-            then(html)
-        });
-    });
-    req.end();
+```ts
+async function getHtml(url: string, encoding: string): Promise<string> {
+    const response = await axios.get<ArrayBuffer>(url, {
+        responseType: "arraybuffer"
+    })
+    const htmlBuf = response.data
+    return window.iconv.decode(Buffer.from(htmlBuf), encoding)
 }
-
-window.getHtml = getHtml
 ```
 
 用户输入的url和xpath选择方式绑定在呢this.url和this.select,axios,xmldom,xpath这三个包也绑定在this.axios,this.xmldom,this.xpath上

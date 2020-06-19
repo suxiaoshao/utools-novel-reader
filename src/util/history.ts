@@ -1,4 +1,4 @@
-import router from "../router";
+import router from "./router";
 import {Message} from "element-ui";
 import {RawLocation} from "vue-router/types/router"
 

@@ -7,7 +7,7 @@ const routes = [
     {
         path: '/test',
         name: 'test',
-        component: () => import("../views/text.vue")
+        component: () => import("../views/test.vue")
     },
     {
         path: "/search",

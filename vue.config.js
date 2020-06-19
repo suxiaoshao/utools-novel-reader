@@ -1,8 +1,8 @@
 module.exports = {
     publicPath: './',
-    productionSourceMap:false,
-    outputDir: './result/vue',
-    devServer:{
-        port:8081
+    productionSourceMap: false,
+    outputDir: './build/vue',
+    devServer: {
+        port: 8081
     }
 };

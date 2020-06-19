@@ -26,9 +26,9 @@
 
                             <!-- 收藏信息 -->
                             <span style="margin-right: 10px" v-show="!whether_collection">
-                            <el-link target="_blank" :underline="false" @click="collect">
-                                <i class="el-icon-star-off"></i>
-                                加入书架
+                            <el-link target="_blank" :underline="false" @click="collect"
+                                     :disabled="(info_loading||directory_loading)">
+                                <i class="el-icon-star-off"></i>加入书架
                             </el-link>
                         </span>
                             <span style="margin-right: 10px" v-show="whether_collection">
@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-    import novel_method from "../util/web/novel"
+    import {getDirectoryAndInfo} from "@/util/web/novel"
     import setting from "../components/setting.vue";
     import header from "../components/header.vue";
     import {addNovel, existNovel, removeNovel} from "@/util/db";
@@ -71,7 +71,7 @@
             "my-setting": setting,
             "my-header": header
         },
-        data():NovelData {
+        data(): NovelData {
             return {
                 name: '',//小说名字
                 author: '',//作者名字
@@ -98,7 +98,19 @@
 
             //获得小说信息和章节
             to_get_directory_and_info() {
-                novel_method.get_directory_and_info(this.type, this.nid, this);
+                this.info_loading = true;
+                this.directory_loading = true;
+                getDirectoryAndInfo(this.type, this.nid)
+                    .then(({name, author, latest_chapter, last_cid, last_update_time, directory_list}) => {
+                        this.name = name
+                        this.author = author
+                        this.last_cid = last_cid
+                        this.last_update_time = last_update_time
+                        this.latest_chapter = latest_chapter
+                        this.directory_list = directory_list
+                        this.info_loading = false;
+                        this.directory_loading = false;
+                    });
             },
 
             //到小说章节
@@ -111,7 +123,7 @@
             },
 
             //收藏小说
-            collect():void {
+            collect(): void {
                 let data = {
                     _id: this.nid,
                     name: this.name,
@@ -125,12 +137,12 @@
             },
 
             //取消收藏
-            cancel_collect():void {
+            cancel_collect(): void {
                 removeNovel(this.nid, this.type)
                 this.whether_collection = existNovel(this.nid, this.type)
             },
             // 创建方法
-            created_method():void {
+            created_method(): void {
                 this.whether_collection = existNovel(this.nid, this.type)
                 window.utools.setSubInput(({text}) => {
                     this.myHistory.addNewItem({name: "search", query: {name: text, type: this.type}})

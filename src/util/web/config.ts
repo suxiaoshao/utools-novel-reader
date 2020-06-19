@@ -1,3 +1,13 @@
+import axios from "axios"
+
+export async function getHtml(url: string, encoding: string): Promise<string> {
+    const response = await axios.get<ArrayBuffer>(url, {
+        responseType: "arraybuffer"
+    })
+    const htmlBuf = response.data
+    return window.iconv.decode(Buffer.from(htmlBuf), encoding)
+}
+
 interface Search {
     url: string,
     li: string,
