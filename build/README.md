@@ -14,6 +14,17 @@
 
 ## 更新
 
+### v0.3.1
+
+1. 因为utools官方服务器的压力，现在本地读取小说的限制为2MB,之前储存的
+大于2MB的小说也将会被删除,如给你带来不便请见谅。
+
+2. 具体原因，请看这个 [帖子](https://yuanliao.info/d/1877)
+
+### v0.2.12
+
+1. 减少插件体积
+
 ### v0.2.11
 
 1. 修改了后台api,提升了页面访问速度
@@ -256,7 +267,7 @@ async function getHtml(url: string, encoding: string): Promise<string> {
         responseType: "arraybuffer"
     })
     const htmlBuf = response.data
-    return window.iconv.decode(Buffer.from(htmlBuf), encoding)
+    return iconv.decode(Buffer.from(htmlBuf), encoding)
 }
 ```
 

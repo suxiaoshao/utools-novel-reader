@@ -16,10 +16,10 @@ window.utools.onPluginReady(() => {
         router,
         render: h => h(App)
     }).$mount('#app');
-    utools.onPluginEnter((params) => {
+    utools.onPluginEnter(params=> {
         //分流
         const code:string=params.code
-        const payload:any[]=params.payload
+        const payload:any[]=params.payload as any[]
         if (code === "search") {
             my_history.addNewItem({name: "search", query: {type: "1"}})
         } else if (code === 'bookshelf') {

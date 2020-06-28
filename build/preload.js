@@ -1,5 +1,4 @@
 const fs = require("fs")
-const iconv = require("iconv-lite")
 
 function set_initialization() {
     let setting = window.utools.db.get("setting");
@@ -27,13 +26,13 @@ function set_initialization() {
                 font_size: 18,
                 line_height: 25
             },
-            version: "0.2.11"
+            version: "0.3.1"
         }
         window.utools.db.put(new_setting)
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.2.11"
+    setting.version = "0.3.1"
     setting.style = Object.assign({
         theme: "base-theme",
         font_size: 18,
@@ -87,4 +86,3 @@ function set_initialization() {
 
 window.set_initialization = set_initialization;
 window.readFile = fs.readFile;
-window.iconv = iconv

@@ -7,7 +7,6 @@ declare global {
     interface Window {
         utools: UTools;
         readFile: typeof ReadFile;
-        iconv: typeof iconv
         set_initialization(): void;
     }
 

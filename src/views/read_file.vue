@@ -47,187 +47,198 @@
 </template>
 
 <script lang="ts">
-    import navigation from "../components/navigation.vue";
-    import {addNovel, existNovel, getOneNovelData} from "@/util/db";
-    import Vue from "vue"
-    import {Chapter} from "@/util/interface";
+  import navigation from "../components/navigation.vue";
+  import {addNovel, existNovel, getOneNovelData} from "@/util/db";
+  import Vue from "vue"
+  import {Chapter} from "@/util/interface";
 
-    interface Data {
-        content: string
-        author: string
-        read_chapter: Chapter
-        directory_list: Chapter[]
-        type: string,
-        regex: string
-        name: string
-        is_regex: boolean
-        split_num: number
-        _rev?: string
-        _id: string
-    }
+  interface Data {
+    content: string
+    author: string
+    read_chapter: Chapter
+    directory_list: Chapter[]
+    type: string,
+    regex: string
+    name: string
+    is_regex: boolean
+    split_num: number
+    _rev?: string
+    _id: string
+  }
 
-    export default Vue.extend({
-        name: "read_file",
-        components: {
-            "my-navigation": navigation
-        },
-        data(): Data {
-            return {
-                _id: "",
-                content: "",//小说内容
-                author: "未知",//作者名
-                read_chapter: {
-                    name:"",
-                    cid:0
-                },//最后阅读章节
-                directory_list: [],//目录数组
-                type: "0",//类型
-                regex: '',//正则表达式字符串
-                name: '',//小说名字
-                is_regex: false,//是否使用正则
-                split_num: 4000,//每章字数,
+  export default Vue.extend({
+    name: "read_file",
+    components: {
+      "my-navigation": navigation
+    },
+    data(): Data {
+      return {
+        _id: "",
+        content: "",//小说内容
+        author: "未知",//作者名
+        read_chapter: {
+          name: "",
+          cid: 0
+        },//最后阅读章节
+        directory_list: [],//目录数组
+        type: "0",//类型
+        regex: '',//正则表达式字符串
+        name: '',//小说名字
+        is_regex: false,//是否使用正则
+        split_num: 4000,//每章字数,
+      }
+    },
+    methods: {
+      created_method() {
+        window.utools.setSubInput(({text}) => {
+          this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
+        }, '搜索在线小说');
+        window.utools.subInputBlur();
+        document.onkeydown = null;
+        this.get_setting_info()
+        if (this.path !== "undefined") {
+          window.readFile(this.path, {}, (err, data) => {
+            if (err) {
+              this.$notify({
+                title: "错误",
+                message: "读取文件失败，请重新读取文件",
+                duration: 0,
+                type: "error"
+              });
+              this.myHistory.addNewItem({name: "read_file"})
+              this.created_method();
+              return
             }
-        },
-        methods: {
-            created_method() {
-                window.utools.setSubInput(({text}) => {
-                    this.myHistory.addNewItem({name: "search", query: {name: text, type: "1"}})
-                }, '搜索在线小说');
-                window.utools.subInputBlur();
-                document.onkeydown = null;
-                this.get_setting_info()
-                if (this.path !== "undefined") {
-                    window.readFile(this.path, {}, (err, data) => {
-                        if (err) {
-                            this.$notify({
-                                title: "错误",
-                                message: "读取文件失败，请重新读取文件",
-                                duration: 0,
-                                type: "error"
-                            });
-                            this.myHistory.addNewItem({name: "read_file"})
-                            this.created_method();
-                            return
-                        }
-                        this.content = " " + data.toString();
-                        const name = this.path.match(/\\([^\\]*?)\./)
-                        this.name = name === null ? "" : name[1]
-                    });
-                    this.$notify({
-                        title: "提示",
-                        message: "目前仅支持utf-8编码的.txt结尾的文件,其他编码方式的.txt文件可以通过文本编辑器改成utf-8编码,就可以正确读取",
-                        duration: 0,
-                        type: "info"
-                    })
-                } else {
-                    this.$message({
-                        showClose: true,
-                        message: '还没读取文件，先读取文件',
-                        type: 'error'
-                    })
-                }
-            },
-            add_bookshelf() {
-                //获取章节目录
-                this.split_novel()
-                //构造数据
-                const data: Data = {
-                    _id: this.path,
-                    content: this.content,
-                    read_chapter: this.directory_list[0],
-                    type: "0",
-                    regex: this.regex,
-                    name: this.name,
-                    is_regex: this.is_regex,
-                    split_num: this.split_num,
-                    author: this.author,
-                    directory_list: this.directory_list
-                }
-
-                //判断是否已经存在这个地址
-                const old_data = existNovel(this.path, "0")
-                if (old_data) {
-                    data._rev = getOneNovelData(this.path, "0")._rev
-                }
-                addNovel(data)
-            },
-            split_novel() {
-                //是正则表达式
-                this.directory_list = [];
-                if (this.is_regex) {
-                    if (this.regex !== "") {
-                        const re = RegExp(this.regex, "g")
-                        const directory_list = this.content.match(re)
-                        if (directory_list !== null) {
-                            this.directory_list = directory_list.map((value, index): Chapter => {
-                                return {
-                                    name: value,
-                                    cid: index
-                                }
-                            })
-                        }
-                    } else {
-                        this.$notify({
-                            title: "错误",
-                            message: "正则表达式不能为空",
-                            type: "error"
-                        });
-                    }
-                } else {
-                    //非正则提取章节
-                    this.directory_list = [];
-                    const chapter_num = this.content.length / this.split_num
-                    for (let i = 0; i < chapter_num; i++) {
-                        this.directory_list.push({"name": `第${i + 1}章`, "cid": i});
-                    }
-                }
-            },
-            whether_regular_changes(value: boolean) {
-                if (value) {
-                    this.$notify({
-                        title: "提示",
-                        message: "使用正则表达式分割章节，正则表达式匹配的值将作为章节名",
-                        type: "info"
-                    })
-                } else {
-                    this.$notify({
-                        title: "提示",
-                        message: "不使用正则表达式分割章节，可以选择输入框里输入的数字作为每一章的字符数(包括空格和符号),章节名为第*章",
-                        type: "info"
-                    })
-                }
-            },
-            get_file() {
-                let fileNames = window.utools.showOpenDialog({
-                    title: "获取小说文件",
-                    filters: [
-                        {name: "txt文档", extensions: ["txt"]}
-                    ],
-                    properties: ['openFile']
-                })
-                if (fileNames !== undefined && fileNames.length === 1) {
-                    this.myHistory.addNewItem({name: "read_file", query: {path: fileNames[0]}})
-                    this.created_method()
-                } else {
-                    this.$message({
-                        showClose: true,
-                        message: '没有选取文件',
-                        type: 'error'
-                    })
-                }
-            },
-            get_setting_info() {
+            if (data.byteLength > 2097152) {
+              this.$notify({
+                title: "错误",
+                message: "读取的文件不应该超过2MB",
+                duration: 0,
+                type: "error"
+              });
+              this.myHistory.addNewItem({name: "read_file"})
+              this.created_method();
+              return
             }
-        },
-        created() {
-            this.created_method()
-        },
-        computed: {
-            path(): string {
-                return String(this.$route.query.path)
-            }
+            this.content = " " + data.toString();
+            const name = this.path.match(/\\([^\\]*?)\./)
+            this.name = name === null ? "" : name[1]
+          });
+          this.$notify({
+            title: "提示",
+            message: "目前仅支持utf-8编码的.txt结尾的文件,其他编码方式的.txt文件可以通过文本编辑器改成utf-8编码,就可以正确读取",
+            duration: 0,
+            type: "info"
+          })
+        } else {
+          this.$message({
+            showClose: true,
+            message: '还没读取文件，先读取文件',
+            type: 'error'
+          })
         }
-    })
+      },
+      add_bookshelf() {
+        //获取章节目录
+        this.split_novel()
+        //构造数据
+        const data: Data = {
+          _id: this.path,
+          content: this.content,
+          read_chapter: this.directory_list[0],
+          type: "0",
+          regex: this.regex,
+          name: this.name,
+          is_regex: this.is_regex,
+          split_num: this.split_num,
+          author: this.author,
+          directory_list: this.directory_list
+        }
+
+        //判断是否已经存在这个地址
+        const old_data = existNovel(this.path, "0")
+        if (old_data) {
+          data._rev = getOneNovelData(this.path, "0")._rev
+        }
+        addNovel(data)
+      },
+      split_novel() {
+        //是正则表达式
+        this.directory_list = [];
+        if (this.is_regex) {
+          if (this.regex !== "") {
+            const re = RegExp(this.regex, "g")
+            const directory_list = this.content.match(re)
+            if (directory_list !== null) {
+              this.directory_list = directory_list.map((value, index): Chapter => {
+                return {
+                  name: value,
+                  cid: index
+                }
+              })
+            }
+          } else {
+            this.$notify({
+              title: "错误",
+              message: "正则表达式不能为空",
+              type: "error"
+            });
+          }
+        } else {
+          //非正则提取章节
+          this.directory_list = [];
+          const chapter_num = this.content.length / this.split_num
+          for (let i = 0; i < chapter_num; i++) {
+            this.directory_list.push({"name": `第${i + 1}章`, "cid": i});
+          }
+        }
+      },
+      whether_regular_changes(value: boolean) {
+        if (value) {
+          this.$notify({
+            title: "提示",
+            message: "使用正则表达式分割章节，正则表达式匹配的值将作为章节名",
+            type: "info"
+          })
+        } else {
+          this.$notify({
+            title: "提示",
+            message: "不使用正则表达式分割章节，可以选择输入框里输入的数字作为每一章的字符数(包括空格和符号),章节名为第*章",
+            type: "info"
+          })
+        }
+      },
+      get_file() {
+        let fileNames = window.utools.showOpenDialog({
+          title: "获取小说文件",
+          filters: [
+            {name: "txt文档", extensions: ["txt"]}
+          ],
+          properties: ['openFile']
+        })
+        if (fileNames !== undefined && fileNames.length === 1) {
+          this.myHistory.addNewItem({name: "read_file", query: {path: fileNames[0]}})
+          this.created_method()
+        } else {
+          this.$message({
+            showClose: true,
+            message: '没有选取文件',
+            type: 'error'
+          })
+        }
+      },
+      get_setting_info() {
+      }
+    },
+    created() {
+      this.created_method()
+    },
+    computed: {
+      path(): string {
+        return String(this.$route.query.path)
+      }
+    }
+  })
 </script>
 
 <style scoped lang="scss">
