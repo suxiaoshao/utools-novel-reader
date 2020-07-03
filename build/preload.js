@@ -26,13 +26,13 @@ function set_initialization() {
                 font_size: 18,
                 line_height: 25
             },
-            version: "0.3.1"
+            version: "0.3.2"
         }
         window.utools.db.put(new_setting)
     }
 
     setting = window.utools.db.get("setting");
-    setting.version = "0.3.1"
+    setting.version = "0.3.2"
     setting.style = Object.assign({
         theme: "base-theme",
         font_size: 18,
