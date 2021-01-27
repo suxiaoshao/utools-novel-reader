@@ -1,42 +1,47 @@
 {
-    "pluginName": "小说阅读",
-    "description": "一个小说阅读工具",
-    "author": "sushao",
+  "pluginName": "小说阅读",
+  "description": "一个小说阅读工具",
+  "author": "sushao",
+  "preload": "preload.js",
+  "logo": "read.png",
+  "main": "react/index.html",
+  "homepage": "https://github.com/suxiaoshao/utools-novel-reader",
+  "version": "0.3.2",
+  "development": {
+    "main": "http://localhost:8082/index.html",
     "preload": "preload.js",
-    "logo": "read.png",
-    "main": "vue/index.html",
-    "homepage": "https://github.com/suxiaoshao/utools-novel-reader",
-    "version": "0.3.2",
-    "features": [
+    "logo": "read.png"
+  },
+  "features": [
+    {
+      "code": "search",
+      "explain": "进入小说搜索页面",
+      "cmds": [
+        "novel",
+        "小说"
+      ]
+    },
+    {
+      "code": "bookshelf",
+      "explain": "进入书架",
+      "cmds": [
+        "书架",
+        "bookshelf"
+      ]
+    },
+    {
+      "code": "read_novel",
+      "explain": "添加本地小说到书架",
+      "cmds": [
         {
-            "code": "search",
-            "explain": "进入小说搜索页面",
-            "cmds": [
-                "novel",
-                "小说"
-            ]
-        },
-        {
-            "code": "bookshelf",
-            "explain": "进入书架",
-            "cmds": [
-                "书架",
-                "bookshelf"
-            ]
-        },
-        {
-            "code": "read_novel",
-            "explain": "添加本地小说到书架",
-            "cmds": [
-                {
-                    "type": "files",
-                    "label": "添加到书架",
-                    "fileType": "file",
-                    "match": "/.*\\.txt/",
-                    "minNum": 1,
-                    "maxNum": 1
-                }
-            ]
+          "type": "files",
+          "label": "添加到书架",
+          "fileType": "file",
+          "match": "/.*\\.txt/",
+          "minNum": 1,
+          "maxNum": 1
         }
-    ]
+      ]
+    }
+  ]
 }

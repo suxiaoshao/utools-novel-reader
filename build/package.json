@@ -1,13 +1,9 @@
 {
-  "name": "y",
-  "version": "0.3.2",
-  "description": "1. 修复放回按钮bug，因为新版本utools禁止了`windows.history`的用法，\r 所以之前的版本的小说插件在新版utools下返回按钮出现bug，\r 我换了一种方法实现修复了这个问题",
-  "main": "preload.js",
-  "dependencies": {},
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  "name": "build",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
 }
