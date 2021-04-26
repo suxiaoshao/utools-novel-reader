@@ -1,2 +1,2 @@
-const axios = require('axios')
-window.axios = axios
+const axios = require('axios');
+window.axios = axios;
