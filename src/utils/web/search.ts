@@ -1,8 +1,6 @@
 import { getHtml, getIdFromHref } from './util';
 import cheerio from 'cheerio';
 
-export type SearchUrlPattern = `${string}${'{##searchName##}'}${string}`;
-
 /**
  * @author sushao
  * @since 0.4.0
@@ -13,7 +11,7 @@ export interface SearchConfig {
   /**
    * url 的总体格式
    * */
-  url: SearchUrlPattern;
+  url: string;
   /**
    * 搜索结果的每一项 query 路径
    * */
@@ -87,7 +85,7 @@ export class Search implements SearchConfig {
   /**
    * url 的总体格式
    * */
-  url: SearchUrlPattern;
+  url: string;
   /**
    * 搜索结果的每一项 query 路径
    * */
@@ -138,7 +136,7 @@ export class Search implements SearchConfig {
     /**
      * 获取搜索结果的 html 树
      * */
-    const url = this.url.replace('{##search_name##}', searchName);
+    const url = this.url.replace('{##searchName##}', searchName);
     const htmlString = await getHtml(url, this.encoding);
     const $ = cheerio.load(htmlString, { decodeEntities: false });
     /**
@@ -158,7 +156,7 @@ export class Search implements SearchConfig {
      * 获取小说名,作者名,最后章节小说名
      * */
     const $searchItem = cheerio.load(html, { decodeEntities: false, xmlMode: true });
-    const novelName: string = $searchItem(this.novelId).text();
+    const novelName: string = $searchItem(this.novelId).text().trim();
     const authorName: string = $searchItem(this.authorName).text();
     const latestChapterName: string = $searchItem(this.latestChapterId).text();
     /**
