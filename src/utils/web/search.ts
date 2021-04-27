@@ -1,5 +1,6 @@
 import { getHtml, getIdFromHref } from './util';
 import cheerio from 'cheerio';
+import { NovelConfig } from './defaultConfig';
 
 /**
  * @author sushao
@@ -129,6 +130,10 @@ export class Search implements SearchConfig {
     this.novelId = searchConfig.novelId;
     this.novelIdRegex = searchConfig.novelIdRegex;
     this.encoding = encoding;
+  }
+
+  public static new(config: NovelConfig): Search {
+    return new Search(config.search, config.encoding);
   }
 
   public async getSearchList(searchName: string): Promise<SearchListItem[]> {

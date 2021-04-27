@@ -13,7 +13,7 @@ export interface NovelConfig {
   content: ContentConfig;
 }
 
-export const configs: NovelConfig[] = [
+export const defaultConfigs: NovelConfig[] = [
   {
     name: '笔趣阁1',
     url: 'https://www.biqubao.com/',
