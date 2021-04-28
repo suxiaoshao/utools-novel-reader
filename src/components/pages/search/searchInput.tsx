@@ -2,8 +2,9 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Divider, IconButton, InputBase, Paper, Theme, Tooltip } from '@material-ui/core';
 import MySelector from '../../common/mySelector';
-import { defaultConfigs, NovelConfig } from '../../../utils/web/defaultConfig';
+import { defaultConfigs } from '../../../utils/web/config/defaultConfig';
 import { Search } from '@material-ui/icons';
+import { TotalConfig } from '../../../utils/web/config/totalConfig';
 
 export const useUrlStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -49,12 +50,12 @@ export interface SearchInputProp {
   /**
    * 活跃的配置
    * */
-  activeConfig: NovelConfig | undefined;
+  activeConfig: TotalConfig | undefined;
 
   /**
    * 修改活跃的配置
    * */
-  onActiveConfigChange(newConfig: NovelConfig | undefined): void;
+  onActiveConfigChange(newConfig: TotalConfig | undefined): void;
 
   /**
    * 搜索关键词
@@ -83,11 +84,11 @@ export default function SearchInput(props: SearchInputProp): JSX.Element {
   return (
     <Paper component="form" className={classes.form}>
       <MySelector<string | undefined>
-        itemList={defaultConfigs.map((value) => ({ text: value.name, value: value.url }))}
+        itemList={defaultConfigs.map((value) => ({ text: value.name, value: value.mainPageUrl }))}
         onValueChange={(newValue) => {
-          props.onActiveConfigChange(defaultConfigs.find((value) => value.url === newValue));
+          props.onActiveConfigChange(defaultConfigs.find((value) => value.mainPageUrl === newValue));
         }}
-        value={props.activeConfig?.url}
+        value={props.activeConfig?.mainPageUrl}
         className={classes.iconButton}
       />
       <Divider className={classes.divider} orientation="vertical" />

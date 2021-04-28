@@ -1,5 +1,9 @@
-import { getHtml, getIdFromHref } from './util';
+import { getHtml } from './util';
 import cheerio from 'cheerio';
+import { ContentConfig } from './config/contentConfig';
+import { UrlUtil } from './urlUtil';
+import { RegexUtil } from './regexUtil';
+import { TotalConfig } from './config/totalConfig';
 
 /**
  * 文章内容数据
@@ -16,126 +20,51 @@ export interface ContentData {
  * @author sushao
  * @since 0.4.0
  * @version 0.4.0
- * @description 文章的配置
- * */
-export interface ContentConfig {
-  /**
-   * url 的总体格式
-   * */
-  url: string;
-  /**
-   * 章节名
-   * */
-  chapterName: string;
-  /**
-   * 小说名
-   * */
-  novelName: string;
-  /**
-   * 上一章
-   * */
-  preChapterId: string;
-  /**
-   * 上一章正则
-   * */
-  preChapterIdRegex: string;
-  /**
-   * 下一章
-   * */
-  nextChapterId: string;
-  /**
-   * 下一章正则
-   * */
-  nextChapterIdRegex: string;
-  /**
-   * 文章内容
-   * */
-  content: string;
-  /**
-   * 文章内容切割
-   * */
-  contentSplit?: string;
-}
-
-/**
- * @author sushao
- * @since 0.4.0
- * @version 0.4.0
  * @description 章节内容类,用于读取配置
  * */
-export class Content implements ContentConfig {
+export class Content {
   /**
-   * url 的总体格式
+   * 搜索配置
    * */
-  url: string;
-  /**
-   * 章节名
-   * */
-  chapterName: string;
-  /**
-   * 小说名
-   * */
-  novelName: string;
-  /**
-   * 上一章
-   * */
-  preChapterId: string;
-  /**
-   * 上一章正则
-   * */
-  preChapterIdRegex: string;
-  /**
-   * 下一章
-   * */
-  nextChapterId: string;
-  /**
-   * 下一章正则
-   * */
-  nextChapterIdRegex: string;
-  /**
-   * 文章内容
-   * */
-  content: string;
-  /**
-   * 文章内容切割
-   * */
-  contentSplit?: string;
+  config: ContentConfig;
   /**
    * 小说网站的编码方式
    * */
   encoding: string;
+  /**
+   * url 配置
+   * */
+  url: UrlUtil;
+  /**
+   * 正则配置
+   * */
+  regex: RegexUtil;
 
-  constructor(content: ContentConfig, encoding: string) {
-    this.contentSplit = content.contentSplit;
-    this.preChapterId = content.preChapterId;
-    this.chapterName = content.chapterName;
-    this.url = content.url;
-    this.novelName = content.novelName;
-    this.content = content.content;
-    this.nextChapterIdRegex = content.nextChapterIdRegex;
-    this.nextChapterId = content.nextChapterId;
-    this.preChapterIdRegex = content.preChapterIdRegex;
-    this.encoding = encoding;
+  constructor(config: TotalConfig) {
+    this.config = config.content;
+    this.encoding = config.encoding;
+    this.url = new UrlUtil(config.url);
+    this.regex = new RegexUtil(config.regex);
   }
 
   /**
    * 获取文章
    * */
   async getContent(novelId: string, chapterId: string): Promise<ContentData> {
-    const url = this.url.replace('{##novel_id##}', novelId).replace('{##chapter_id##}', chapterId);
+    const url = this.url.getChapterUrl(novelId, chapterId);
     const htmlString = await getHtml(url, this.encoding);
     const $content = cheerio.load(htmlString, { decodeEntities: false, xmlMode: true });
-    const chapterName = $content(this.chapterName).text();
-    const novelName = $content(this.novelName).text();
-    const preChapterId = getIdFromHref($content, this.preChapterId, this.preChapterIdRegex);
-    const nextChapterId = getIdFromHref($content, this.nextChapterId, this.nextChapterIdRegex);
+    const chapterName = $content(this.config.chapterName).text();
+    const novelName = $content(this.config.novelName).text();
+    const preChapterId = this.regex.getChapter($content(this.config.preChapterId).attr('href'));
+    const nextChapterId = this.regex.getChapter($content(this.config.nextChapterId).attr('href'));
     const contentList =
-      this.contentSplit !== undefined
-        ? $content(this.content)
+      this.config.contentSplit !== undefined
+        ? $content(this.config.content)
             .text()
-            .split(this.contentSplit)
+            .split(this.config.contentSplit)
             .filter((value) => value !== '')
-        : Array.from($content(this.content)).map((element) => $content(element).text());
+        : Array.from($content(this.config.content)).map((element) => $content(element).text());
     return {
       contentList,
       chapterName,

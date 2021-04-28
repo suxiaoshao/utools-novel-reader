@@ -1,47 +1,9 @@
-import { getHtml, getIdFromHref } from './util';
+import { getHtml } from './util';
 import cheerio from 'cheerio';
-import { NovelConfig } from './defaultConfig';
-
-/**
- * @author sushao
- * @since 0.4.0
- * @version 0.4.0
- * @description 搜索的配置
- * */
-export interface SearchConfig {
-  /**
-   * url 的总体格式
-   * */
-  url: string;
-  /**
-   * 搜索结果的每一项 query 路径
-   * */
-  li: string;
-  /**
-   * 在搜索结果中获取 小说 id 的 query 路径
-   * */
-  novelId: string;
-  /**
-   * 在搜索结果中获取 小说名字 的 query 路径
-   * */
-  authorName: string;
-  /**
-   * 最后一章的路径
-   * */
-  latestChapterId: string;
-  /**
-   * 获取最后一章正则
-   * */
-  latestChapterIdRegex: string;
-  /**
-   * 更新时间的正则,如果没有则为 false
-   * */
-  updateTime: string | false;
-  /**
-   * 获取小说 id 的 正则
-   * */
-  novelIdRegex: string;
-}
+import { TotalConfig } from './config/totalConfig';
+import { SearchConfig } from './config/searchConfig';
+import { UrlUtil } from './urlUtil';
+import { RegexUtil } from './regexUtil';
 
 /**
  * @author sushao
@@ -82,58 +44,29 @@ export interface SearchListItem {
  * @version 0.4.0
  * @description 搜索类,用于读取配置并搜素
  * */
-export class Search implements SearchConfig {
+export class Search {
   /**
-   * url 的总体格式
+   * 搜索配置
    * */
-  url: string;
-  /**
-   * 搜索结果的每一项 query 路径
-   * */
-  li: string;
-  /**
-   * 在搜索结果中获取 小说 id 的 query 路径
-   * */
-  novelId: string;
-  /**
-   * 在搜索结果中获取 小说名字 的 query 路径
-   * */
-  authorName: string;
-  /**
-   * 最后一章的路径
-   * */
-  latestChapterId: string;
-  /**
-   * 获取最后一章正则
-   * */
-  latestChapterIdRegex: string;
-  /**
-   * 更新时间的正则,如果没有则为 false
-   * */
-  updateTime: string | false;
-  /**
-   * 获取小说 id 的 正则
-   * */
-  novelIdRegex: string;
+  config: SearchConfig;
   /**
    * 小说网站的编码方式
    * */
   encoding: string;
+  /**
+   * url 配置
+   * */
+  url: UrlUtil;
+  /**
+   * 正则配置
+   * */
+  regex: RegexUtil;
 
-  constructor(searchConfig: SearchConfig, encoding: string) {
-    this.updateTime = searchConfig.updateTime;
-    this.url = searchConfig.url;
-    this.authorName = searchConfig.authorName;
-    this.latestChapterId = searchConfig.latestChapterId;
-    this.latestChapterIdRegex = searchConfig.latestChapterIdRegex;
-    this.li = searchConfig.li;
-    this.novelId = searchConfig.novelId;
-    this.novelIdRegex = searchConfig.novelIdRegex;
-    this.encoding = encoding;
-  }
-
-  public static new(config: NovelConfig): Search {
-    return new Search(config.search, config.encoding);
+  constructor(config: TotalConfig) {
+    this.config = config.search;
+    this.encoding = config.encoding;
+    this.url = new UrlUtil(config.url);
+    this.regex = new RegexUtil(config.regex);
   }
 
   public async getSearchList(searchName: string): Promise<SearchListItem[]> {
@@ -141,13 +74,13 @@ export class Search implements SearchConfig {
     /**
      * 获取搜索结果的 html 树
      * */
-    const url = this.url.replace('{##searchName##}', searchName);
+    const url = this.url.getSearchUrl(searchName);
     const htmlString = await getHtml(url, this.encoding);
     const $ = cheerio.load(htmlString, { decodeEntities: false });
     /**
      * 遍历每个搜索结果
      * */
-    $(this.li).each((index, element) => {
+    $(this.config.li).each((index, element) => {
       const searchItem = this.getSearchItem($.html(element));
       if (searchItem) {
         searchList.push(searchItem);
@@ -161,18 +94,18 @@ export class Search implements SearchConfig {
      * 获取小说名,作者名,最后章节小说名
      * */
     const $searchItem = cheerio.load(html, { decodeEntities: false, xmlMode: true });
-    const novelName: string = $searchItem(this.novelId).text().trim();
-    const authorName: string = $searchItem(this.authorName).text();
-    const latestChapterName: string = $searchItem(this.latestChapterId).text();
+    const novelName: string = $searchItem(this.config.novelId).text().trim();
+    const authorName: string = $searchItem(this.config.authorName).text();
+    const latestChapterName: string = $searchItem(this.config.latestChapterId).text();
     /**
      * 获取最近更新时间
      * */
-    const updateTime = this.updateTime ? $searchItem(this.updateTime).text() : '网站未提供';
+    const updateTime = $searchItem(this.config.updateTime).text() || '网站未提供';
     /**
      * 获取章节和小说 id
      * */
-    const novelId = getIdFromHref($searchItem, this.novelId, this.novelIdRegex);
-    const latestChapterId = getIdFromHref($searchItem, this.latestChapterId, this.latestChapterIdRegex);
+    const novelId = this.regex.getNovelId($searchItem(this.config.novelId).attr('href'));
+    const latestChapterId = this.regex.getChapter($searchItem(this.config.latestChapterId).attr('href'));
     if (novelId && latestChapterId) {
       return {
         novelName,

@@ -1,5 +1,9 @@
 import * as cheerio from 'cheerio';
-import { getHtml, getIdFromHref } from './util';
+import { getHtml } from './util';
+import { DirectoryConfig, InfoConfig } from './config/novelInfoConfig';
+import { UrlUtil } from './urlUtil';
+import { RegexUtil } from './regexUtil';
+import { TotalConfig } from './config/totalConfig';
 
 //章节信息
 export interface Chapter {
@@ -30,70 +34,36 @@ export interface NovelAllData extends NovelData {
   directories: Chapter[];
 }
 
-export interface Directory {
+export class NovelInfo {
+  directory: DirectoryConfig;
+  info: InfoConfig;
   /**
-   * 文章列表信息
+   * 小说网站的编码方式
    * */
-  url: string;
-  chapterId: string;
-  chapterIdRegex: string;
-}
-
-export interface Info {
-  /**
-   * 小说基本信息
-   * */
-  url: string;
-  /**
-   * 小说名
-   * */
-  name: string;
-  /**
-   * 作者
-   * */
-  author: string;
-  /**
-   * 最后更新时间
-   * */
-  lastUpdateTime: string;
-  /**
-   * 最新章节
-   * */
-  latestChapterId: string;
-  /**
-   * 最新章节正则
-   * */
-  latestChapterIdRegex: string;
-}
-
-/**
- * @author sushao
- * @since 0.4.0
- * @version 0.4.0
- * @description 章节列表的配置
- * */
-export interface NovelInfoConfig {
-  directory: Directory;
-  info: Info;
-}
-
-export class NovelInfo implements NovelInfoConfig {
-  directory: Directory;
-  info: Info;
   encoding: string;
+  /**
+   * url 配置
+   * */
+  url: UrlUtil;
+  /**
+   * 正则配置
+   * */
+  regex: RegexUtil;
 
-  constructor(novelInfoConfig: NovelInfoConfig, encoding: string) {
-    this.directory = novelInfoConfig.directory;
-    this.info = novelInfoConfig.info;
-    this.encoding = encoding;
+  constructor(config: TotalConfig) {
+    this.directory = config.novel.directory;
+    this.info = config.novel.info;
+    this.encoding = config.encoding;
+    this.url = new UrlUtil(config.url);
+    this.regex = new RegexUtil(config.regex);
   }
 
   /**
    * 获取信息
    * */
   public async getDirectoryAndInfo(novelId: string): Promise<NovelAllData> {
-    const directoryUrl = this.directory.url.replace('{##novel_id##}', novelId);
-    const infoUrl = this.info.url.replace('{##novel_id##}', novelId);
+    const directoryUrl = this.url.getDirectoryUrl(novelId);
+    const infoUrl = this.url.getNovelInfoUrl(novelId);
     if (infoUrl === directoryUrl) {
       const htmlString = await getHtml(directoryUrl, this.encoding);
       const $ = cheerio.load(htmlString, { decodeEntities: false, xmlMode: true });
@@ -121,7 +91,7 @@ export class NovelInfo implements NovelInfoConfig {
       .map((element) => {
         const $element = $directory(element);
         const name = $element.text();
-        const chapterId = $element.attr('href')?.match(this.directory.chapterIdRegex)?.groups?.id;
+        const chapterId = this.regex.getChapter($element.attr('href'));
         return chapterId ? { name, chapterId } : null;
       })
       .filter((value) => value !== null) as Chapter[];
@@ -135,7 +105,7 @@ export class NovelInfo implements NovelInfoConfig {
     const authorName = $info(this.info.author).text();
     const lastUpdateTime = $info(this.info.lastUpdateTime).text();
     const latestChapterName = $info(this.info.latestChapterId).text();
-    const lastId = getIdFromHref($info, this.info.latestChapterId, this.info.latestChapterIdRegex);
+    const lastId = this.regex.getChapter($info(this.info.latestChapterId).attr('href'));
     if (lastId === undefined) {
       throw new Error('网站解析错误');
     }
