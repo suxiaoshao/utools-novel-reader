@@ -4,6 +4,7 @@ import { TotalConfig } from './config/totalConfig';
 import { SearchConfig } from './config/searchConfig';
 import { UrlUtil } from './urlUtil';
 import { RegexUtil } from './regexUtil';
+import { Chapter } from './novelInfo';
 
 /**
  * @author sushao
@@ -25,17 +26,25 @@ export interface SearchListItem {
    * */
   authorName: string;
   /**
-   * 最后一章的名字
+   * 最后一章
    * */
-  latestChapterName: string;
-  /**
-   * 最后一章 id
-   * */
-  latestChapterId: string;
+  latestChapter: Chapter;
   /**
    * 更新时间
    * */
   updateTime: string;
+  /**
+   * 小说图片
+   * */
+  image: string | undefined;
+  /**
+   * 标签
+   * */
+  label: string;
+  /**
+   * 描述
+   * */
+  desc: string;
 }
 
 /**
@@ -97,6 +106,9 @@ export class Search {
     const novelName: string = $searchItem(this.config.novelId).text().trim();
     const authorName: string = $searchItem(this.config.authorName).text();
     const latestChapterName: string = $searchItem(this.config.latestChapterId).text();
+    const label = $searchItem(this.config.label).text();
+    const desc = $searchItem(this.config.desc).text();
+    const image = $searchItem(this.config.image).attr('src');
     /**
      * 获取最近更新时间
      * */
@@ -110,10 +122,15 @@ export class Search {
       return {
         novelName,
         authorName,
-        latestChapterId,
-        latestChapterName,
         updateTime,
         novelId,
+        label,
+        desc,
+        image,
+        latestChapter: {
+          chapterId: latestChapterId,
+          name: latestChapterName,
+        },
       };
     } else {
       return null;

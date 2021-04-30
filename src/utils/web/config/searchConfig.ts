@@ -25,4 +25,16 @@ export interface SearchConfig {
    * 更新时间的正则,如果没有则为 false
    * */
   updateTime: string;
+  /**
+   * 小说图片
+   * */
+  image: string;
+  /**
+   * 标签
+   * */
+  label: string;
+  /**
+   * 描述
+   * */
+  desc: string;
 }

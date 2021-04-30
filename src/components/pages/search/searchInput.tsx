@@ -102,8 +102,8 @@ export default function SearchInput(props: SearchInputProp): JSX.Element {
       />
       <Divider className={classes.divider} orientation="vertical" />
       <Tooltip title={'搜索'}>
-        <IconButton disabled={props.activeConfig === undefined}>
-          <Search onClick={props.onSearch} />
+        <IconButton onClick={props.onSearch} disabled={props.activeConfig === undefined}>
+          <Search />
         </IconButton>
       </Tooltip>
     </Paper>

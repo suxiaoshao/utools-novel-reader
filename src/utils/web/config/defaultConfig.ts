@@ -26,6 +26,9 @@ export const defaultConfigs: TotalConfig[] = [
       authorName: 'div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)',
       latestChapterId: 'div.result-game-item-detail > div > p:nth-child(4) > a',
       updateTime: 'div.result-game-item-detail > div > p:nth-child(3) > span:nth-child(2)',
+      image: 'div.result-game-item-pic > a > img',
+      desc: 'div.result-game-item-detail > p',
+      label: 'div.result-game-item-detail > div > p:nth-child(2) > span:nth-child(2)',
     },
     novel: {
       directory: {

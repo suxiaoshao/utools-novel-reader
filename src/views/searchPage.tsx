@@ -5,19 +5,9 @@ import { defaultConfigs } from '../utils/web/config/defaultConfig';
 import SearchInput from '../components/pages/search/searchInput';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
-import { Loading } from '../components/common/loading';
-import {
-  Button,
-  Link,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@material-ui/core';
 import { TotalConfig } from '../utils/web/config/totalConfig';
+import { Loading } from '../components/common/loading';
+import SearchItemView from '../components/pages/search/searchItemView';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -26,11 +16,11 @@ const useClasses = makeStyles((theme) =>
       flexDirection: 'column',
     },
     main: {
-      margin: theme.spacing(1),
-      height: `calc(100% - ${theme.spacing(1)}px)`,
-      width: `calc(100% - ${theme.spacing(1) * 2}px) !important`,
       flex: '1 1 0',
-      marginTop: 0,
+      overflow: 'auto',
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'start',
     },
   }),
 );
@@ -63,35 +53,13 @@ export default function SearchPage(): JSX.Element {
         onActiveConfigChange={setActiveConfig}
         onSearch={fn}
       />
-      <TableContainer component={Paper} className={classes.main}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>小说名</TableCell>
-              <TableCell>作者</TableCell>
-              <TableCell>更新时间</TableCell>
-              <TableCell>最新章节</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <Loading state={{ ...state, retry: fn }}>
-              {state.value &&
-                state.value.map((value) => (
-                  <TableRow key={value.novelId}>
-                    <TableCell>
-                      <Button>{value.novelName}</Button>
-                    </TableCell>
-                    <TableCell>{value.authorName}</TableCell>
-                    <TableCell>{value.updateTime}</TableCell>
-                    <TableCell>
-                      <Link>{value.latestChapterName}</Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </Loading>
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <div className={classes.main}>
+        <Loading state={{ ...state, retry: fn }}>
+          {state.value?.map((value) => (
+            <SearchItemView searchItem={value} key={value.novelId} />
+          ))}
+        </Loading>
+      </div>
     </MyTabs>
   );
 }
