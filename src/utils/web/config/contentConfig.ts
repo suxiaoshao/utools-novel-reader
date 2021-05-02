@@ -6,6 +6,10 @@
  * */
 export interface ContentConfig {
   /**
+   * 编码方式
+   * */
+  encoding: string;
+  /**
    * 章节名
    * */
   chapterName: string;

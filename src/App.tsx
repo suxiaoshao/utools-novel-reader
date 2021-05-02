@@ -5,6 +5,7 @@ import SearchPage from './views/searchPage';
 import ReadFile from './views/readFile';
 import Bookshelf from './views/bookshelf';
 import TestPage from './views/testPage';
+import NovelPage from './views/novelPage';
 
 function App(): JSX.Element {
   return (
@@ -22,6 +23,9 @@ function App(): JSX.Element {
           </Route>
           <Route path="/test" exact>
             <TestPage />
+          </Route>
+          <Route path="/novel" exact>
+            <NovelPage />
           </Route>
         </Switch>
       </MyThemeProvider>

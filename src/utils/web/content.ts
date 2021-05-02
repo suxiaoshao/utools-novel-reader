@@ -28,10 +28,6 @@ export class Content {
    * */
   config: ContentConfig;
   /**
-   * 小说网站的编码方式
-   * */
-  encoding: string;
-  /**
    * url 配置
    * */
   url: UrlUtil;
@@ -42,7 +38,6 @@ export class Content {
 
   constructor(config: TotalConfig) {
     this.config = config.content;
-    this.encoding = config.encoding;
     this.url = new UrlUtil(config.url);
     this.regex = new RegexUtil(config.regex);
   }
@@ -52,7 +47,7 @@ export class Content {
    * */
   async getContent(novelId: string, chapterId: string): Promise<ContentData> {
     const url = this.url.getChapterUrl(novelId, chapterId);
-    const htmlString = await getHtml(url, this.encoding);
+    const htmlString = await getHtml(url, this.config.encoding);
     const $content = cheerio.load(htmlString, { decodeEntities: false, xmlMode: true });
     const chapterName = $content(this.config.chapterName).text();
     const novelName = $content(this.config.novelName).text();

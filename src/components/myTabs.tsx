@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { myHistory } from '../utils/myHistory';
 
 const useStyle = makeStyles(() =>
   createStyles({
@@ -21,14 +22,13 @@ const useStyle = makeStyles(() =>
 
 export default function MyTabs(props: { children?: React.ReactNode; classname?: string }): JSX.Element {
   const myLocation = useLocation();
-  const myHistory = useHistory();
   const style = useStyle();
   return (
     <div className={style.page}>
       <Paper className={style.tabs} square>
         <Tabs
           onChange={(event, value) => {
-            myHistory.push(value);
+            myHistory.replace(value);
           }}
           value={myLocation.pathname}
           centered

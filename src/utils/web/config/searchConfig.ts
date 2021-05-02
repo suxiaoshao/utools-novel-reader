@@ -37,4 +37,8 @@ export interface SearchConfig {
    * 描述
    * */
   desc: string;
+  /**
+   * 编码方式
+   * */
+  encoding: string;
 }

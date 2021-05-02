@@ -1,7 +1,10 @@
 import React from 'react';
-import { Avatar, Card, CardContent, CardHeader, Link, Typography } from '@material-ui/core';
+import { Avatar, Card, CardContent, CardHeader, IconButton, Link, Tooltip, Typography } from '@material-ui/core';
 import { SearchListItem } from '../../../utils/web/search';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { ExitToApp } from '@material-ui/icons';
+import { TotalConfig } from '../../../utils/web/config/totalConfig';
+import { myHistory } from '../../../utils/myHistory';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -17,6 +20,10 @@ export interface SearchItemProp {
    * 搜索结果
    * */
   searchItem: SearchListItem;
+  /**
+   * 配置
+   * */
+  activeConfig: TotalConfig;
 }
 
 export default function SearchItemView(props: SearchItemProp): JSX.Element {
@@ -27,6 +34,20 @@ export default function SearchItemView(props: SearchItemProp): JSX.Element {
         avatar={<Avatar src={props.searchItem.image} />}
         title={props.searchItem.novelName}
         subheader={`${props.searchItem.label} · ${props.searchItem.authorName}`}
+        action={
+          <Tooltip title={'前往小说页面'}>
+            <IconButton
+              onClick={() => {
+                myHistory.push({
+                  pathname: '/novel',
+                  search: `novelId=${props.searchItem.novelId}&url=${props.activeConfig.mainPageUrl}`,
+                });
+              }}
+            >
+              <ExitToApp />
+            </IconButton>
+          </Tooltip>
+        }
       />
       <CardContent>
         <Typography variant="body2" component="p" gutterBottom>

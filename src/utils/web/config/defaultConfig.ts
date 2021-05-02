@@ -4,11 +4,10 @@ export const defaultConfigs: TotalConfig[] = [
   {
     name: '笔趣阁1',
     mainPageUrl: 'https://www.biqubao.com/',
-    encoding: 'utf8',
     url: {
       search: 'https://www.biqubao.com/search.php?q={##searchName##}',
-      novelInfo: 'https://www.kuxiaoshuo.com/{##novelId##}/',
-      directory: 'https://www.kuxiaoshuo.com/{##novelId##}/',
+      novelInfo: 'https://www.biqubao.com/book/{##novelId##}/',
+      directory: 'https://www.biqubao.com/book/{##novelId##}/',
       chapter: 'https://www.kuxiaoshuo.com/{##novelId##}/{##chapterId##}.html',
       searchPlaceholder: '{##searchName##}',
       novelPlaceholder: '{##novelId##}',
@@ -21,6 +20,7 @@ export const defaultConfigs: TotalConfig[] = [
       chapter: '\\/(?<id>\\d+).html',
     },
     search: {
+      encoding: 'utf8',
       li: 'body > div.result-list > div',
       novelId: 'div.result-game-item-detail > h3 > a',
       authorName: 'div.result-game-item-detail > div > p:nth-child(1) > span:nth-child(2)',
@@ -32,9 +32,11 @@ export const defaultConfigs: TotalConfig[] = [
     },
     novel: {
       directory: {
+        encoding: 'gbk',
         chapterId: '#list > dl > dd > a',
       },
       info: {
+        encoding: 'gbk',
         name: '#info > h1',
         author: '#info > p:nth-child(2)',
         lastUpdateTime: '#info > p:nth-child(4)',
@@ -42,6 +44,7 @@ export const defaultConfigs: TotalConfig[] = [
       },
     },
     content: {
+      encoding: 'gbk',
       chapterName: '#wrapper > div.content_read > div > div.bookname > h1',
       novelName: '#wrapper > div.footer > div.footer_cont > p:nth-child(1) > a',
       preChapterId: '#wrapper > div.content_read > div > div.bookname > div.bottem1 > a:nth-child(1)',

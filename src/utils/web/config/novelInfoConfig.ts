@@ -1,5 +1,9 @@
 export interface DirectoryConfig {
   chapterId: string;
+  /**
+   * 编码方式
+   * */
+  encoding: string;
 }
 
 export interface InfoConfig {
@@ -19,6 +23,10 @@ export interface InfoConfig {
    * 最新章节
    * */
   latestChapterId: string;
+  /**
+   * 编码方式
+   * */
+  encoding: string;
 }
 
 /**

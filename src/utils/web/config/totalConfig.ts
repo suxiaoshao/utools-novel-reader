@@ -9,10 +9,6 @@ import { RegexConfig } from './regexConfig';
  * */
 export interface TotalConfig {
   /**
-   * 编码方式
-   * */
-  encoding: string;
-  /**
    * 网站地址
    * */
   mainPageUrl: string;

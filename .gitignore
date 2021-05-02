@@ -12,7 +12,9 @@ node_modules
 /build/react
 /build/node_modules
 .idea
-
+target
+Cargo.lock
+/data/pkg
 # misc
 .DS_Store
 .env.local

@@ -59,10 +59,6 @@ export class Search {
    * */
   config: SearchConfig;
   /**
-   * 小说网站的编码方式
-   * */
-  encoding: string;
-  /**
    * url 配置
    * */
   url: UrlUtil;
@@ -73,7 +69,6 @@ export class Search {
 
   constructor(config: TotalConfig) {
     this.config = config.search;
-    this.encoding = config.encoding;
     this.url = new UrlUtil(config.url);
     this.regex = new RegexUtil(config.regex);
   }
@@ -84,7 +79,7 @@ export class Search {
      * 获取搜索结果的 html 树
      * */
     const url = this.url.getSearchUrl(searchName);
-    const htmlString = await getHtml(url, this.encoding);
+    const htmlString = await getHtml(url, this.config.encoding);
     const $ = cheerio.load(htmlString, { decodeEntities: false });
     /**
      * 遍历每个搜索结果

@@ -38,10 +38,6 @@ export class NovelInfo {
   directory: DirectoryConfig;
   info: InfoConfig;
   /**
-   * 小说网站的编码方式
-   * */
-  encoding: string;
-  /**
    * url 配置
    * */
   url: UrlUtil;
@@ -53,7 +49,6 @@ export class NovelInfo {
   constructor(config: TotalConfig) {
     this.directory = config.novel.directory;
     this.info = config.novel.info;
-    this.encoding = config.encoding;
     this.url = new UrlUtil(config.url);
     this.regex = new RegexUtil(config.regex);
   }
@@ -65,7 +60,7 @@ export class NovelInfo {
     const directoryUrl = this.url.getDirectoryUrl(novelId);
     const infoUrl = this.url.getNovelInfoUrl(novelId);
     if (infoUrl === directoryUrl) {
-      const htmlString = await getHtml(directoryUrl, this.encoding);
+      const htmlString = await getHtml(directoryUrl, this.info.encoding);
       const $ = cheerio.load(htmlString, { decodeEntities: false, xmlMode: true });
       return {
         ...this.getInfo($),
@@ -73,8 +68,8 @@ export class NovelInfo {
       };
     } else {
       const [infoHtml, directoryHtml] = await Promise.all([
-        getHtml(infoUrl, this.encoding),
-        getHtml(directoryUrl, this.encoding),
+        getHtml(infoUrl, this.info.encoding),
+        getHtml(directoryUrl, this.directory.encoding),
       ]);
       return {
         ...this.getInfo(cheerio.load(infoHtml, { decodeEntities: false, xmlMode: true })),
@@ -102,9 +97,9 @@ export class NovelInfo {
    * */
   private getInfo($info: cheerio.Root): NovelData {
     const novelName = $info(this.info.name).text();
-    const authorName = $info(this.info.author).text();
-    const lastUpdateTime = $info(this.info.lastUpdateTime).text();
-    const latestChapterName = $info(this.info.latestChapterId).text();
+    const authorName = $info(this.info.author).text().split('：').reverse()[0];
+    const lastUpdateTime = $info(this.info.lastUpdateTime).text().split('：').reverse()[0];
+    const latestChapterName = $info(this.info.latestChapterId).text().split('：').reverse()[0];
     const lastId = this.regex.getChapter($info(this.info.latestChapterId).attr('href'));
     if (lastId === undefined) {
       throw new Error('网站解析错误');
