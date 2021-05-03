@@ -28,6 +28,14 @@ export interface NovelData {
    * 最新章节
    * */
   latestChapter: Chapter;
+  /**
+   * 图片
+   * */
+  image: string | undefined;
+  /**
+   * 小说描述
+   * */
+  desc: string;
 }
 
 export interface NovelAllData extends NovelData {
@@ -99,6 +107,8 @@ export class NovelInfo {
     const novelName = $info(this.info.name).text();
     const authorName = $info(this.info.author).text().split('：').reverse()[0];
     const lastUpdateTime = $info(this.info.lastUpdateTime).text().split('：').reverse()[0];
+    const image = $info(this.info.image).attr('src');
+    const desc = $info(this.info.desc).text();
     const latestChapterName = $info(this.info.latestChapterId).text().split('：').reverse()[0];
     const lastId = this.regex.getChapter($info(this.info.latestChapterId).attr('href'));
     if (lastId === undefined) {
@@ -112,6 +122,8 @@ export class NovelInfo {
         name: latestChapterName,
         chapterId: lastId,
       },
+      image,
+      desc,
     };
   }
 }

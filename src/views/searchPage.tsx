@@ -8,9 +8,9 @@ import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
 import { Loading } from '../components/common/loading';
 import SearchItemView from '../components/pages/search/searchItemView';
 import { useQuery } from '../utils/hooks/useQuery';
-import { myHistory } from '../utils/myHistory';
+import { historyStore } from '../utils/store/history.store';
 
-const useClasses = makeStyles((theme) =>
+const useClasses = makeStyles(() =>
   createStyles({
     all: {
       display: 'flex',
@@ -45,10 +45,14 @@ export default function SearchPage(): JSX.Element {
     return defaultConfigs.find((value) => value.mainPageUrl === mainPageUrl);
   }, [mainPageUrl]);
   /**
+   * 显示的 搜索词
+   * */
+  const [newSearchName, setNewSearchName] = React.useState(searchName);
+  /**
    * 跳转指令
    * */
   const push = React.useCallback((search: string, mainPage: string) => {
-    myHistory.replace({ search: `searchName=${search}&mainPageUrl=${mainPage}` });
+    historyStore.replace({ search: `searchName=${search}&mainPageUrl=${mainPage}`, name: `搜索(${search})` });
   }, []);
   const classes = useClasses();
   const [state, fn] = useAsyncFnWithNotify(
@@ -63,18 +67,23 @@ export default function SearchPage(): JSX.Element {
     undefined,
     [activeConfig, searchName],
   );
+  React.useEffect(() => {
+    if (searchName !== '') {
+      fn().then();
+    }
+  }, [fn, searchName, activeConfig]);
   return (
     <MyTabs classname={classes.all}>
       <SearchInput
-        onSearchNameChange={(newSearchName) => {
-          push(newSearchName, mainPageUrl);
-        }}
-        searchName={searchName}
+        onSearchNameChange={setNewSearchName}
+        searchName={newSearchName}
         activeConfig={activeConfig}
         onActiveConfigChange={(newConfig) => {
           push(searchName, newConfig?.mainPageUrl ?? '');
         }}
-        onSearch={fn}
+        onSearch={() => {
+          push(newSearchName, mainPageUrl);
+        }}
       />
       <div className={classes.main}>
         <Loading state={{ ...state, retry: fn }}>

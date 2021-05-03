@@ -41,6 +41,8 @@ export const defaultConfigs: TotalConfig[] = [
         author: '#info > p:nth-child(2)',
         lastUpdateTime: '#info > p:nth-child(4)',
         latestChapterId: '#info > p:nth-child(5) > a',
+        image: '#fmimg > img',
+        desc: '#intro',
       },
     },
     content: {

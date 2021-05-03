@@ -4,7 +4,7 @@ import { SearchListItem } from '../../../utils/web/search';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { ExitToApp } from '@material-ui/icons';
 import { TotalConfig } from '../../../utils/web/config/totalConfig';
-import { myHistory } from '../../../utils/myHistory';
+import { historyStore } from '../../../utils/store/history.store';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -38,9 +38,10 @@ export default function SearchItemView(props: SearchItemProp): JSX.Element {
           <Tooltip title={'前往小说页面'}>
             <IconButton
               onClick={() => {
-                myHistory.push({
+                historyStore.push({
                   pathname: '/novel',
                   search: `novelId=${props.searchItem.novelId}&url=${props.activeConfig.mainPageUrl}`,
+                  name: props.searchItem.novelName,
                 });
               }}
             >

@@ -27,6 +27,14 @@ export interface InfoConfig {
    * 编码方式
    * */
   encoding: string;
+  /**
+   * 小说图片
+   * */
+  image: string;
+  /**
+   * 描述
+   * */
+  desc: string;
 }
 
 /**
