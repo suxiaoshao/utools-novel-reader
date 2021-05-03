@@ -8,7 +8,7 @@ export const defaultConfigs: TotalConfig[] = [
       search: 'https://www.biqubao.com/search.php?q={##searchName##}',
       novelInfo: 'https://www.biqubao.com/book/{##novelId##}/',
       directory: 'https://www.biqubao.com/book/{##novelId##}/',
-      chapter: 'https://www.kuxiaoshuo.com/{##novelId##}/{##chapterId##}.html',
+      chapter: 'https://www.biqubao.com/book/{##novelId##}/{##chapterId##}.html',
       searchPlaceholder: '{##searchName##}',
       novelPlaceholder: '{##novelId##}',
       chapterPlaceholder: '{##chapterId##}',
@@ -52,7 +52,7 @@ export const defaultConfigs: TotalConfig[] = [
       preChapterId: '#wrapper > div.content_read > div > div.bookname > div.bottem1 > a:nth-child(1)',
       nextChapterId: '#wrapper > div.content_read > div > div.bookname > div.bottem1 > a:nth-child(3)',
       content: '#content',
-      contentSplit: '　　',
+      contentSplit: '&nbsp;',
     },
   },
 ];

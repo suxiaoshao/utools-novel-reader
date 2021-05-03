@@ -18,7 +18,9 @@ export class UrlUtil {
    * 获取章节内容 url
    * */
   public getChapterUrl(novelId: string, chapterId: string): string {
-    return this.config.chapter.replace(this.config.novelPlaceholder, novelId).replace(this.config.chapter, chapterId);
+    return this.config.chapter
+      .replace(this.config.novelPlaceholder, novelId)
+      .replace(this.config.chapterPlaceholder, chapterId);
   }
 
   /**

@@ -34,7 +34,6 @@ export class HistoryStore extends Store<MyLocation[]> {
     this.data.pop();
     const thisLocation = createLocation(path);
     this.setData([...this.data, { ...thisLocation, name: path.name }]);
-    console.log(this.data);
   }
 
   /**
@@ -53,6 +52,14 @@ export class HistoryStore extends Store<MyLocation[]> {
     thisHistory.push(this.data[index]);
     const data = this.data.slice(0, index + 1);
     this.setData(data);
+  }
+
+  /**
+   * 跟新最后一章名字
+   * */
+  public updateActiveName(name: string): void {
+    this.data[this.data.length - 1].name = name;
+    this.setData([...this.data]);
   }
 }
 

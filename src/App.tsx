@@ -6,6 +6,7 @@ import ReadFile from './views/readFile';
 import Bookshelf from './views/bookshelf';
 import TestPage from './views/testPage';
 import NovelPage from './views/novelPage';
+import ChapterPage from './views/chapterPage';
 
 function App(): JSX.Element {
   return (
@@ -26,6 +27,9 @@ function App(): JSX.Element {
           </Route>
           <Route path="/novel" exact>
             <NovelPage />
+          </Route>
+          <Route path="/chapter" exact>
+            <ChapterPage />
           </Route>
         </Switch>
       </MyThemeProvider>

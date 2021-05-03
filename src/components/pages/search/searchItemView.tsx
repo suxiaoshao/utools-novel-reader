@@ -1,10 +1,11 @@
 import React from 'react';
-import { Avatar, Card, CardContent, CardHeader, IconButton, Link, Tooltip, Typography } from '@material-ui/core';
+import { Avatar, Card, CardContent, CardHeader, IconButton, Tooltip, Typography } from '@material-ui/core';
 import { SearchListItem } from '../../../utils/web/search';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { ExitToApp } from '@material-ui/icons';
 import { TotalConfig } from '../../../utils/web/config/totalConfig';
 import { historyStore } from '../../../utils/store/history.store';
+import ChapterLink from '../../common/chapterLink';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -55,7 +56,12 @@ export default function SearchItemView(props: SearchItemProp): JSX.Element {
           {props.searchItem.desc}
         </Typography>
         <Typography color={'textSecondary'}>
-          最后一章 : <Link> {props.searchItem.latestChapter.name}</Link>
+          最后一章 :{' '}
+          <ChapterLink
+            chapter={props.searchItem.latestChapter}
+            novelId={props.searchItem.novelId}
+            url={props.activeConfig.mainPageUrl}
+          />
         </Typography>
         <Typography color={'textSecondary'}>最后更新时间 : {props.searchItem.updateTime}</Typography>
       </CardContent>

@@ -32,7 +32,7 @@ export default function MyBreadcrumbs(props: MyBreadcrumbsProp): JSX.Element {
   const classes = useClass();
   return (
     <div className={classes.page}>
-      <Breadcrumbs className={classes.breadcrumbs}>
+      <Breadcrumbs maxItems={3} className={classes.breadcrumbs}>
         {allLocation.map((value, index) => (
           <Link
             color={index !== allLocation.length - 1 ? 'inherit' : 'textPrimary'}
