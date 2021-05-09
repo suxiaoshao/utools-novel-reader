@@ -32,5 +32,5 @@ export interface ContentConfig {
   /**
    * 文章内容切割
    * */
-  contentSplit?: string;
+  contentSplit: string | null;
 }

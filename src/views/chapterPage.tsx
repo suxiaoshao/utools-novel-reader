@@ -129,7 +129,7 @@ export default function ChapterPage(): JSX.Element {
         </div>
       )
     );
-  }, [classes.action, classes.actionFather, pushToChapter, state.value]);
+  }, [classes.action, classes.actionFather, pushNovel, pushToChapter, state.value]);
   return (
     <MyBreadcrumbs classname={classes.main}>
       <Loading state={{ ...state, retry: fn }}>

@@ -54,7 +54,7 @@ export class Content {
     const preChapterId = this.regex.getChapter($content(this.config.preChapterId).attr('href'));
     const nextChapterId = this.regex.getChapter($content(this.config.nextChapterId).attr('href'));
     const contentList =
-      this.config.contentSplit !== undefined
+      this.config.contentSplit !== null
         ? $content(this.config.content)
             .text()
             .split(this.config.contentSplit)

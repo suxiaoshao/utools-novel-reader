@@ -2,13 +2,9 @@ import { UTools } from 'utools-helper/@types/utools';
 
 declare global {
   interface Window {
-    utools: UTools & {
-      isDarkColors(): boolean;
-    };
+    utools: UTools;
   }
 }
 declare global {
-  type Utools = UTools & {
-    isDarkColors(): boolean;
-  };
+  type Utools = UTools;
 }
