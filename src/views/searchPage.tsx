@@ -1,7 +1,6 @@
 import React from 'react';
 import MyTabs from '../components/myTabs';
 import { Search } from '../utils/web/search';
-import { defaultConfigs } from '../utils/web/config/defaultConfig';
 import SearchInput from '../components/pages/search/searchInput';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
@@ -9,6 +8,7 @@ import { Loading } from '../components/common/loading';
 import SearchItemView from '../components/pages/search/searchItemView';
 import { useQuery } from '../utils/hooks/useQuery';
 import { historyStore } from '../utils/store/history.store';
+import { useTotalConfigs } from '../utils/store/config.store';
 
 const useClasses = makeStyles(() =>
   createStyles({
@@ -30,6 +30,7 @@ const useClasses = makeStyles(() =>
  * 搜索页
  * */
 export default function SearchPage(): JSX.Element {
+  const [totalConfigs] = useTotalConfigs();
   /**
    * 搜索关键词
    * */
@@ -37,13 +38,13 @@ export default function SearchPage(): JSX.Element {
   /**
    * 主页url
    * */
-  const mainPageUrl = useQuery('mainPageUrl') ?? defaultConfigs[0]?.mainPageUrl ?? '';
+  const mainPageUrl = useQuery('mainPageUrl') ?? totalConfigs[0]?.mainPageUrl ?? '';
   /**
    * 活跃配置
    * */
   const activeConfig = React.useMemo(() => {
-    return defaultConfigs.find((value) => value.mainPageUrl === mainPageUrl);
-  }, [mainPageUrl]);
+    return totalConfigs.find((value) => value.mainPageUrl === mainPageUrl);
+  }, [mainPageUrl, totalConfigs]);
   /**
    * 显示的 搜索词
    * */

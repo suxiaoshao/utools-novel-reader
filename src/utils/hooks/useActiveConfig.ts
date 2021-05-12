@@ -1,11 +1,12 @@
 import { useQuery } from './useQuery';
 import React from 'react';
-import { defaultConfigs } from '../web/config/defaultConfig';
 import { TotalConfig } from '../web/config/totalConfig';
+import { useTotalConfigs } from '../store/config.store';
 
 export function useActiveConfig(): TotalConfig | undefined {
   const mainPageUrl = useQuery('url');
+  const [totalConfigs] = useTotalConfigs();
   return React.useMemo(() => {
-    return defaultConfigs.find((value) => value.mainPageUrl === mainPageUrl);
-  }, [mainPageUrl]);
+    return totalConfigs.find((value) => value.mainPageUrl === mainPageUrl);
+  }, [mainPageUrl, totalConfigs]);
 }

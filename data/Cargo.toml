@@ -13,5 +13,5 @@ crate-type = ["cdylib"]
 serde = { version="1.0.125",features = ["derive"] }
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 js-sys = "0.3.50"
-web-sys = "0.3.50"
+web-sys = { version = "0.3.4",features = ['Document', 'Element', 'HtmlElement', 'Node', 'Window', ] }
 serde_json = "1.0.64"

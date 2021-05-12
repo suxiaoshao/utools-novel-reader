@@ -2,9 +2,9 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Divider, IconButton, InputBase, Paper, Theme, Tooltip } from '@material-ui/core';
 import MySelector from '../../common/mySelector';
-import { defaultConfigs } from '../../../utils/web/config/defaultConfig';
 import { Search } from '@material-ui/icons';
 import { TotalConfig } from '../../../utils/web/config/totalConfig';
+import { useTotalConfigs } from '../../../utils/store/config.store';
 
 export const useUrlStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -81,12 +81,13 @@ export interface SearchInputProp {
  * */
 export default function SearchInput(props: SearchInputProp): JSX.Element {
   const classes = useUrlStyles();
+  const [totalConfigs] = useTotalConfigs();
   return (
     <Paper component="form" className={classes.form}>
       <MySelector<string | undefined>
-        itemList={defaultConfigs.map((value) => ({ text: value.name, value: value.mainPageUrl }))}
+        itemList={totalConfigs.map((value) => ({ text: value.name, value: value.mainPageUrl }))}
         onValueChange={(newValue) => {
-          props.onActiveConfigChange(defaultConfigs.find((value) => value.mainPageUrl === newValue));
+          props.onActiveConfigChange(totalConfigs.find((value) => value.mainPageUrl === newValue));
         }}
         value={props.activeConfig?.mainPageUrl}
         className={classes.iconButton}

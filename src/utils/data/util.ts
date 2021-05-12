@@ -1,16 +1,5 @@
-import { initData } from '../../../data/pkg';
-
 export const DOC_ID = 'database';
 export const ATTACHMENT_ID = 'data.json';
-
-/**
- * 初始化数据
- * */
-export function checkData(): void {
-  const buf = get_buffer();
-  const newBuf = initData(buf);
-  writeToFile(newBuf);
-}
 
 /**
  * 将数据写入文件
@@ -33,7 +22,7 @@ export function writeToFile(buf: Uint8Array): void {
 /**
  * 从文件中获取数据
  * */
-export function get_buffer(): Uint8Array {
+export function getBuffer(): Uint8Array {
   const data = utools.db.getAttachment(DOC_ID, ATTACHMENT_ID);
   let buf: Uint8Array;
   if (data === null) {
