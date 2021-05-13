@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 
 /// # 阅读记录
 #[wasm_bindgen]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ReadRecord {
     pub(crate) author: String,
     pub(crate) name: String,
@@ -13,7 +13,7 @@ pub struct ReadRecord {
     #[serde(rename = "novelId")]
     pub(crate) novel_id: String,
 }
-#[wasm_bindgen]
+#[wasm_bindgen]                                 
 impl ReadRecord {
     #[wasm_bindgen]
     pub fn match_url(&self, url: &str) -> bool {
@@ -34,7 +34,7 @@ impl PartialEq for ReadRecord {
 impl Eq for ReadRecord {}
 /// # 章节数据
 #[wasm_bindgen]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Chapter {
     name: String,
     #[serde(rename = "chapterId")]

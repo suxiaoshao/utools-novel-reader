@@ -10,7 +10,8 @@ import { createStyles } from '@material-ui/core/styles';
 import { useActiveConfig } from '../utils/hooks/useActiveConfig';
 import ChapterLink from '../components/common/chapterLink';
 import { Star, StarBorder } from '@material-ui/icons';
-import { totalData } from '../utils/data/totalData';
+import { ReadRecord, totalData } from '../utils/data/totalData';
+import { useIsStar } from '../utils/hooks/useIsStar';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -49,9 +50,7 @@ export default function NovelPage(): JSX.Element {
   /**
    * 是否收藏
    * */
-  const isStar = React.useMemo(() => {
-    return totalData?.data?.checkExists(novelId ?? '', activeConfig?.mainPageUrl ?? '') ?? false;
-  }, [activeConfig?.mainPageUrl, novelId]);
+  const { isStar, getIsStar } = useIsStar(novelId ?? '', activeConfig?.mainPageUrl ?? '');
   const [state, fn] = useAsyncFnWithNotify(
     async () => {
       if (activeConfig && novelId) {
@@ -79,13 +78,30 @@ export default function NovelPage(): JSX.Element {
               action={
                 isStar ? (
                   <Tooltip title={'取消收藏'}>
-                    <IconButton>
+                    <IconButton
+                      onClick={() => {
+                        totalData.data?.removeRecord(novelId, activeConfig?.mainPageUrl);
+                        getIsStar();
+                      }}
+                    >
                       <Star />
                     </IconButton>
                   </Tooltip>
                 ) : (
                   <Tooltip title={'收藏'}>
-                    <IconButton>
+                    <IconButton
+                      onClick={() => {
+                        const newReadCord: ReadRecord = {
+                          author: state.value?.author ?? '',
+                          chapter: state.value?.directories[0] ?? { chapterId: '', name: '' },
+                          mainPageUrl: activeConfig?.mainPageUrl ?? '',
+                          name: state.value?.name ?? '',
+                          novelId: novelId,
+                        };
+                        totalData.data?.addReadRecord(newReadCord);
+                        getIsStar();
+                      }}
+                    >
                       <StarBorder />
                     </IconButton>
                   </Tooltip>
