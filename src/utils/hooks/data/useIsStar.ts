@@ -1,5 +1,5 @@
 import React from 'react';
-import { totalData } from '../data/totalData';
+import { totalData } from '../../data/totalData';
 
 export interface IsStar {
   isStar: boolean;

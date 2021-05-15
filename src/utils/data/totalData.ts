@@ -1,5 +1,5 @@
 import { TotalData } from 'data';
-import {Chapter} from "../web/novelInfo";
+import { Chapter } from '../web/novelInfo';
 
 export const totalData: { data?: TotalData } = {};
 
@@ -9,4 +9,12 @@ export interface ReadRecord {
   chapter: Chapter;
   mainPageUrl: string;
   novelId: string;
+  /**
+   * 图片
+   * */
+  image: string | null;
+  /**
+   * 小说描述
+   * */
+  desc: string;
 }

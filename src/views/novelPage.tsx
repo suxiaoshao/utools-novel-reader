@@ -1,17 +1,17 @@
 import React from 'react';
 import { useQuery } from '../utils/hooks/useQuery';
-import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
+import { useAsyncFnWithNotify } from '../utils/hooks/async/useAsyncFnWithNotify';
 import { NovelInfo } from '../utils/web/novelInfo';
 import { Avatar, Card, CardContent, CardHeader, IconButton, makeStyles, Tooltip, Typography } from '@material-ui/core';
 import { Loading } from '../components/common/loading';
 import { historyStore } from '../utils/store/history.store';
 import MyBreadcrumbs from '../components/myBreadcrumbs';
 import { createStyles } from '@material-ui/core/styles';
-import { useActiveConfig } from '../utils/hooks/useActiveConfig';
+import { useActiveConfig } from '../utils/hooks/data/useActiveConfig';
 import ChapterLink from '../components/common/chapterLink';
 import { Star, StarBorder } from '@material-ui/icons';
 import { ReadRecord, totalData } from '../utils/data/totalData';
-import { useIsStar } from '../utils/hooks/useIsStar';
+import { useIsStar } from '../utils/hooks/data/useIsStar';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -76,36 +76,29 @@ export default function NovelPage(): JSX.Element {
               title={state.value.name}
               subheader={state.value.author}
               action={
-                isStar ? (
-                  <Tooltip title={'取消收藏'}>
-                    <IconButton
-                      onClick={() => {
+                <Tooltip title={isStar ? '取消收藏' : '收藏'}>
+                  <IconButton
+                    onClick={() => {
+                      if (isStar) {
                         totalData.data?.removeRecord(novelId, activeConfig?.mainPageUrl);
-                        getIsStar();
-                      }}
-                    >
-                      <Star />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <Tooltip title={'收藏'}>
-                    <IconButton
-                      onClick={() => {
+                      } else {
                         const newReadCord: ReadRecord = {
                           author: state.value?.author ?? '',
                           chapter: state.value?.directories[0] ?? { chapterId: '', name: '' },
                           mainPageUrl: activeConfig?.mainPageUrl ?? '',
                           name: state.value?.name ?? '',
                           novelId: novelId,
+                          desc: state.value?.desc ?? '',
+                          image: state.value?.image ?? null,
                         };
                         totalData.data?.addReadRecord(newReadCord);
-                        getIsStar();
-                      }}
-                    >
-                      <StarBorder />
-                    </IconButton>
-                  </Tooltip>
-                )
+                      }
+                      getIsStar();
+                    }}
+                  >
+                    {isStar ? <Star /> : <StarBorder />}
+                  </IconButton>
+                </Tooltip>
               }
             />
             <CardContent>

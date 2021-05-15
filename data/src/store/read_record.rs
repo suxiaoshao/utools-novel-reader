@@ -12,8 +12,10 @@ pub struct ReadRecord {
     pub(crate) main_page_url: String,
     #[serde(rename = "novelId")]
     pub(crate) novel_id: String,
+    pub(crate) image: Option<String>,
+    pub(crate) desc: String,
 }
-#[wasm_bindgen]                                 
+#[wasm_bindgen]
 impl ReadRecord {
     #[wasm_bindgen]
     pub fn match_url(&self, url: &str) -> bool {
@@ -23,6 +25,8 @@ impl ReadRecord {
         self.name = other.name;
         self.author = other.author;
         self.chapter = other.chapter;
+        self.image = other.image;
+        self.desc = other.desc;
     }
 }
 

@@ -1,4 +1,4 @@
-import { notifySubject } from '../../components/common/notify';
+import { notifySubject } from '../../../components/common/notify';
 
 export interface AsyncFunc<T> {
   (): Promise<T>;

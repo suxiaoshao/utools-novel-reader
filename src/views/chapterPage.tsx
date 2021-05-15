@@ -1,8 +1,8 @@
 import React from 'react';
 import { useQuery } from '../utils/hooks/useQuery';
-import { useActiveConfig } from '../utils/hooks/useActiveConfig';
+import { useActiveConfig } from '../utils/hooks/data/useActiveConfig';
 import { historyStore } from '../utils/store/history.store';
-import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
+import { useAsyncFnWithNotify } from '../utils/hooks/async/useAsyncFnWithNotify';
 import { Content } from '../utils/web/content';
 import { Button, makeStyles, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';

@@ -60,7 +60,7 @@ impl TotalData {
         self.func.iter().for_each(|func| {
             let this = JsValue::null();
             let arraybuffer = unsafe { Uint8Array::view(&self.to_data()) };
-            func.call1(&this, &arraybuffer);
+            let _ = func.call1(&this, &arraybuffer);
         })
     }
 }

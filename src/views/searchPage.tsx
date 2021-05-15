@@ -3,7 +3,7 @@ import MyTabs from '../components/myTabs';
 import { Search } from '../utils/web/search';
 import SearchInput from '../components/pages/search/searchInput';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { useAsyncFnWithNotify } from '../utils/hooks/useAsyncFnWithNotify';
+import { useAsyncFnWithNotify } from '../utils/hooks/async/useAsyncFnWithNotify';
 import { Loading } from '../components/common/loading';
 import SearchItemView from '../components/pages/search/searchItemView';
 import { useQuery } from '../utils/hooks/useQuery';
