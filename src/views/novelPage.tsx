@@ -10,7 +10,7 @@ import { createStyles } from '@material-ui/core/styles';
 import { useActiveConfig } from '../utils/hooks/data/useActiveConfig';
 import ChapterLink from '../components/common/chapterLink';
 import { Star, StarBorder } from '@material-ui/icons';
-import { ReadRecord, totalData } from '../utils/data/totalData';
+import { ReadRecord, TotalDataBuild } from '../utils/data/totalData';
 import { useIsStar } from '../utils/hooks/data/useIsStar';
 
 const useClasses = makeStyles((theme) =>
@@ -79,8 +79,9 @@ export default function NovelPage(): JSX.Element {
                 <Tooltip title={isStar ? '取消收藏' : '收藏'}>
                   <IconButton
                     onClick={() => {
+                      const totalData = TotalDataBuild.getTotalData();
                       if (isStar) {
-                        totalData.data?.removeRecord(novelId, activeConfig?.mainPageUrl);
+                        totalData.removeRecord(novelId, activeConfig?.mainPageUrl);
                       } else {
                         const newReadCord: ReadRecord = {
                           author: state.value?.author ?? '',
@@ -91,7 +92,7 @@ export default function NovelPage(): JSX.Element {
                           desc: state.value?.desc ?? '',
                           image: state.value?.image ?? null,
                         };
-                        totalData.data?.addReadRecord(newReadCord);
+                        totalData.addReadRecord(newReadCord);
                       }
                       getIsStar();
                     }}

@@ -1,7 +1,18 @@
 import { TotalData } from 'data';
 import { Chapter } from '../web/novelInfo';
+import { getBuffer } from './util';
 
-export const totalData: { data?: TotalData } = {};
+export class TotalDataBuild {
+  private static totalData?: TotalData;
+
+  public static getTotalData(): TotalData {
+    if (this.totalData) {
+      return this.totalData;
+    } else {
+      return TotalData.load(getBuffer());
+    }
+  }
+}
 
 export interface ReadRecord {
   author: string;

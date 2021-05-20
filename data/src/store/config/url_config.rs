@@ -1,15 +1,15 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UrlConfig {
-    search: String,
+    pub(crate) search: String,
     #[serde(rename = "novelInfo")]
-    novel_info: String,
-    directory: String,
-    chapter: String,
+    pub(crate) novel_info: String,
+    pub(crate) directory: String,
+    pub(crate) chapter: String,
     #[serde(rename = "searchPlaceholder")]
-    search_placeholder: String,
+    pub(crate) search_placeholder: String,
     #[serde(rename = "novelPlaceholder")]
-    novel_placeholder: String,
+    pub(crate) novel_placeholder: String,
     #[serde(rename = "chapterPlaceholder")]
-    chapter_placeholder: String,
+    pub(crate) chapter_placeholder: String,
 }

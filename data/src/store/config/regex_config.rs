@@ -1,10 +1,10 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct RegexConfig {
-    novel: String,
+    pub(crate) novel: String,
     #[serde(rename = "novelIdPlaceholder")]
-    novel_id_placeholder: String,
+    pub(crate) novel_id_placeholder: String,
     #[serde(rename = "chapterIdPlaceholder")]
-    chapter_id_placeholder: String,
-    chapter: String,
+    pub(crate) chapter_id_placeholder: String,
+    pub(crate) chapter: String,
 }

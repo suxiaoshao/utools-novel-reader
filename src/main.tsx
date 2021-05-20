@@ -3,19 +3,25 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import 'fontsource-roboto';
-import init, { TotalData } from '../data/pkg';
-import { getBuffer, writeToFile } from './utils/data/util';
+import init from '../data/pkg';
+import { writeToFile } from './utils/data/util';
 import { configStore } from './utils/store/config.store';
-import { totalData } from './utils/data/totalData';
+import { TotalDataBuild } from './utils/data/totalData';
+import { settingStore } from './utils/store/setting.store';
 
 utools.onPluginReady(() => {
   init().then(() => {
-    totalData.data = TotalData.load(getBuffer());
-    totalData.data.addOnchangeFunc((buf: Uint8Array) => {
+    const totalData = TotalDataBuild.getTotalData();
+    totalData.addOnchangeFunc((buf: Uint8Array) => {
       writeToFile(buf);
+      // 初始化配置
+      configStore.setData(totalData.getAllConfig());
+      settingStore.setData(totalData.getSetting());
       console.log(JSON.parse(new TextDecoder().decode(buf)));
     });
-    configStore.setData(totalData.data.getAllConfig());
+    // 初始化配置
+    configStore.setData(totalData.getAllConfig());
+    settingStore.setData(totalData.getSetting());
     ReactDOM.render(
       <React.StrictMode>
         <App />

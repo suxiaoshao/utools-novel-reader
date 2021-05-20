@@ -8,6 +8,8 @@ import { Button, makeStyles, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import { Loading } from '../components/common/loading';
 import MyBreadcrumbs from '../components/myBreadcrumbs';
+import { TotalDataBuild } from '../utils/data/totalData';
+import { Chapter } from '../utils/web/novelInfo';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -17,6 +19,7 @@ const useClasses = makeStyles((theme) =>
     },
     p: {
       textIndent: '2em',
+      fontSize: theme.spacing(2.5),
     },
     center: {
       textAlign: 'center',
@@ -29,6 +32,9 @@ const useClasses = makeStyles((theme) =>
       minWidth: '50%',
       display: 'flex',
       justifyContent: 'space-between',
+    },
+    page: {
+      backgroundColor: theme.palette.background.paper,
     },
   }),
 );
@@ -75,6 +81,16 @@ export default function ChapterPage(): JSX.Element {
   React.useEffect(() => {
     fn().then();
   }, [fn]);
+  /**
+   * 更新
+   * */
+  React.useEffect(() => {
+    if (state.value && novelId && activeConfig?.mainPageUrl && chapterId) {
+      const totalData = TotalDataBuild.getTotalData();
+      const chapter: Chapter = { chapterId: chapterId, name: state.value.chapterName };
+      totalData.updateRecord(chapter, novelId, activeConfig?.mainPageUrl);
+    }
+  }, [activeConfig?.mainPageUrl, chapterId, novelId, state.value]);
   /**
    * 跳转章节
    * */
@@ -131,7 +147,7 @@ export default function ChapterPage(): JSX.Element {
     );
   }, [classes.action, classes.actionFather, pushNovel, pushToChapter, state.value]);
   return (
-    <MyBreadcrumbs classname={classes.main}>
+    <MyBreadcrumbs classname={classes.main} pageClassName={classes.page}>
       <Loading state={{ ...state, retry: fn }}>
         {state.value && (
           <>
@@ -140,7 +156,7 @@ export default function ChapterPage(): JSX.Element {
             </Typography>
             {action}
             {state.value.contentList.map((value) => (
-              <Typography className={classes.p} paragraph variant={'subtitle1'} component={'p'} key={value}>
+              <Typography className={classes.p} paragraph variant={'body1'} component={'p'} key={value}>
                 {value}
               </Typography>
             ))}

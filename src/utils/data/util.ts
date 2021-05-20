@@ -1,5 +1,5 @@
 export const DOC_ID = 'database';
-export const ATTACHMENT_ID = 'data.json';
+export const ATTACHMENT_ID = 'data';
 
 /**
  * 将数据写入文件

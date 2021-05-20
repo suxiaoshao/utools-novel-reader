@@ -1,5 +1,5 @@
 import React from 'react';
-import { totalData } from '../../data/totalData';
+import { TotalDataBuild } from '../../data/totalData';
 
 export interface IsStar {
   isStar: boolean;
@@ -9,7 +9,8 @@ export interface IsStar {
 export function useIsStar(novelId: string, mainPageUrl: string): IsStar {
   const [isStar, setIsStar] = React.useState(false);
   const getIsStar = React.useCallback(() => {
-    setIsStar(totalData?.data?.checkExists(novelId, mainPageUrl) ?? false);
+    const totalData = TotalDataBuild.getTotalData();
+    setIsStar(totalData.checkExists(novelId, mainPageUrl));
   }, [mainPageUrl, novelId]);
   React.useEffect(() => {
     getIsStar();

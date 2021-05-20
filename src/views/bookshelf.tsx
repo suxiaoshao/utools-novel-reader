@@ -19,7 +19,7 @@ import ChapterLink from '../components/common/chapterLink';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Delete } from '@material-ui/icons';
 import { useReadRecords } from '../utils/hooks/data/useReadRecords';
-import { totalData } from '../utils/data/totalData';
+import { TotalDataBuild } from '../utils/data/totalData';
 import { historyStore } from '../utils/store/history.store';
 
 const useClasses = makeStyles((theme) =>
@@ -83,7 +83,8 @@ export default function Bookshelf(): JSX.Element {
                   <Tooltip title={'删除记录'}>
                     <IconButton
                       onClick={() => {
-                        totalData.data?.removeRecord(value.novelId, value.mainPageUrl);
+                        const totalData = TotalDataBuild.getTotalData();
+                        totalData.removeRecord(value.novelId, value.mainPageUrl);
                         updateReadRecords();
                       }}
                     >

@@ -1,3 +1,3 @@
-export function getClassName(...argv: string[]): string {
-  return argv.join(' ');
+export function getClassName(...argv: (string | undefined)[]): string {
+  return argv.filter((value) => value !== undefined).join(' ');
 }

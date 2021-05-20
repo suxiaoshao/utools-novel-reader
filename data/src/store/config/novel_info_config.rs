@@ -1,26 +1,27 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Debug)]
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct NovelInfoConfig {
-    info: InfoConfig,
-    directory: DirectoryConfig,
+    pub(crate) info: InfoConfig,
+    pub(crate) directory: DirectoryConfig,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct InfoConfig {
-    name: String,
-    author: String,
+    pub(crate) name: String,
+    pub(crate) author: String,
     #[serde(rename = "lastUpdateTime")]
-    last_update_time: String,
+    pub(crate) last_update_time: String,
     #[serde(rename = "latestChapterId")]
-    latest_chapter_id: String,
-    encoding: String,
-    image: String,
-    desc: String,
+    pub(crate) latest_chapter_id: String,
+    pub(crate) encoding: String,
+    pub(crate) image: String,
+    pub(crate) desc: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct DirectoryConfig {
     #[serde(rename = "chapterId")]
-    chapter_id: String,
-    encoding: String,
+    pub(crate) chapter_id: String,
+    pub(crate) encoding: String,
 }

@@ -4,7 +4,8 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
 use crate::store::config::total_config::TotalConfig;
-use crate::store::read_record::ReadRecord;
+use crate::store::read_record::{Chapter, ReadRecord};
+use crate::store::setting::SettingConfig;
 
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize)]
@@ -15,6 +16,7 @@ pub struct TotalData {
     read_record: Vec<ReadRecord>,
     #[serde(skip, default = "Vec::new")]
     func: Vec<Function>,
+    setting: SettingConfig,
 }
 
 /// # 变成数据
@@ -33,9 +35,10 @@ impl TotalData {
         match serde_json::from_slice(&buf) {
             Ok(value) => value,
             Err(_) => TotalData {
-                total_config: vec![TotalConfig::get_default()],
+                total_config: TotalConfig::get_default(),
                 read_record: vec![],
                 func: vec![],
+                setting: SettingConfig::get_default(),
             },
         }
     }
@@ -126,6 +129,31 @@ impl TotalData {
             .collect();
         self.on_update();
     }
+    /// # 更新阅读记录
+    #[wasm_bindgen(js_name=updateRecord)]
+    pub fn update_record(
+        &mut self,
+        chapter: JsValue,
+        novel_id: String,
+        main_page_url: String,
+    ) -> bool {
+        let chapter: Chapter = match JsValue::into_serde(&chapter) {
+            Err(_) => return false,
+            Ok(e) => e,
+        };
+        match self
+            .read_record
+            .iter_mut()
+            .find(|item| item.main_page_url == main_page_url && item.novel_id == novel_id)
+        {
+            None => false,
+            Some(item) => {
+                item.chapter = chapter;
+                self.on_update();
+                true
+            }
+        }
+    }
 }
 
 /// # 配置相关
@@ -138,5 +166,15 @@ impl TotalData {
             .iter()
             .filter_map(|x| JsValue::from_serde(x).ok())
             .collect()
+    }
+}
+
+/// # 设置相关
+#[wasm_bindgen]
+impl TotalData {
+    /// # 获取所有配置
+    #[wasm_bindgen(js_name=getSetting)]
+    pub fn get_setting(&self) -> JsValue {
+        JsValue::from(self.setting)
     }
 }

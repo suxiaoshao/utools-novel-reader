@@ -1,17 +1,17 @@
 use serde::{Deserialize, Serialize};
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SearchConfig {
-    li: String,
+    pub(crate) li: String,
     #[serde(rename = "novelId")]
-    novel_id: String,
+    pub(crate) novel_id: String,
     #[serde(rename = "authorName")]
-    author_name: String,
+    pub(crate) author_name: String,
     #[serde(rename = "latestChapterId")]
-    latest_chapter_id: String,
+    pub(crate) latest_chapter_id: String,
     #[serde(rename = "updateTime")]
-    update_time: String,
-    image: String,
-    label: String,
-    desc: String,
-    encoding: String,
+    pub(crate) update_time: String,
+    pub(crate) image: String,
+    pub(crate) label: String,
+    pub(crate) desc: String,
+    pub(crate) encoding: String,
 }
