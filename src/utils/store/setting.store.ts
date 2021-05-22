@@ -20,10 +20,14 @@ export const settingStore = new SettingStore();
 /**
  * 主题
  * */
-export const useTheme = settingStore.getComputeFunc(
+export const useSettingTheme = settingStore.getComputeFunc(
   (setting) => setting.theme,
   (theme, preData) => ({
     ...preData,
     theme,
   }),
 );
+/**
+ * 全部设置
+ * */
+export const useSetting = settingStore.getData();

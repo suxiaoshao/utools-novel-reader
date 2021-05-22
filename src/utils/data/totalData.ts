@@ -6,10 +6,11 @@ export class TotalDataBuild {
   private static totalData?: TotalData;
 
   public static getTotalData(): TotalData {
-    if (this.totalData) {
+    if (this.totalData !== undefined) {
       return this.totalData;
     } else {
-      return TotalData.load(getBuffer());
+      this.totalData = TotalData.load(getBuffer());
+      return this.totalData;
     }
   }
 }

@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
+use crate::log;
 use crate::store::config::total_config::TotalConfig;
 use crate::store::read_record::{Chapter, ReadRecord};
 use crate::store::setting::SettingConfig;
@@ -176,5 +177,16 @@ impl TotalData {
     #[wasm_bindgen(js_name=getSetting)]
     pub fn get_setting(&self) -> JsValue {
         JsValue::from(self.setting)
+    }
+    /// # 更新设置
+    #[wasm_bindgen(js_name=updateSetting)]
+    pub fn update_setting(&mut self, new_setting: JsValue) -> bool {
+        let new_setting = match JsValue::into_serde(&new_setting) {
+            Ok(e) => e,
+            Err(_) => return false,
+        };
+        self.setting = new_setting;
+        self.on_update();
+        true
     }
 }
