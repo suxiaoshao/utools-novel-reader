@@ -3,7 +3,10 @@ import React from 'react';
 import { createMuiTheme, Theme } from '@material-ui/core';
 import { zhCN } from '@material-ui/core/locale';
 
-function getThemeByName(name: ThemeValue): [Theme, boolean] {
+/**
+ * 根据名字获取 theme 对象
+ * */
+export function getThemeByName(name: ThemeValue): [Theme, boolean] {
   switch (name) {
     case 'dark':
       return [

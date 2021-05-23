@@ -1,5 +1,6 @@
 extern crate wasm_bindgen;
 
+use js_sys::Function;
 use wasm_bindgen::prelude::*;
 
 mod store;

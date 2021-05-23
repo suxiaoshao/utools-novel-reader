@@ -1,15 +1,32 @@
 import { Store } from './store';
+import { TotalDataBuild } from '../data/totalData';
 
 export type ThemeValue = 'dark' | 'light' | 'green' | 'yellow';
 
+export type SettingTheme = ThemeValue | { light: ThemeValue; dark: ThemeValue };
+
 export interface SettingConfig {
-  theme: ThemeValue | { light: ThemeValue; dark: ThemeValue };
-  fontSize: number;
+  theme: SettingTheme;
+  fontSize: 1 | 2 | 3 | 4 | 5;
 }
 
 export class SettingStore extends Store<SettingConfig> {
   constructor() {
-    super({ theme: { dark: 'dark', light: 'light' }, fontSize: 0 });
+    super({ theme: { dark: 'dark', light: 'light' }, fontSize: 1 });
+  }
+
+  /**
+   * 更新主题
+   * */
+  public updateTheme(theme: SettingTheme): void {
+    const newSetting = { ...this.data, theme };
+    const totalData = TotalDataBuild.getTotalData();
+    totalData.updateSetting(newSetting);
+  }
+
+  public selfUpdate(): void {
+    const totalData = TotalDataBuild.getTotalData();
+    this.setData(totalData.getSetting());
   }
 }
 
@@ -30,4 +47,11 @@ export const useSettingTheme = settingStore.getComputeFunc(
 /**
  * 全部设置
  * */
-export const useSetting = settingStore.getData();
+export const useSetting = settingStore.getDataFunc();
+/**
+ * 获取 font-size
+ * */
+export const useFontSize = settingStore.getComputeFunc(
+  (data) => data.fontSize,
+  (newComputeData, preData) => preData,
+);

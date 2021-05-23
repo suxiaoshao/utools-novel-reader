@@ -3,7 +3,6 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
-use crate::log;
 use crate::store::config::total_config::TotalConfig;
 use crate::store::read_record::{Chapter, ReadRecord};
 use crate::store::setting::SettingConfig;
@@ -33,15 +32,15 @@ impl TotalData {
     /// # 读取数据
     #[wasm_bindgen(js_name=load)]
     pub fn load(buf: Vec<u8>) -> Self {
-        match serde_json::from_slice(&buf) {
-            Ok(value) => value,
-            Err(_) => TotalData {
-                total_config: TotalConfig::get_default(),
-                read_record: vec![],
-                func: vec![],
-                setting: SettingConfig::get_default(),
-            },
-        }
+        let mut total_data = serde_json::from_slice::<Self>(&buf).unwrap_or(TotalData {
+            total_config: TotalConfig::get_default(),
+            read_record: vec![],
+            func: vec![],
+            setting: SettingConfig::get_default(),
+        });
+        // 修改错误配置
+        total_data.setting.check_value();
+        total_data
     }
     /// # 更新数据
     #[wasm_bindgen(js_name=updateFromData)]
@@ -61,7 +60,7 @@ impl TotalData {
         self.func.push(func);
     }
     pub fn on_update(&self) {
-        self.func.iter().for_each(|func| {
+        self.func.iter().for_each(|func: &Function| {
             let this = JsValue::null();
             let arraybuffer = unsafe { Uint8Array::view(&self.to_data()) };
             let _ = func.call1(&this, &arraybuffer);

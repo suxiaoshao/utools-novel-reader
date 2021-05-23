@@ -42,6 +42,9 @@ const useStyle = makeStyles<Theme, StyleProp>((theme) =>
       '::-webkit-scrollbar-thumb': {
         borderRadius: theme.spacing(0.5),
         border: 'none',
+        backgroundColor: (props: StyleProp) => {
+          return props.isDark ? '#ffffff50' : '#00000050';
+        },
       },
       '::-webkit-scrollbar-track-piece': {
         backgroundColor: '#00000000',

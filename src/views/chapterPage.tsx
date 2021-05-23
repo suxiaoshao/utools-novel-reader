@@ -4,14 +4,19 @@ import { useActiveConfig } from '../utils/hooks/data/useActiveConfig';
 import { historyStore } from '../utils/store/history.store';
 import { useAsyncFnWithNotify } from '../utils/hooks/async/useAsyncFnWithNotify';
 import { Content } from '../utils/web/content';
-import { Button, makeStyles, Typography } from '@material-ui/core';
+import { Button, makeStyles, Theme, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import { Loading } from '../components/common/loading';
 import MyBreadcrumbs from '../components/myBreadcrumbs';
 import { TotalDataBuild } from '../utils/data/totalData';
 import { Chapter } from '../utils/web/novelInfo';
+import { useFontSize } from '../utils/store/setting.store';
 
-const useClasses = makeStyles((theme) =>
+interface StyleProp {
+  fontSize: 1 | 2 | 3 | 4 | 5;
+}
+
+const useClasses = makeStyles<Theme, StyleProp>((theme) =>
   createStyles({
     main: {
       padding: theme.spacing(1),
@@ -19,7 +24,9 @@ const useClasses = makeStyles((theme) =>
     },
     p: {
       textIndent: '2em',
-      fontSize: theme.spacing(2.5),
+      fontSize: (props) => {
+        return theme.spacing(2 + props.fontSize / 5);
+      },
     },
     center: {
       textAlign: 'center',
@@ -52,7 +59,8 @@ export default function ChapterPage(): JSX.Element {
    * 章节id
    * */
   const chapterId = useQuery('chapterId');
-  const classes = useClasses();
+  const [fontSize] = useFontSize();
+  const classes = useClasses({ fontSize });
   /**
    * 路由无效跳转首页
    * */
