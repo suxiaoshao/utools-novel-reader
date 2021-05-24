@@ -1,11 +1,15 @@
+use std::collections::BTreeSet;
+
 use js_sys::{Array, Function, Uint8Array};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
+use crate::log;
 use crate::store::config::total_config::TotalConfig;
 use crate::store::read_record::{Chapter, ReadRecord};
 use crate::store::setting::SettingConfig;
+use crate::store::theme::Theme;
 
 #[wasm_bindgen]
 #[derive(Serialize, Deserialize)]
@@ -17,6 +21,7 @@ pub struct TotalData {
     #[serde(skip, default = "Vec::new")]
     func: Vec<Function>,
     setting: SettingConfig,
+    theme: Vec<Theme>,
 }
 
 /// # 变成数据
@@ -37,9 +42,10 @@ impl TotalData {
             read_record: vec![],
             func: vec![],
             setting: SettingConfig::get_default(),
+            theme: Theme::get_default(),
         });
         // 修改错误配置
-        total_data.setting.check_value();
+        total_data.check_data();
         total_data
     }
     /// # 更新数据
@@ -48,6 +54,8 @@ impl TotalData {
         let new_data = Self::load(buf);
         self.read_record = new_data.read_record;
         self.total_config = new_data.total_config;
+        self.setting = new_data.setting;
+        self.theme = new_data.theme
     }
     /// # 获取数据
     #[wasm_bindgen(js_name=toData)]
@@ -63,8 +71,31 @@ impl TotalData {
         self.func.iter().for_each(|func: &Function| {
             let this = JsValue::null();
             let arraybuffer = unsafe { Uint8Array::view(&self.to_data()) };
-            let _ = func.call1(&this, &arraybuffer);
+            let setting = self.setting.clone();
+            log(JsValue::from_str("1"));
+            let setting = JsValue::from(setting);
+            let configs = JsValue::from_serde(&self.total_config).unwrap();
+            let _ = func.call3(&this, &arraybuffer, &setting, &configs);
+            log(JsValue::from_str("1"));
         })
+    }
+    /// 检测数据并修改
+    pub fn check_data(&mut self) {
+        self.setting.check_value();
+        // 阅读记录去重消去无用
+        self.read_record = self
+            .read_record
+            .iter()
+            .filter(|&read_cord| {
+                self.total_config
+                    .iter()
+                    .any(|config| read_cord.match_url(&*config.main_page_url))
+            })
+            .map(|read_cord| read_cord.clone())
+            .collect::<BTreeSet<ReadRecord>>()
+            .iter()
+            .map(|x| x.clone())
+            .collect();
     }
 }
 
@@ -148,9 +179,13 @@ impl TotalData {
         {
             None => false,
             Some(item) => {
-                item.chapter = chapter;
-                self.on_update();
-                true
+                if item.chapter != chapter {
+                    item.chapter = chapter;
+                    self.on_update();
+                    true
+                } else {
+                    false
+                }
             }
         }
     }
@@ -175,7 +210,7 @@ impl TotalData {
     /// # 获取所有配置
     #[wasm_bindgen(js_name=getSetting)]
     pub fn get_setting(&self) -> JsValue {
-        JsValue::from(self.setting)
+        JsValue::from((&self).setting.clone())
     }
     /// # 更新设置
     #[wasm_bindgen(js_name=updateSetting)]
@@ -187,5 +222,16 @@ impl TotalData {
         self.setting = new_setting;
         self.on_update();
         true
+    }
+}
+/// # 主题相关
+#[wasm_bindgen]
+impl TotalData {
+    #[wasm_bindgen(js_name=getAllTheme)]
+    pub fn get_all_theme(&self) -> Vec<JsValue> {
+        self.theme
+            .iter()
+            .map(|x| JsValue::from_serde(x).unwrap())
+            .collect()
     }
 }

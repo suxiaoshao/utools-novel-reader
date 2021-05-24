@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { ThemeValue } from '../../../utils/store/setting.store';
 import ThemeButton, { ThemeEnv } from './themeButton';
+import { useThemeList } from '../../../utils/hooks/data/useThemeList';
 
 const useClasses = makeStyles((theme) =>
   createStyles({
@@ -49,48 +50,21 @@ export interface ThemeFormProp {
  * */
 export default function ThemeValueForm(props: ThemeFormProp): JSX.Element {
   const classes = useClasses();
+  const themeList = useThemeList();
   return (
     <div className={classes.main}>
-      <ThemeEnv theme={'light'}>
-        <ThemeButton
-          disabled={props.value === 'light'}
-          onClick={() => {
-            props.onChange('light');
-          }}
-        >
-          明亮
-        </ThemeButton>
-      </ThemeEnv>
-      <ThemeEnv theme={'dark'}>
-        <ThemeButton
-          disabled={props.value === 'dark'}
-          onClick={() => {
-            props.onChange('dark');
-          }}
-        >
-          暗黑
-        </ThemeButton>
-      </ThemeEnv>
-      <ThemeEnv theme={'yellow'}>
-        <ThemeButton
-          onClick={() => {
-            props.onChange('yellow');
-          }}
-          disabled={props.value === 'yellow'}
-        >
-          明黄
-        </ThemeButton>
-      </ThemeEnv>
-      <ThemeEnv theme={'green'}>
-        <ThemeButton
-          onClick={() => {
-            props.onChange('yellow');
-          }}
-          disabled={props.value === 'green'}
-        >
-          明绿
-        </ThemeButton>
-      </ThemeEnv>
+      {themeList.map((value) => (
+        <ThemeEnv theme={value} key={value.name}>
+          <ThemeButton
+            onClick={() => {
+              props.onChange(value);
+            }}
+            disabled={props.value.name === value.name}
+          >
+            {value.name}
+          </ThemeButton>
+        </ThemeEnv>
+      ))}
     </div>
   );
 }

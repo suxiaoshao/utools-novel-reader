@@ -60,9 +60,7 @@ export default function SearchPage(): JSX.Element {
     async () => {
       if (activeConfig) {
         const search = new Search(activeConfig);
-        const data = await search.getSearchList(searchName);
-        console.log(data);
-        return data;
+        return await search.getSearchList(searchName);
       }
     },
     undefined,

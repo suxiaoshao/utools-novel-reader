@@ -1,7 +1,12 @@
 import { Store } from './store';
 import { TotalDataBuild } from '../data/totalData';
+import { TypeBackground } from '@material-ui/core/styles/createPalette';
 
-export type ThemeValue = 'dark' | 'light' | 'green' | 'yellow';
+export interface ThemeValue {
+  name: string;
+  type: 'light' | 'dark';
+  background: null | TypeBackground;
+}
 
 export type SettingTheme = ThemeValue | { light: ThemeValue; dark: ThemeValue };
 
@@ -12,7 +17,13 @@ export interface SettingConfig {
 
 export class SettingStore extends Store<SettingConfig> {
   constructor() {
-    super({ theme: { dark: 'dark', light: 'light' }, fontSize: 1 });
+    super({
+      theme: {
+        dark: { type: 'dark', name: '暗黑', background: null },
+        light: { type: 'light', name: '明亮', background: null },
+      },
+      fontSize: 1,
+    });
   }
 
   /**
@@ -22,11 +33,6 @@ export class SettingStore extends Store<SettingConfig> {
     const newSetting = { ...this.data, theme };
     const totalData = TotalDataBuild.getTotalData();
     totalData.updateSetting(newSetting);
-  }
-
-  public selfUpdate(): void {
-    const totalData = TotalDataBuild.getTotalData();
-    this.setData(totalData.getSetting());
   }
 }
 

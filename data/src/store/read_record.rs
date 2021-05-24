@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -36,9 +38,31 @@ impl PartialEq for ReadRecord {
     }
 }
 impl Eq for ReadRecord {}
+impl PartialOrd for ReadRecord {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        if self.main_page_url < other.main_page_url {
+            Some(Ordering::Less)
+        } else if self.main_page_url > other.main_page_url {
+            Some(Ordering::Greater)
+        } else {
+            Some(self.novel_id.cmp(&other.novel_id))
+        }
+    }
+}
+impl Ord for ReadRecord {
+    fn cmp(&self, other: &Self) -> Ordering {
+        if self.main_page_url < other.main_page_url {
+            Ordering::Less
+        } else if self.main_page_url > other.main_page_url {
+            Ordering::Greater
+        } else {
+            self.novel_id.cmp(&other.novel_id)
+        }
+    }
+}
 /// # 章节数据
 #[wasm_bindgen]
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub struct Chapter {
     name: String,
     #[serde(rename = "chapterId")]

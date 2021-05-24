@@ -5,6 +5,7 @@ import { Style } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
 import ThemeValueForm from './themeValueForm';
+import { useThemeList } from '../../../utils/hooks/data/useThemeList';
 
 const useClasses = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +25,7 @@ const useClasses = makeStyles((theme: Theme) =>
 export default function ThemeEdit(): JSX.Element {
   const [theme] = useSettingTheme();
   const classes = useClasses();
+  const themeList = useThemeList();
   return (
     <Card className={classes.card}>
       <CardHeader
@@ -39,16 +41,16 @@ export default function ThemeEdit(): JSX.Element {
           <FormLabel>是否跟随 utools 主题</FormLabel>
           <Switch
             color="primary"
-            checked={typeof theme !== 'string'}
+            checked={!('name' in theme)}
             onChange={() => {
-              if (typeof theme === 'string') {
-                settingStore.updateTheme({ dark: 'dark', light: 'light' });
+              if ('name' in theme) {
+                settingStore.updateTheme({ dark: themeList[0], light: themeList[1] });
               } else {
-                settingStore.updateTheme('dark');
+                settingStore.updateTheme(themeList[0]);
               }
             }}
           />
-          {typeof theme !== 'string' ? (
+          {!('name' in theme) ? (
             <>
               <FormLabel>明亮模式主题</FormLabel>
               <ThemeValueForm

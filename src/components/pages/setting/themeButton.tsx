@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeValue } from '../../../utils/store/setting.store';
 import { ButtonBase, ButtonProps, MuiThemeProvider } from '@material-ui/core';
-import { getThemeByName } from '../../../utils/hooks/useThemeValue';
+import { getThemeByThemeValue } from '../../../utils/hooks/useThemeValue';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { getClassName } from '../../../utils/getClassName';
 
@@ -11,7 +11,7 @@ export interface ThemeEnvProp {
 }
 
 export function ThemeEnv(props: ThemeEnvProp): JSX.Element {
-  const [theme] = getThemeByName(props.theme);
+  const [theme] = getThemeByThemeValue(props.theme);
   return <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>;
 }
 
@@ -29,7 +29,7 @@ const useClasses = makeStyles((theme) => {
     },
     disable: {
       boxShadow: theme.shadows[0],
-      cursor: 'no-drop !important',
+      cursor: 'not-allowed !important',
       pointerEvents: 'none',
     },
   });

@@ -42,15 +42,6 @@ export class Store<Data> {
   }
 
   /**
-   * 通知所有监听过这个数据的函数
-   * */
-  protected notify(): void {
-    this.listenFuncList.forEach((value) => {
-      value.func(this.data);
-    });
-  }
-
-  /**
    * 添加监听函数
    * */
   public addListen(func: (newValue: Data) => void): symbol {
@@ -112,5 +103,14 @@ export class Store<Data> {
         },
       ];
     };
+  }
+
+  /**
+   * 通知所有监听过这个数据的函数
+   * */
+  protected notify(): void {
+    this.listenFuncList.forEach((value) => {
+      value.func(this.data);
+    });
   }
 }

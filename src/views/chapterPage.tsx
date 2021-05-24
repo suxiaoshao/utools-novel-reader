@@ -84,7 +84,7 @@ export default function ChapterPage(): JSX.Element {
       }
     },
     undefined,
-    [activeConfig, novelId, chapterId],
+    [activeConfig?.mainPageUrl, novelId, chapterId],
   );
   React.useEffect(() => {
     fn().then();

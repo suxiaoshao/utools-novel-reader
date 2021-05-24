@@ -28,6 +28,8 @@ const useClasses = makeStyles((theme) =>
     },
     chapter: {
       width: '33%',
+      fontSize: 15,
+      marginTop: theme.spacing(0.5),
     },
   }),
 );
