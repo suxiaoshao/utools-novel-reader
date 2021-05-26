@@ -28,20 +28,6 @@
         "书架",
         "bookshelf"
       ]
-    },
-    {
-      "code": "read_novel",
-      "explain": "添加本地小说到书架",
-      "cmds": [
-        {
-          "type": "files",
-          "label": "添加到书架",
-          "fileType": "file",
-          "match": "/.*\\.txt/",
-          "minNum": 1,
-          "maxNum": 1
-        }
-      ]
     }
   ]
 }

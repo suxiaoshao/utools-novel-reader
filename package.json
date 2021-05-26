@@ -44,7 +44,7 @@
     "prettier": "^2.2.1",
     "typescript": "^4.2.4",
     "utools-helper": "^1.5.1",
-    "vite": "^2.3.0",
+    "vite": "^2.3.4",
     "vite-plugin-rsw": "^1.4.1"
   }
 }

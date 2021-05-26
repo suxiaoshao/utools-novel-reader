@@ -25,12 +25,13 @@ const useClasses = makeStyles((theme) => {
       boxShadow: theme.shadows[2],
       ...theme.typography.button,
       backgroundColor: theme.palette.background.paper,
-      color: theme.palette.text.primary,
+      color: theme.palette.getContrastText(theme.palette.background.paper),
     },
     disable: {
       boxShadow: theme.shadows[0],
       cursor: 'not-allowed !important',
       pointerEvents: 'none',
+      color: theme.palette.text.disabled,
     },
   });
 });
@@ -38,7 +39,7 @@ const useClasses = makeStyles((theme) => {
 export default function ThemeButton(props: ButtonProps): JSX.Element {
   const classes = useClasses();
   return (
-    <ButtonBase className={getClassName(classes.buttonBase, props.disabled ? classes.disable : undefined)} {...props}>
+    <ButtonBase classes={{ disabled: classes.disable }} className={getClassName(classes.buttonBase)} {...props}>
       {props.children}
     </ButtonBase>
   );

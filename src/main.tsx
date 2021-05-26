@@ -8,8 +8,14 @@ import { writeToFile } from './utils/data/util';
 import { configStore } from './utils/store/config.store';
 import { TotalDataBuild, TotalDataProp } from './utils/data/totalData';
 import { settingStore } from './utils/store/setting.store';
+import { historyStore } from './utils/store/history.store';
 
 utools.onPluginReady(() => {
+  utools.onPluginEnter((params) => {
+    if (params.code === 'bookshelf') {
+      historyStore.replace({ name: '书架', pathname: '/bookshelf' });
+    }
+  });
   init().then(() => {
     const totalData = TotalDataBuild.getTotalData();
     totalData.addOnchangeFunc((data: TotalDataProp) => {

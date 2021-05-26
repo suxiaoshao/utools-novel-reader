@@ -18,6 +18,7 @@ export default defineConfig(() => {
     },
     build: {
       outDir: 'build/react',
+      assetsInlineLimit: 800000000000,
     },
     base: './',
   };

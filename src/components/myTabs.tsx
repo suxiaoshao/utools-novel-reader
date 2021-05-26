@@ -16,18 +16,19 @@ const useStyle = makeStyles(() =>
     },
     main: {
       flex: '1 1 0',
+      position: 'relative',
     },
   }),
 );
 
-export default function MyTabs(props: { children?: React.ReactNode; classname?: string }): JSX.Element {
+export default function MyTabs(props: { children?: React.ReactNode; className?: string }): JSX.Element {
   const [myLocation] = useActiveLocation();
   const style = useStyle();
   return (
     <div className={style.page}>
       <Paper className={style.tabs} square>
         <Tabs
-          onChange={(event, value: '/' | '/bookshelf' | '/readFile' | '/setting') => {
+          onChange={(event, value: '/' | '/bookshelf' | '/readFile' | '/setting' | '/sponsorship') => {
             let name: string;
             switch (value) {
               case '/':
@@ -42,6 +43,9 @@ export default function MyTabs(props: { children?: React.ReactNode; classname?: 
               case '/setting':
                 name = '设置';
                 break;
+              case '/sponsorship':
+                name = '支持作者';
+                break;
             }
             historyStore.replace({ pathname: value, name });
           }}
@@ -52,11 +56,12 @@ export default function MyTabs(props: { children?: React.ReactNode; classname?: 
         >
           <Tab label="搜索" value={'/'} />
           <Tab label="书架" value={'/bookshelf'} />
-          <Tab label="读取文件" value={'/readFile'} />
+          {/*<Tab label="读取文件" value={'/readFile'} />*/}
           <Tab label="设置" value={'/setting'} />
+          <Tab label="支持作者" value={'/sponsorship'} />
         </Tabs>
       </Paper>
-      <main className={getClassName(style.main, props.classname)}>{props.children}</main>
+      <main className={getClassName(style.main, props.className)}>{props.children}</main>
     </div>
   );
 }
