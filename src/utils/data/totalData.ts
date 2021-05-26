@@ -1,6 +1,8 @@
 import { TotalData } from 'data';
 import { Chapter } from '../web/novelInfo';
 import { getBuffer } from './util';
+import { SettingConfig, ThemeValue } from '../store/setting.store';
+import { TotalConfig } from '../web/config/totalConfig';
 
 export class TotalDataBuild {
   private static totalData?: TotalData;
@@ -13,6 +15,13 @@ export class TotalDataBuild {
       return this.totalData;
     }
   }
+}
+
+export interface TotalDataProp {
+  totalConfig: TotalConfig[];
+  readRecord: ReadRecord[];
+  setting: SettingConfig;
+  theme: ThemeValue[];
 }
 
 export interface ReadRecord {

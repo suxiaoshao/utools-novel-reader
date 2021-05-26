@@ -63,7 +63,7 @@ export default function NovelPage(): JSX.Element {
       }
     },
     undefined,
-    [activeConfig, novelId],
+    [activeConfig?.mainPageUrl, novelId],
   );
   React.useEffect(() => {
     fn().then();

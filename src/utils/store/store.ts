@@ -69,10 +69,12 @@ export class Store<Data> {
 
   /**
    * 获取计算属性,和设置
+   * @param computeFunc 根据旧数据计算新数据的函数
+   * @param reduceFunc 根据旧数据和新数据返回更新后数据,诺为 false 不跟新
    * */
   public getComputeFunc<ComData>(
     computeFunc: (data: Data) => ComData,
-    reduceFunc: (newComputeData: ComData, preData: Data) => Data,
+    reduceFunc: (newComputeData: ComData, preData: Data) => Data | false,
   ): () => [ComData, (newComputeData: ComData) => void] {
     return (): [ComData, (newComputeData: ComData) => void] => {
       /**
@@ -99,7 +101,10 @@ export class Store<Data> {
       return [
         realValue,
         (newData) => {
-          this.setData(reduceFunc(newData, baseValue));
+          const resultData = reduceFunc(newData, baseValue);
+          if (resultData !== false) {
+            this.setData(resultData);
+          }
         },
       ];
     };

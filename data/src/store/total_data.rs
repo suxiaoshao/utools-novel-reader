@@ -1,11 +1,10 @@
 use std::collections::BTreeSet;
 
-use js_sys::{Array, Function, Uint8Array};
+use js_sys::{Array, Function};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
-use crate::log;
 use crate::store::config::total_config::TotalConfig;
 use crate::store::read_record::{Chapter, ReadRecord};
 use crate::store::setting::SettingConfig;
@@ -70,13 +69,8 @@ impl TotalData {
     pub fn on_update(&self) {
         self.func.iter().for_each(|func: &Function| {
             let this = JsValue::null();
-            let arraybuffer = unsafe { Uint8Array::view(&self.to_data()) };
-            let setting = self.setting.clone();
-            log(JsValue::from_str("1"));
-            let setting = JsValue::from(setting);
-            let configs = JsValue::from_serde(&self.total_config).unwrap();
-            let _ = func.call3(&this, &arraybuffer, &setting, &configs);
-            log(JsValue::from_str("1"));
+            let total_data = JsValue::from_serde(&self).unwrap();
+            let _ = func.call1(&this, &total_data);
         })
     }
     /// 检测数据并修改

@@ -34,6 +34,15 @@ export class SettingStore extends Store<SettingConfig> {
     const totalData = TotalDataBuild.getTotalData();
     totalData.updateSetting(newSetting);
   }
+
+  /**
+   * 更新字体
+   * */
+  public updateFontSize(fontSize: 1 | 2 | 3 | 4 | 5): void {
+    const newSetting = { ...this.data, fontSize };
+    const totalData = TotalDataBuild.getTotalData();
+    totalData.updateSetting(newSetting);
+  }
 }
 
 /**
@@ -45,19 +54,18 @@ export const settingStore = new SettingStore();
  * */
 export const useSettingTheme = settingStore.getComputeFunc(
   (setting) => setting.theme,
-  (theme, preData) => ({
-    ...preData,
-    theme,
-  }),
+  (theme) => {
+    settingStore.updateTheme(theme);
+    return false;
+  },
 );
-/**
- * 全部设置
- * */
-export const useSetting = settingStore.getDataFunc();
 /**
  * 获取 font-size
  * */
 export const useFontSize = settingStore.getComputeFunc(
   (data) => data.fontSize,
-  (newComputeData, preData) => preData,
+  (fontSize) => {
+    settingStore.updateFontSize(fontSize);
+    return false;
+  },
 );

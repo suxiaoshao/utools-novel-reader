@@ -12,11 +12,11 @@ import { TotalDataBuild } from '../utils/data/totalData';
 import { Chapter } from '../utils/web/novelInfo';
 import { useFontSize } from '../utils/store/setting.store';
 
-interface StyleProp {
+export interface FontStyleProp {
   fontSize: 1 | 2 | 3 | 4 | 5;
 }
 
-const useClasses = makeStyles<Theme, StyleProp>((theme) =>
+const useClasses = makeStyles<Theme, FontStyleProp>((theme) =>
   createStyles({
     main: {
       padding: theme.spacing(1),

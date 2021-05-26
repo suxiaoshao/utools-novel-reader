@@ -1,8 +1,21 @@
 import React from 'react';
-import { Avatar, Card, CardHeader, Theme } from '@material-ui/core';
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Theme,
+  Typography,
+} from '@material-ui/core';
 import { ChromeReaderMode } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { deepPurple } from '@material-ui/core/colors';
+import { useFontSize } from '../../../utils/store/setting.store';
+import FontSizeTypo from './fontSizeTypo';
 
 const useClasses = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +34,7 @@ const useClasses = makeStyles((theme: Theme) =>
 
 export default function FontCard(): JSX.Element {
   const classes = useClasses();
+  const [fontSize, setFortSize] = useFontSize();
   return (
     <Card className={classes.card}>
       <CardHeader
@@ -31,6 +45,29 @@ export default function FontCard(): JSX.Element {
         }
         title={'阅读设置'}
       />
+      <CardContent>
+        <FormControl component="fieldset" className={classes.form}>
+          <Typography gutterBottom>阅读页面字体大小</Typography>
+          <RadioGroup
+            value={fontSize}
+            onChange={(event, value) => {
+              setFortSize(parseInt(value) as 1 | 2 | 3 | 4 | 5);
+            }}
+            row
+          >
+            {Array(5)
+              .fill(1)
+              .map((value, index) => (
+                <FormControlLabel
+                  key={index}
+                  value={index + 1}
+                  control={<Radio />}
+                  label={<FontSizeTypo fontSize={(index + 1) as 1 | 2 | 3 | 4 | 5} />}
+                />
+              ))}
+          </RadioGroup>
+        </FormControl>
+      </CardContent>
     </Card>
   );
 }

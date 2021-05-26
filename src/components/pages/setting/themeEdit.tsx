@@ -1,13 +1,23 @@
-import { Avatar, Card, CardContent, CardHeader, FormControl, FormLabel, Switch, Theme } from '@material-ui/core';
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  FormControl,
+  FormLabel,
+  Switch,
+  Theme,
+  Typography,
+} from '@material-ui/core';
 import React from 'react';
-import { settingStore, useSettingTheme } from '../../../utils/store/setting.store';
+import { useSettingTheme } from '../../../utils/store/setting.store';
 import { Style } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
 import ThemeValueForm from './themeValueForm';
 import { useThemeList } from '../../../utils/hooks/data/useThemeList';
 
-const useClasses = makeStyles((theme: Theme) =>
+export const useSettingClasses = makeStyles((theme: Theme) =>
   createStyles({
     green: {
       color: '#fff',
@@ -23,8 +33,8 @@ const useClasses = makeStyles((theme: Theme) =>
 );
 
 export default function ThemeEdit(): JSX.Element {
-  const [theme] = useSettingTheme();
-  const classes = useClasses();
+  const [theme, setTheme] = useSettingTheme();
+  const classes = useSettingClasses();
   const themeList = useThemeList();
   return (
     <Card className={classes.card}>
@@ -38,34 +48,34 @@ export default function ThemeEdit(): JSX.Element {
       />
       <CardContent>
         <FormControl component="fieldset" className={classes.form}>
-          <FormLabel>是否跟随 utools 主题</FormLabel>
+          <Typography gutterBottom>是否跟随 utools 主题</Typography>
           <Switch
             color="primary"
             checked={!('name' in theme)}
             onChange={() => {
               if ('name' in theme) {
-                settingStore.updateTheme({ dark: themeList[0], light: themeList[1] });
+                setTheme({ dark: themeList[0], light: themeList[1] });
               } else {
-                settingStore.updateTheme(themeList[0]);
+                setTheme(themeList[0]);
               }
             }}
           />
           {!('name' in theme) ? (
             <>
-              <FormLabel>明亮模式主题</FormLabel>
+              <Typography gutterBottom>明亮模式主题</Typography>
               <ThemeValueForm
                 value={theme.light}
                 onChange={(newValue) => {
                   theme.light = newValue;
-                  settingStore.updateTheme(theme);
+                  setTheme(theme);
                 }}
               />
-              <FormLabel>暗黑模式主题</FormLabel>
+              <Typography gutterBottom>暗黑模式主题</Typography>
               <ThemeValueForm
                 value={theme.dark}
                 onChange={(newValue) => {
                   theme.dark = newValue;
-                  settingStore.updateTheme(theme);
+                  setTheme(theme);
                 }}
               />
             </>
@@ -75,7 +85,7 @@ export default function ThemeEdit(): JSX.Element {
               <ThemeValueForm
                 value={theme}
                 onChange={(newValue) => {
-                  settingStore.updateTheme(newValue);
+                  setTheme(newValue);
                 }}
               />
             </>
