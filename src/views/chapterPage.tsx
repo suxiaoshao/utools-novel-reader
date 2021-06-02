@@ -1,16 +1,12 @@
 import React from 'react';
-import { useQuery } from '../utils/hooks/useQuery';
-import { useActiveConfig } from '../utils/hooks/data/useActiveConfig';
 import { historyStore } from '../utils/store/history.store';
-import { useAsyncFnWithNotify } from '../utils/hooks/async/useAsyncFnWithNotify';
-import { Content } from '../utils/web/content';
 import { Button, makeStyles, Theme, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import { Loading } from '../components/common/loading';
 import MyBreadcrumbs from '../components/myBreadcrumbs';
-import { TotalDataBuild } from '../utils/data/totalData';
-import { Chapter } from '../utils/web/novelInfo';
 import { useFontSize } from '../utils/store/setting.store';
+import { useChapterRouter } from '../utils/hooks/page/useChapterRouter';
+import { useChapterData } from '../utils/hooks/page/useChapterData';
 
 export interface FontStyleProp {
   fontSize: 1 | 2 | 3 | 4 | 5;
@@ -48,62 +44,20 @@ const useClasses = makeStyles<Theme, FontStyleProp>((theme) =>
 
 export default function ChapterPage(): JSX.Element {
   /**
-   * 小说id
+   * 路由数据
    * */
-  const novelId = useQuery('novelId');
-  /**
-   * 配置
-   * */
-  const activeConfig = useActiveConfig();
-  /**
-   * 章节id
-   * */
-  const chapterId = useQuery('chapterId');
+  const { activeConfig, novelId, chapterId } = useChapterRouter();
   const [fontSize] = useFontSize();
   const classes = useClasses({ fontSize });
   /**
-   * 路由无效跳转首页
+   * 章节数据
    * */
-  React.useEffect(() => {
-    if (!(activeConfig && novelId && chapterId)) {
-      historyStore.goHome();
-    }
-  }, [activeConfig, chapterId, novelId]);
-  /**
-   * 获取数据
-   * */
-  const [state, fn] = useAsyncFnWithNotify(
-    async () => {
-      if (activeConfig && novelId && chapterId) {
-        const novel = new Content(activeConfig);
-        const date = await novel.getContent(novelId, chapterId);
-        historyStore.updateActiveName(date.chapterName);
-        return date;
-      } else {
-        throw new Error('参数错误');
-      }
-    },
-    undefined,
-    [activeConfig?.mainPageUrl, novelId, chapterId],
-  );
-  React.useEffect(() => {
-    fn().then();
-  }, [fn]);
-  /**
-   * 更新
-   * */
-  React.useEffect(() => {
-    if (state.value && novelId && activeConfig?.mainPageUrl && chapterId) {
-      const totalData = TotalDataBuild.getTotalData();
-      const chapter: Chapter = { chapterId: chapterId, name: state.value.chapterName };
-      totalData.updateRecord(chapter, novelId, activeConfig?.mainPageUrl);
-    }
-  }, [activeConfig?.mainPageUrl, chapterId, novelId, state.value]);
+  const [state, fn] = useChapterData(activeConfig, novelId, chapterId);
   /**
    * 跳转章节
    * */
   const pushToChapter = React.useCallback(
-    (chapterId) => {
+    (chapterId: string) => {
       historyStore.replace({
         search: `?novelId=${novelId}&url=${activeConfig?.mainPageUrl}&chapterId=${chapterId}`,
         name: `${state.value?.chapterName}的章节`,
@@ -121,6 +75,37 @@ export default function ChapterPage(): JSX.Element {
       name: state.value?.novelName ?? '',
     });
   }, [activeConfig?.mainPageUrl, novelId, state.value?.novelName]);
+  /**
+   * 左右翻页
+   * */
+  React.useEffect(() => {
+    const hand = (ev: KeyboardEvent) => {
+      if (novelId && state.value) {
+        switch (ev.key) {
+          case 'ArrowRight':
+            if (state.value.nextChapterId) {
+              pushToChapter(state.value.nextChapterId);
+            }
+            break;
+          case 'ArrowLeft':
+            if (state.value.preChapterId) {
+              pushToChapter(state.value.preChapterId);
+            }
+            break;
+          case 'Enter':
+            pushNovel();
+            break;
+        }
+      }
+    };
+    document.addEventListener('keydown', hand);
+    return () => {
+      document.removeEventListener('keydown', hand);
+    };
+  }, [classes.main, novelId, pushNovel, pushToChapter, state.value]);
+  /**
+   * 上下章翻页
+   * */
   const action = React.useMemo(() => {
     return (
       state.value && (
@@ -129,7 +114,7 @@ export default function ChapterPage(): JSX.Element {
             {state.value.preChapterId && (
               <Button
                 onClick={() => {
-                  pushToChapter(state.value?.preChapterId);
+                  pushToChapter(state.value?.preChapterId ?? '');
                 }}
                 color={'primary'}
               >
@@ -142,7 +127,7 @@ export default function ChapterPage(): JSX.Element {
             {state.value.nextChapterId && (
               <Button
                 onClick={() => {
-                  pushToChapter(state.value?.nextChapterId);
+                  pushToChapter(state.value?.nextChapterId ?? '');
                 }}
                 color={'primary'}
               >

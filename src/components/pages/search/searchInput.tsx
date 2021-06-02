@@ -2,7 +2,7 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { Divider, IconButton, InputBase, Paper, Theme, Tooltip } from '@material-ui/core';
 import MySelector from '../../common/mySelector';
-import { Search } from '@material-ui/icons';
+import { ExitToApp, Search } from '@material-ui/icons';
 import { TotalConfig } from '../../../utils/web/config/totalConfig';
 import { useTotalConfigs } from '../../../utils/store/config.store';
 
@@ -101,6 +101,15 @@ export default function SearchInput(props: SearchInputProp): JSX.Element {
           props.onSearchNameChange(event.target.value);
         }}
       />
+      <Tooltip title={'前往源网站'}>
+        <IconButton
+          onClick={() => {
+            utools.shellOpenExternal(props.activeConfig?.mainPageUrl ?? '');
+          }}
+        >
+          <ExitToApp />
+        </IconButton>
+      </Tooltip>
       <Divider className={classes.divider} orientation="vertical" />
       <Tooltip title={'搜索'}>
         <IconButton onClick={props.onSearch} disabled={props.activeConfig === undefined}>

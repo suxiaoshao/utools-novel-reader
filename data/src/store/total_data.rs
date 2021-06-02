@@ -76,6 +76,10 @@ impl TotalData {
     /// 检测数据并修改
     pub fn check_data(&mut self) {
         self.setting.check_value();
+        // 更新最新的 config
+        if self.total_config.len() <= TotalConfig::get_default().len() {
+            self.total_config = TotalConfig::get_default();
+        }
         // 阅读记录去重消去无用
         self.read_record = self
             .read_record

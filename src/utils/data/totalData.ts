@@ -1,4 +1,4 @@
-import { TotalData } from 'data';
+import { TotalData } from '../../../data/pkg';
 import { Chapter } from '../web/novelInfo';
 import { getBuffer } from './util';
 import { SettingConfig, ThemeValue } from '../store/setting.store';
