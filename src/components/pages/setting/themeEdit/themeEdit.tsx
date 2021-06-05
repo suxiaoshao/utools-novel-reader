@@ -10,12 +10,12 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { useSettingTheme } from '../../../utils/store/setting.store';
+import { useSettingTheme } from '../../../../utils/store/setting.store';
 import { Style } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { orange } from '@material-ui/core/colors';
 import ThemeValueForm from './themeValueForm';
-import { useThemeList } from '../../../utils/hooks/data/useThemeList';
+import { useThemeList } from '../../../../utils/hooks/data/useThemeList';
 
 export const useSettingClasses = makeStyles((theme: Theme) =>
   createStyles({

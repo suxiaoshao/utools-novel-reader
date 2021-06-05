@@ -61,6 +61,14 @@ export class HistoryStore extends Store<MyLocation[]> {
     this.data[this.data.length - 1].name = name;
     this.setData([...this.data]);
   }
+
+  /**
+   * 返回上一页
+   * */
+  public goBack(): void {
+    this.goIndex(this.data.length - 2);
+    console.log(this);
+  }
 }
 
 export const historyStore = new HistoryStore();
@@ -69,10 +77,10 @@ export const historyStore = new HistoryStore();
  * */
 export const useActiveLocation = historyStore.getComputeFunc(
   (data) => data[data.length - 1],
-  (newComputeData, preData) => {
+  (newComputeData, manager) => {
     thisHistory.replace(newComputeData);
-    preData.pop();
-    return [...preData, newComputeData];
+    manager.getData().pop();
+    manager.setData([...manager.getData(), newComputeData]);
   },
 );
 export const useAllLocation = historyStore.getDataFunc();

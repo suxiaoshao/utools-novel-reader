@@ -66,7 +66,8 @@ impl TotalData {
     pub fn add_onchange_func(&mut self, func: js_sys::Function) {
         self.func.push(func);
     }
-    pub fn on_update(&self) {
+    pub fn on_update(&mut self) {
+        self.check_data();
         self.func.iter().for_each(|func: &Function| {
             let this = JsValue::null();
             let total_data = JsValue::from_serde(&self).unwrap();
@@ -199,6 +200,43 @@ impl TotalData {
             .iter()
             .filter_map(|x| JsValue::from_serde(x).ok())
             .collect()
+    }
+    /// # 删除配置
+    #[wasm_bindgen(js_name=deleteConfig)]
+    pub fn delete_config(&mut self, main_page_url: &str) -> bool {
+        // 判断是否是默认的
+        if TotalConfig::get_default()
+            .iter()
+            .any(|config| config.main_page_url == main_page_url)
+        {
+            return false;
+        };
+        self.total_config = self
+            .total_config
+            .iter()
+            .filter(|config| config.main_page_url != main_page_url)
+            .map(|x| x.clone())
+            .collect();
+        self.on_update();
+        true
+    }
+    /// # 添加配置
+    #[wasm_bindgen(js_name=addConfig)]
+    pub fn add_config(&mut self, code: &str) -> Option<String> {
+        let config: TotalConfig = match serde_json::from_str(code) {
+            Err(_) => return Some(String::from("json 配置格式不正确")),
+            Ok(e) => e,
+        };
+        if self
+            .total_config
+            .iter()
+            .any(|item| item.main_page_url == config.main_page_url)
+        {
+            return Some(String::from("mainPageUrl 不允许重复"));
+        }
+        self.total_config.push(config);
+        self.on_update();
+        None
     }
 }
 

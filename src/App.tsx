@@ -9,6 +9,7 @@ import NovelPage from './views/novelPage';
 import ChapterPage from './views/chapterPage';
 import SettingPage from './views/settingPage';
 import Sponsorship from './views/sponsorship';
+import EditConfig from './views/editConfig';
 
 function App(): JSX.Element {
   return (
@@ -38,6 +39,9 @@ function App(): JSX.Element {
           </Route>
           <Route path="/sponsorship" exact>
             <Sponsorship />
+          </Route>
+          <Route path="/editConfig" exact>
+            <EditConfig />
           </Route>
         </Switch>
       </MyThemeProvider>

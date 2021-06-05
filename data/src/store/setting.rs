@@ -21,7 +21,7 @@ impl SettingConfig {
     /// # 检查设置是否合法
     pub fn check_value(&mut self) {
         match self.font_size {
-            1..=5 => {}
+            1..=10 => {}
             _ => {
                 self.font_size = 1;
             }
@@ -121,7 +121,7 @@ mod test {
         setting.font_size = 0;
         setting.check_value();
         assert_eq!(setting.font_size, 1);
-        setting.font_size = 6;
+        setting.font_size = 11;
         setting.check_value();
         assert_eq!(setting.font_size, 1);
     }

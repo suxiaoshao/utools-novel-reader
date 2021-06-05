@@ -160,6 +160,7 @@ mod test {
     #[test]
     fn get_default() {
         let data = TotalConfig::get_default();
-        println!("{:#?}", data);
+        println!("{}",serde_json::to_string_pretty(&data[0]).unwrap());
+        println!("{}",serde_json::to_string_pretty(&data[1]).unwrap());
     }
 }

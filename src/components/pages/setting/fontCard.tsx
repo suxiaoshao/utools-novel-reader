@@ -14,7 +14,7 @@ import {
 import { ChromeReaderMode } from '@material-ui/icons';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { deepPurple } from '@material-ui/core/colors';
-import { useFontSize } from '../../../utils/store/setting.store';
+import { FontSize, useFontSize } from '../../../utils/store/setting.store';
 import FontSizeTypo from './fontSizeTypo';
 
 const useClasses = makeStyles((theme: Theme) =>
@@ -51,18 +51,18 @@ export default function FontCard(): JSX.Element {
           <RadioGroup
             value={fontSize}
             onChange={(event, value) => {
-              setFortSize(parseInt(value) as 1 | 2 | 3 | 4 | 5);
+              setFortSize(parseInt(value) as FontSize);
             }}
             row
           >
-            {Array(5)
+            {Array(10)
               .fill(1)
               .map((value, index) => (
                 <FormControlLabel
                   key={index}
                   value={index + 1}
                   control={<Radio />}
-                  label={<FontSizeTypo fontSize={(index + 1) as 1 | 2 | 3 | 4 | 5} />}
+                  label={<FontSizeTypo fontSize={(index + 1) as FontSize} />}
                 />
               ))}
           </RadioGroup>

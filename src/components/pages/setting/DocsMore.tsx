@@ -14,7 +14,7 @@ import { Comment, Description, GitHub, NearMe, Person } from '@material-ui/icons
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { blueGrey } from '@material-ui/core/colors';
-import { useSettingClasses } from './themeEdit';
+import { useSettingClasses } from './themeEdit/themeEdit';
 
 const useClasses = makeStyles(() =>
   createStyles({

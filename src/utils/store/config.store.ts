@@ -10,9 +10,19 @@ export class ConfigStore extends Store<TotalConfig[]> {
     super([]);
   }
 
-  public selfUpdate(): void {
+  /**
+   * 根据 mainPageUrl 删除配置
+   * */
+  public deleteByMainPageUrl(mainPageUrl: string): boolean {
     const totalData = TotalDataBuild.getTotalData();
-    this.setData(totalData.getAllConfig());
+    return totalData.deleteConfig(mainPageUrl);
+  }
+  /**
+   * 添加配置
+   * **/
+  public addConfig(code: string): string | undefined {
+    const totalData = TotalDataBuild.getTotalData();
+    return totalData.addConfig(code);
   }
 }
 

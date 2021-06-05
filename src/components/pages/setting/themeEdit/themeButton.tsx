@@ -1,9 +1,9 @@
 import React from 'react';
-import { ThemeValue } from '../../../utils/store/setting.store';
+import { ThemeValue } from '../../../../utils/store/setting.store';
 import { ButtonBase, ButtonProps, MuiThemeProvider } from '@material-ui/core';
-import { getThemeByThemeValue } from '../../../utils/hooks/useThemeValue';
+import { getThemeByThemeValue } from '../../../../utils/hooks/useThemeValue';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { getClassName } from '../../../utils/getClassName';
+import { getClassName } from '../../../../utils/getClassName';
 
 export interface ThemeEnvProp {
   theme: ThemeValue;

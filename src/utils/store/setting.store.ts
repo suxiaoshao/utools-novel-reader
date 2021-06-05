@@ -8,11 +8,13 @@ export interface ThemeValue {
   background: null | TypeBackground;
 }
 
+export type FontSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 export type SettingTheme = ThemeValue | { light: ThemeValue; dark: ThemeValue };
 
 export interface SettingConfig {
   theme: SettingTheme;
-  fontSize: 1 | 2 | 3 | 4 | 5;
+  fontSize: FontSize;
 }
 
 export class SettingStore extends Store<SettingConfig> {
@@ -38,7 +40,7 @@ export class SettingStore extends Store<SettingConfig> {
   /**
    * 更新字体
    * */
-  public updateFontSize(fontSize: 1 | 2 | 3 | 4 | 5): void {
+  public updateFontSize(fontSize: FontSize): void {
     const newSetting = { ...this.data, fontSize };
     const totalData = TotalDataBuild.getTotalData();
     totalData.updateSetting(newSetting);
@@ -56,7 +58,6 @@ export const useSettingTheme = settingStore.getComputeFunc(
   (setting) => setting.theme,
   (theme) => {
     settingStore.updateTheme(theme);
-    return false;
   },
 );
 /**
@@ -66,6 +67,5 @@ export const useFontSize = settingStore.getComputeFunc(
   (data) => data.fontSize,
   (fontSize) => {
     settingStore.updateFontSize(fontSize);
-    return false;
   },
 );

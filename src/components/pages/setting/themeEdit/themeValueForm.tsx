@@ -1,8 +1,8 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { ThemeValue } from '../../../utils/store/setting.store';
+import { ThemeValue } from '../../../../utils/store/setting.store';
 import ThemeButton, { ThemeEnv } from './themeButton';
-import { useThemeList } from '../../../utils/hooks/data/useThemeList';
+import { useThemeList } from '../../../../utils/hooks/data/useThemeList';
 
 const useClasses = makeStyles((theme) =>
   createStyles({

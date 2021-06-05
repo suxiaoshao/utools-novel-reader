@@ -4,12 +4,12 @@ import { Button, makeStyles, Theme, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import { Loading } from '../components/common/loading';
 import MyBreadcrumbs from '../components/myBreadcrumbs';
-import { useFontSize } from '../utils/store/setting.store';
+import { FontSize, useFontSize } from '../utils/store/setting.store';
 import { useChapterRouter } from '../utils/hooks/page/useChapterRouter';
 import { useChapterData } from '../utils/hooks/page/useChapterData';
 
 export interface FontStyleProp {
-  fontSize: 1 | 2 | 3 | 4 | 5;
+  fontSize: FontSize;
 }
 
 const useClasses = makeStyles<Theme, FontStyleProp>((theme) =>
@@ -21,7 +21,7 @@ const useClasses = makeStyles<Theme, FontStyleProp>((theme) =>
     p: {
       textIndent: '2em',
       fontSize: (props) => {
-        return theme.spacing(2 + props.fontSize / 5);
+        return theme.spacing(1.5 + props.fontSize / 10);
       },
     },
     center: {

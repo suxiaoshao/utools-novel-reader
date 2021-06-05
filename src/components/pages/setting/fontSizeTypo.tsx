@@ -2,16 +2,17 @@ import { Theme, Typography } from '@material-ui/core';
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { FontStyleProp } from '../../../views/chapterPage';
+import { FontSize } from '../../../utils/store/setting.store';
 
 export interface FontSizeTypoProp {
-  fontSize: 1 | 2 | 3 | 4 | 5;
+  fontSize: FontSize;
 }
 
 const useClasses = makeStyles<Theme, FontStyleProp>((theme) =>
   createStyles({
     font: {
       fontSize: (props) => {
-        return theme.spacing(2 + props.fontSize / 5);
+        return theme.spacing(1.5 + props.fontSize / 10);
       },
     },
   }),

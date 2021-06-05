@@ -63,7 +63,9 @@ export class Store<Data> {
   public getDataFunc(): () => [Data, (newData: Data) => void] {
     return this.getComputeFunc<Data>(
       (data) => data,
-      (newComputeData) => newComputeData,
+      (newComputeData, manager) => {
+        manager.setData(newComputeData);
+      },
     );
   }
 
@@ -74,7 +76,7 @@ export class Store<Data> {
    * */
   public getComputeFunc<ComData>(
     computeFunc: (data: Data) => ComData,
-    reduceFunc: (newComputeData: ComData, preData: Data) => Data | false,
+    reduceFunc: (newComputeData: ComData, manager: Store<Data>) => void,
   ): () => [ComData, (newComputeData: ComData) => void] {
     return (): [ComData, (newComputeData: ComData) => void] => {
       /**
@@ -101,10 +103,7 @@ export class Store<Data> {
       return [
         realValue,
         (newData) => {
-          const resultData = reduceFunc(newData, baseValue);
-          if (resultData !== false) {
-            this.setData(resultData);
-          }
+          reduceFunc(newData, this);
         },
       ];
     };
