@@ -100,6 +100,11 @@ export default function SearchInput(props: SearchInputProp): JSX.Element {
         onChange={(event) => {
           props.onSearchNameChange(event.target.value);
         }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            props.onSearch();
+          }
+        }}
       />
       <Tooltip title={'前往源网站'}>
         <IconButton

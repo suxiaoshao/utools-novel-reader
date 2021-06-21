@@ -1,7 +1,7 @@
 import 'monaco-editor/esm/vs/editor/editor.main';
 import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker&inline';
 import monankai from './monankai';
-import {editor, languages, Uri} from 'monaco-editor';
+import { editor, languages, Uri } from 'monaco-editor';
 import { JSONSchema4 } from 'json-schema';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -267,7 +267,7 @@ export const schemas = [
     schema,
   },
 ];
-export const model = editor.createModel("", 'json', modelUri);
+export const model = editor.createModel('', 'json', modelUri);
 languages.json.jsonDefaults.setDiagnosticsOptions({
   validate: true,
   schemas,

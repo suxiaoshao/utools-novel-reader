@@ -28,6 +28,7 @@ utools.onPluginReady(() => {
   });
   init().then(() => {
     const totalData = TotalDataBuild.getTotalData();
+    writeToFile(totalData.toData());
     totalData.addOnchangeFunc((data: TotalDataProp) => {
       configStore.setData(data.totalConfig);
       settingStore.setData(data.setting);
