@@ -37,7 +37,7 @@ impl TotalData {
     #[wasm_bindgen(js_name=load)]
     pub fn load(buf: Vec<u8>) -> Self {
         let mut total_data = serde_json::from_slice::<Self>(&buf).unwrap_or(TotalData {
-            total_config: TotalConfig::get_default(),
+            total_config: TotalConfig::default(),
             read_record: vec![],
             func: vec![],
             setting: SettingConfig::get_default(),
@@ -78,8 +78,8 @@ impl TotalData {
     pub fn check_data(&mut self) {
         self.setting.check_value();
         // 更新最新的 config
-        if self.total_config.len() <= TotalConfig::get_default().len() {
-            self.total_config = TotalConfig::get_default();
+        if self.total_config.len() <= TotalConfig::default().len() {
+            self.total_config = TotalConfig::default();
         }
         // 阅读记录去重消去无用
         self.read_record = self
@@ -205,7 +205,7 @@ impl TotalData {
     #[wasm_bindgen(js_name=deleteConfig)]
     pub fn delete_config(&mut self, main_page_url: &str) -> bool {
         // 判断是否是默认的
-        if TotalConfig::get_default()
+        if TotalConfig::default()
             .iter()
             .any(|config| config.main_page_url == main_page_url)
         {
