@@ -8,8 +8,6 @@ export default defineConfig(() => {
     plugins: [
       reactRefresh(),
       ViteRsw({
-        mode: 'release',
-        target: 'web',
         crates: ['data'],
       }),
     ],
