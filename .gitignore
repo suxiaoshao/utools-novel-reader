@@ -10,6 +10,7 @@ node_modules
 
 # production
 /build/react
+/build/web
 /build/node_modules
 .idea
 target

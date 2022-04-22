@@ -5,7 +5,7 @@ export const Doc_Id = 'database';
  * */
 export function writeToFile(buf: Uint8Array): void {
   utools.db.remove(Doc_Id);
-  utools.db.putAttachment(Doc_Id, buf, 'text/json');
+  utools.db.postAttachment(Doc_Id, buf, 'text/json');
 }
 
 /**

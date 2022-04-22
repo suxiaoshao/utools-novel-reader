@@ -15,7 +15,7 @@ export default defineConfig(() => {
       port: 8082,
     },
     build: {
-      outDir: 'build/react',
+      outDir: 'build/web',
     },
     base: './',
   };

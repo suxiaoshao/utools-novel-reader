@@ -19,6 +19,7 @@
     "cheerio": "^1.0.0-rc.6",
     "dayjs": "^1.10.4",
     "fontsource-roboto": "^4.0.0",
+    "history": "4",
     "monaco-editor": "^0.24.0",
     "notistack": "^1.0.6",
     "react": "^17.0.0",
